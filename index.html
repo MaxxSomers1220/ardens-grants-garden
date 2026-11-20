@@ -232,7 +232,8 @@
       .garden-landing[data-detail] .garden-camera {
         filter: blur(3px) saturate(.76);
       }
-      .garden-canvas { z-index: 1; }
+      .garden-map { transform: translateZ(0); }
+      .garden-canvas { z-index: 1; transform: translateZ(0); }
       .garden-hit-targets { z-index: 2; }
       .garden-light {
         z-index: 3;
@@ -252,106 +253,11 @@
         background: radial-gradient(ellipse at center, transparent 22%, #F2C14E24 41%, transparent 68%);
         opacity: var(--light-warmth, 0);
       }
-      .garden-bed-labels { position: absolute; inset: 0; pointer-events: none; }
-      .garden-plant {
-        position: absolute;
-        top: var(--slot-y);
-        left: var(--slot-x);
-        width: max(44px, var(--slot-width));
-        aspect-ratio: 11 / 12;
-        min-height: 44px;
-        transform: translate(-50%, -84.1667%);
-        background: none;
-        border: 0;
-        border-radius: 20%;
-        padding: 0;
-        opacity: 1;
-        transition: opacity 180ms ease-out, filter var(--layer-duration, 800ms) ease-in-out;
-      }
-      .garden-plant svg { width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none; }
-      .garden-plant[aria-disabled="true"] { cursor: default !important; }
-      .garden-plant.is-dim { opacity: .22; }
-      .garden-plant.is-active { z-index: 1; }
-      .garden-plant:focus-visible { outline-offset: 0 !important; }
       .garden-map-bed { opacity: 1; }
-      .garden-bed-label {
-        position: absolute;
-        left: var(--label-x);
-        top: var(--label-y);
-        transform: translate(-50%, -50%);
-        font: 700 clamp(.73rem, 1.23vw, 1.07rem) "Public Sans", sans-serif;
-        letter-spacing: .045em;
-        white-space: nowrap;
-        color: var(--garden-ink);
-        text-shadow: 1px 0 var(--garden-cream), -1px 0 var(--garden-cream),
-          0 1px var(--garden-cream), 0 -1px var(--garden-cream);
-      }
-      .garden-scene:not([data-garden-arrived="true"]) :is(.garden-plant, .garden-map-bed, .garden-bed-label) { opacity: 0; }
-      .garden-scene[data-garden-arrived="true"] :is(.garden-plant, .garden-map-bed, .garden-bed-label) {
-        animation: garden-arrive var(--arrival-fade, 240ms) var(--arrival-delay, 0ms) ease-out backwards;
-      }
       .garden-landscape-title { animation: garden-arrive 180ms 390ms ease-out both; }
       @keyframes garden-arrive { from { opacity: 0; } }
-      .garden-lift { transition: transform var(--lift-duration, 180ms) ease-out; }
-      .garden-plant.is-active .garden-lift { transform: translateY(var(--lift-distance, -4px)); }
-      .garden-shadow {
-        transform-box: fill-box;
-        transform-origin: center;
-        transition: transform var(--lift-duration, 180ms) ease-out;
-      }
-      .garden-plant:not(.is-active) .garden-shadow { transform: scaleX(calc(1 + .22 * var(--garden-day-progress, 0))); }
-      .garden-plant.is-active .garden-shadow { transform: scale(.86, .8); }
-      .garden-sway {
-        will-change: transform;
-        transform-box: view-box;
-        transform-origin: 55px 101px;
-        animation: garden-sway var(--sway-period) var(--sway-delay) ease-in-out infinite;
-      }
-      .garden-weed {
-        will-change: transform;
-        transform-box: fill-box;
-        transform-origin: center bottom;
-        animation: garden-sway 4.8s var(--sway-delay) ease-in-out infinite;
-        --sway-angle: 1.5deg;
-      }
-      .garden-plant.is-active .garden-sway { --sway-angle: var(--active-angle); }
-      @keyframes garden-sway {
-        0%, 100% { transform: rotate(var(--sway-angle)); }
-        50% { transform: rotate(calc(-1 * var(--sway-angle))); }
-      }
-      .garden-scene[data-garden-paused="true"] :is(.garden-sway, .garden-weed) { animation-play-state: paused; }
-      .garden-scene[data-garden-panel="true"][data-garden-suspended="false"] .garden-plant.is-detail .garden-sway {
-        --sway-angle: .15deg;
-        animation-play-state: running;
-      }
       .garden-bloom { transform-box: fill-box; transform-origin: center; }
-      .garden-plant.is-pulsing .garden-bloom {
-        animation: garden-bloom-pulse var(--bloom-duration, 900ms) ease-out 1;
-      }
-      .garden-scene[data-garden-paused="true"] .garden-bloom { animation-play-state: paused; }
       @keyframes garden-bloom-pulse { 50% { transform: scale(var(--bloom-scale, 1.08)); } }
-      .garden-scene[data-funding="false"] .garden-plant { filter: saturate(.83); }
-      .garden-preview {
-        position: absolute;
-        z-index: 4;
-        inset: auto 1rem clamp(.75rem, 2vw, 1.8rem);
-        width: fit-content;
-        max-width: calc(100% - 2rem);
-        margin-inline: auto;
-        padding: .48rem .8rem;
-        background: var(--garden-cream);
-        border: 1px solid var(--garden-line);
-        border-radius: 6px;
-        box-shadow: 0 4px 15px #6b4a2f24;
-        font-size: .85rem;
-        font-weight: 650;
-        display: flex;
-        gap: .35em;
-        white-space: nowrap;
-        pointer-events: none;
-      }
-      .garden-preview-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-      .garden-preview-fact { flex: none; }
       .garden-list {
         max-width: 78rem;
         margin-inline: auto;
@@ -440,9 +346,6 @@
       .garden-source-details summary { cursor: pointer; font-weight: 700; }
       .garden-source-details li { margin-bottom: .28rem; overflow-wrap: anywhere; }
       .garden-source-details small { display: block; }
-      @media (pointer: coarse) {
-        .garden-sway, .garden-weed { will-change: auto; }
-      }
       @media (max-width: 820px) {
         .stat-strip { grid-template-columns: repeat(2, 1fr); }
         .garden-list-row { grid-template-columns: 1fr 1fr; align-items: start; gap: .2rem .65rem; }
@@ -455,15 +358,163 @@
         .garden-switch { padding-inline: .53rem; }
         .garden-list { padding-top: 8rem; }
         .garden-scene { height: max(670px, 100svh); }
-        .garden-preview { font-size: .77rem; }
       }
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
         #garden *, #garden *::before, #garden *::after { animation: none !important; transition: none !important; }
-        .garden-scene :is(.garden-map-bed, .garden-plant, .garden-bed-label) { opacity: 1; }
-        .garden-scene .garden-plant.is-dim { opacity: .22; }
-        .garden-plant.is-active .garden-lift, .garden-plant.is-active .garden-shadow { transform: none; }
-        .garden-plant.is-active { outline: 2px solid var(--garden-ink); }
+      }
+
+      .garden-bed-target {
+        position: absolute;
+        left: var(--bed-left);
+        top: var(--bed-top);
+        width: var(--bed-width);
+        height: var(--bed-height);
+        border: 1px solid transparent;
+        border-radius: 12px;
+        background: transparent;
+        color: var(--garden-ink);
+      }
+      .garden-bed-target:hover { border-color: var(--garden-cream); }
+      .garden-bed-target .garden-choice-label {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding-top: .35rem;
+        text-shadow: 0 1px var(--garden-cream);
+      }
+      .garden-choice-label {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+        white-space: nowrap;
+        font-size: clamp(.67rem, 1.22vw, 1.04rem);
+        font-weight: 700;
+        letter-spacing: .03em;
+      }
+      .garden-choice-count {
+        border: 1px solid var(--garden-line);
+        border-radius: 7px;
+        padding: .1rem .34rem;
+        background: var(--garden-cream);
+        font-variant-numeric: tabular-nums;
+      }
+      .garden-scene:not([data-garden-arrived="true"]) :is(.garden-map-bed, .garden-bed-target, [data-field-bed]) {
+        opacity: 0;
+      }
+      .garden-scene[data-garden-arrived="true"] :is(.garden-map-bed, .garden-bed-target, [data-field-bed]) {
+        animation: garden-arrive 240ms var(--arrival-delay, 0ms) ease-out backwards;
+      }
+      [data-field-bed] { transition: opacity var(--layer-duration, 800ms) ease-in-out; }
+      .garden-scene[data-funding="false"] [data-field-bed] { opacity: .82; }
+      .garden-landing[data-funding="false"] .garden-bed-plant .garden-crop { opacity: .82; }
+      #garden [data-opportunity-id].is-dim { opacity: .28; }
+      .garden-bed-index {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+        gap: .9rem;
+      }
+      .garden-bed-list-button {
+        width: 100%;
+        min-height: 70px;
+        padding: .8rem;
+        border: 1px solid var(--garden-line);
+        border-radius: 9px;
+        background: var(--garden-cream);
+        color: var(--garden-ink);
+      }
+      .garden-bed-list-button:hover { border-color: var(--garden-deep); }
+      .garden-bed-list-button .garden-choice-label { justify-content: space-between; font-size: .94rem; }
+      .garden-bed-view { position: relative; isolation: isolate; }
+      .garden-bed-view::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(ellipse at top left, #F2C14E36, transparent 67%);
+        opacity: 1;
+        transition: opacity var(--layer-duration, 800ms) ease-in-out;
+        pointer-events: none;
+      }
+      .garden-landing[data-research="false"] .garden-bed-view::before { opacity: 0; }
+      .garden-bed-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        gap: .6rem;
+        flex-wrap: wrap;
+        padding-block: .35rem;
+        background: var(--garden-cream);
+      }
+      .garden-bed-neighbors { display: flex; gap: .5rem; }
+      .garden-bed-heading {
+        display: flex;
+        align-items: baseline;
+        gap: .45rem 1.2rem;
+        flex-wrap: wrap;
+        margin: 1.25rem 0 .8rem;
+      }
+      .garden-bed-heading h3 { font-size: clamp(1.55rem, 3.2vw, 2.4rem); font-family: Georgia, serif; }
+      .garden-bed-heading span { font-size: .9rem; }
+      .garden-bed-plants {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+        gap: .65rem;
+        list-style: none;
+        margin: 0;
+        padding: .9rem;
+        border: 1px solid var(--garden-line);
+        border-radius: 15px;
+        background: color-mix(in srgb, var(--garden-dry) 14%, var(--garden-cream));
+      }
+      .garden-plant-card { content-visibility: auto; contain-intrinsic-block-size: auto 171px; }
+      .garden-plant-card.is-dim, .garden-list-row.is-dim { opacity: .38; }
+      .garden-bed-plant {
+        display: grid;
+        grid-template-rows: 87px auto auto;
+        justify-items: center;
+        align-content: start;
+        gap: .25rem;
+        color: var(--garden-ink);
+        background: var(--garden-cream);
+        border: 1px solid var(--garden-line);
+        border-radius: 8px;
+        padding: .45rem .5rem .65rem;
+        width: 100%;
+        min-height: 100%;
+        text-align: center;
+      }
+      .garden-bed-plant .garden-crop {
+        width: 82px;
+        height: 87px;
+        overflow: visible;
+        transform: translateY(0);
+        transition: transform var(--lift-duration, 180ms) ease-out, opacity var(--layer-duration, 800ms) ease-in-out;
+      }
+      .garden-bed-plant:is(:hover, :focus-visible) { border-color: var(--garden-deep); }
+      .garden-bed-plant:is(:hover, :focus-visible) .garden-crop { transform: translateY(-4px); }
+      .garden-bed-plant .garden-sway { animation: none; will-change: auto; }
+      .garden-bed-plant:is(:hover, :focus-visible) .garden-bloom {
+        animation: garden-bloom-pulse var(--bloom-duration, 900ms) ease-out 1;
+      }
+      .garden-plant-name { font-size: .84rem; font-weight: 650; overflow-wrap: anywhere; }
+      .garden-plant-fact { font-size: .74rem; }
+      .garden-topic-list { margin: 0; padding: 0; }
+      .garden-landing[data-detail] .garden-bed-view { opacity: .86; }
+      .garden-landing[data-detail] .garden-bed-plant .garden-bloom { animation-play-state: paused; }
+      @media (max-width: 500px) {
+        .garden-bed-plants { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .48rem; gap: .5rem; }
+        .garden-bed-plant { padding-inline: .33rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .garden-scene :is(.garden-map-bed, .garden-bed-target, [data-field-bed]) { opacity: 1; }
+        .garden-bed-plant:is(:hover, :focus-visible) .garden-crop { transform: none; }
       }
 
       /* ---------- Ask demo ---------- */
@@ -576,7 +627,7 @@
     <!-- ================= HERO ================= -->
     <!-- ================= INTERACTIVE GARDEN ================= -->
     <section id="garden" aria-labelledby="garden-title">
-      <div class="garden-landing" id="garden-landing">
+      <div class="garden-landing" id="garden-landing" data-funding="true" data-research="true">
         <header class="garden-header">
           <div class="garden-heading garden-landscape-title">
             <h2 id="garden-title">Arden's Grants Garden</h2>
@@ -594,15 +645,29 @@
           <div class="garden-camera" id="garden-camera">
             <div class="garden-front" id="garden-front">
               <svg class="garden-map" id="garden-map" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true"></svg>
-              <div class="garden-bed-labels" id="garden-bed-labels" aria-hidden="true"></div>
               <canvas class="garden-canvas" id="garden-canvas" aria-hidden="true"></canvas>
-              <div class="garden-hit-targets" id="garden-hit-targets" role="group" aria-label="Grant opportunities as plants"></div>
+              <div class="garden-hit-targets" id="garden-hit-targets" role="group" aria-label="Topic beds"></div>
             </div>
           </div>
           <div class="garden-light" id="garden-light" aria-hidden="true"></div>
-          <p class="garden-preview" id="garden-preview" hidden><span class="garden-preview-name"></span><span class="garden-preview-fact"></span></p>
         </div>
-        <div class="garden-list" id="garden-list" aria-label="Grant opportunities as a list" hidden></div>
+        <div class="garden-list" id="garden-list" aria-label="Topic beds as a list" hidden></div>
+        <section class="garden-list garden-bed-view" id="garden-bed-view" aria-labelledby="garden-bed-heading" hidden>
+          <nav class="garden-bed-toolbar" aria-label="Garden navigation">
+            <button class="garden-switch" id="garden-bed-back" type="button">Back to garden</button>
+            <div class="garden-bed-neighbors">
+              <button class="garden-switch" id="garden-bed-previous" type="button">Previous bed</button>
+              <button class="garden-switch" id="garden-bed-next" type="button">Next bed</button>
+            </div>
+          </nav>
+          <div class="garden-bed-heading">
+            <h3 id="garden-bed-heading" tabindex="-1"></h3>
+            <span id="garden-selected-count"></span>
+          </div>
+          <p id="garden-empty-bed" hidden>No open opportunities in this bed.</p>
+          <ul class="garden-bed-plants" id="garden-bed-plants"></ul>
+          <ol class="garden-topic-list" id="garden-topic-list" hidden></ol>
+        </section>
       </div>
       <div class="wrap garden-context">
         <div class="section-head">
@@ -623,7 +688,8 @@
           <span class="lg-pale">Pale = neutral score, thin research evidence</span>
         </div>
         <p class="bed-count" id="bed-count"></p>
-        <p class="sample-note">These 18 plots use the <span id="garden-feed-date"></span> feed snapshot. Empty plots mark beds with fewer than three eligible opportunities. The November 18 feed figures were 786 opportunities, 165 with confirmed research links.</p>
+        <p class="sample-note" id="garden-preview-status" hidden></p>
+        <p class="sample-note">These <span id="garden-plot-total"></span> plots use the <span id="garden-feed-date"></span> feed snapshot. The November 18 feed figures were 786 opportunities, 165 with confirmed research links.</p>
       </div>
       <dialog class="garden-detail" id="garden-detail" aria-labelledby="garden-detail-heading">
         <header class="garden-detail-head">
@@ -1242,7 +1308,7 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
     const y = blend(-10, 16 + 9 * Math.cos(time / 17300) + 8 * progress, arrival);
     const opacity = transitionValue(research) * arrival;
     const tint = (Math.round(progress * 250) / 250).toFixed(3);
-    setStyle(scene, '--garden-day-progress', tint);
+    setStyle(back, '--garden-day-progress', tint);
     setStyle(light, '--light-x', x.toFixed(2) + '%');
     setStyle(light, '--light-y', y.toFixed(2) + '%');
     setStyle(light, '--light-warmth', tint);
@@ -1548,9 +1614,82 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
 
   return {setLayer, setPanel, arrive, setVisible, getStats};
 }
+function renderGardenField({ beds, layout, compact }) {
+  const aspect = compact ? 0.40 : 1.13;
+  const paths = {
+    healthy: "M9 20v-6C4 15 1 11 2 8c4 0 6 2 7 4l.3-3C5 8 5 4 7 2c2 1 4 4 3 7l.5 4C12 9 15 8 19 8c0 4-3 7-8 7v5Z",
+    pale: "M9.6 20v-6C5 15 3 12 3 9c3 0 5 2 6.7 4v-1c1-3 3.7-4 6.7-4-1 3-2.8 5-5.9 5.8V20Z",
+    seedling: "M9 20v-6C6 14 3 12 3 9c3 0 6 2 7 4 2-4 4-6 7-6-1 4-4 7-6 7v6Z",
+    orchard: "M8 20v-6C3 14 0 11 1 8c0-3 2-4 4-4C6 1 9 0 12 2c4-1 7 2 7 5 3 4-2 8-7 7v6Z",
+    corn: "M9 20V6l1-4 1 4v4c1-3 3-4 6-5-1 4-3 6-6 7v2c2-3 5-4 8-4-2 4-5 6-8 6v4Zm0-3c-4-1-6-4-7-8 4 1 6 4 7 6Z",
+    pumpkin: "M9 19c-3 1-8 0-8-4 0-2 2-4 4-3l1-2 1 1-.3 1c2 0 3 1 4 3 0-3 2-4 4-4l.6-2 1 1-.2 1c4 0 5 6 1 8-2 1-5 1-7-1Z"
+  };
+  const outline = "#3E6B34";
+  const cropColors = { corn: 0xD9A441, pumpkin: 0xE07830, orchard: 0x3E6B34 };
+  const cream = 0xF7F1E3;
+  const number = value => Math.round(value * 100) / 100;
+
+  function colorFor(slot, score) {
+    const color = cropColors[slot.crop] ?? 0x5B8C4A;
+    const light = slot.neutral ? .65 : .1 + .22 * score;
+    return "#" + [16, 8, 0].map(shift => {
+      const channel = color >> shift & 255;
+      const highlight = cream >> shift & 255;
+      return Math.round(channel + (highlight - channel) * light).toString(16).padStart(2, "0");
+    }).join("");
+  }
+
+  const field = beds.map((bed, index) => {
+    const { x, y, w, h } = layout[index];
+    const slots = bed.slots;
+    const count = slots.length;
+    const side = Math.min(15, w * .08);
+    const top = Math.min(27, h * .16);
+    const width = w - side * 2;
+    const height = h - top - Math.min(24, h * .15);
+    const columns = Math.min(count, Math.ceil(Math.sqrt(count * width * aspect / height)));
+    const rows = Math.ceil(count / Math.max(1, columns));
+    const dx = width / Math.max(1, columns);
+    const dy = height / Math.max(1, rows);
+    const size = Math.min(32, Math.min(dy, dx * aspect) * .98);
+    const flowerPaths = [];
+    const furrows = Array.from({ length: rows }, (_, row) =>
+      "M" + number(x + side) + " " + number(y + top + (row + 1) * dy) + "h" + number(width)).join("");
+    const plants = slots.map((slot, rank) => {
+      const row = Math.floor(rank / columns);
+      const column = rank % columns;
+      const center = (columns - Math.min(columns, count - row * columns)) / 2;
+      const score = Math.max(0, Math.min(100, slot.score)) / 100;
+      const markHeight = size * (slot.neutral ? .75 : .53 + .47 * score);
+      const markWidth = markHeight / aspect;
+      const left = number(x + side + (column + center + .5) * dx - markWidth / 2 +
+        ((rank * 37 % 17) - 8) / 160 * dx);
+      const upper = number(y + top + (row + 1) * dy - markHeight + ((rank * 53 % 19) - 9) / 190 * dy);
+      if (slot.bloom) {
+        const cx = number(left + markWidth / 2);
+        const cy = number(upper + markHeight * (slot.crop === "pumpkin" ? .36 : .10));
+        const ry = number(markHeight * .115);
+        const rx = number(ry / aspect);
+        flowerPaths.push("M" + number(cx - rx) + " " + cy + "a" + rx + " " + ry +
+          " 0 1 0 " + number(rx * 2) + " 0a" + rx + " " + ry + " 0 1 0 " + number(-rx * 2) + " 0");
+      }
+      const silhouette = slot.crop === "healthy" && slot.neutral ? paths.pale : paths[slot.crop] || paths.healthy;
+      return '<path d="' + silhouette + '" transform="translate(' + left + ' ' + upper + ') scale(' +
+        number(markWidth / 20) + ' ' + number(markHeight / 20) + ')" fill="' + colorFor(slot, score) +
+        '" stroke-width="' + (slot.neutral ? ".48" : ".8") + '" data-opportunity-id="' +
+        escape(slot.record.opportunity_id) + '" data-neutral="' + Boolean(slot.neutral) +
+        '" data-urgent="' + Boolean(slot.bloom) + '" data-crop="' + slot.crop + '"/>';
+    }).join("");
+    return '<g class="garden-field-bed" data-field-bed="' + bed.id + '" data-field-count="' + count + '">' +
+      '<path d="' + furrows + '" fill="none" stroke="#8A6B45" stroke-opacity=".48" stroke-width=".8"/>' +
+      '<g stroke="' + outline + '" stroke-linejoin="round">' + plants + '</g>' +
+      '<path class="garden-field-blooms" d="' + flowerPaths.join("") + '" fill="#F2C14E"/></g>';
+  }).join("");
+  return '<g class="garden-field" aria-hidden="true" pointer-events="none">' + field + '</g>';
+}
+
         const snapshot = JSON.parse(document.getElementById("arden-snapshot").textContent);
         const motion = {
-          sway: { amplitude: [1.5, 2.5], period: [3200, 4800], rut: { amplitude: .3, period: 6000 } },
           arrival: { stagger: 500 },
           hover: { lift: { distance: 4, duration: 180 } },
           bloom: { pulse: { scale: 1.08, duration: 900 } },
@@ -1565,15 +1704,18 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
         const landing = byId("garden-landing");
         const back = byId("garden-backdrop-host");
         const map = byId("garden-map");
-        const labels = byId("garden-bed-labels");
         const camera = byId("garden-camera");
         const front = byId("garden-front");
-        const preview = byId("garden-preview");
-        const previewName = preview.querySelector(".garden-preview-name");
-        const previewFact = preview.querySelector(".garden-preview-fact");
         const targets = byId("garden-hit-targets");
         const detail = byId("garden-detail");
         const list = byId("garden-list");
+        const bedView = byId("garden-bed-view");
+        const bedHeading = byId("garden-bed-heading");
+        const plantGrid = byId("garden-bed-plants");
+        const topicList = byId("garden-topic-list");
+        const emptyBed = byId("garden-empty-bed");
+        const previousButton = byId("garden-bed-previous");
+        const nextButton = byId("garden-bed-next");
         const reduce = matchMedia("(prefers-reduced-motion: reduce)");
         const compact = matchMedia("(max-width: 720px)");
         const dayMs = 86400000;
@@ -1596,9 +1738,8 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
           '<a href="' + escape(url) + '" target="_blank" rel="noopener noreferrer">' + escape(text) + '</a>';
 
         function classify(record) {
-          if (!record) return { crop: "gap", score: 0, neutral: false, bloom: false, awards: 0, papers: 0 };
-          const awards = record.linked_awards.length;
-          const papers = record.linked_papers.length;
+          const awards = record.linked_awards?.length ?? record.linked_award_count;
+          const papers = record.linked_papers?.length ?? record.linked_paper_count;
           const days = record.deadline_parsed
             ? Math.floor(Date.parse(record.deadline_parsed) / dayMs) - Math.floor(Date.now() / dayMs)
             : Infinity;
@@ -1616,33 +1757,40 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
         const beds = snapshot.beds.map((bed, index) => ({
           ...bed,
           index,
-          slots: bed.slots.map((record, rank) => ({
-            record, rank: rank + 1, bedIndex: index, key: bed.id + "-" + (rank + 1), ...classify(record)
-          }))
+          slots: bed.slots.filter(Boolean).map(record => ({ record, bedIndex: index, ...classify(record) }))
         }));
         const slots = beds.flatMap(bed => bed.slots);
+        const slotById = new Map(slots.map(slot => [slot.record.opportunity_id, slot]));
         let layout;
-        let active = null;
-        let opened = null;
-        let trigger = null;
-        let closing = false;
+        let currentBed = null;
         let currentView = "garden";
-        let currentTopic = "all";
         let minimumGap = 0;
         let isOnScreen = true;
+        let fieldScroll = 0;
+        let fieldEntryBed = null;
+        let transitionRunning = false;
+        let trigger = null;
+        let detailRequest = null;
 
         const deadlineText = record => record.deadline_parsed
           ? dateFormat.format(new Date(record.deadline_parsed))
           : "Rolling";
         const scoreText = slot => slot.neutral ? "Neutral" : String(slot.score);
-        const titleText = slot => slot.record ? slot.record.title_normalized : "Empty plot";
-        const previewTitle = slot => slot.record ? titleText(slot) : beds[slot.bedIndex].topic;
-        const previewDeadline = slot => !slot.record ? "No eligible opportunity"
-          : slot.record.deadline_parsed ? "Closes " + deadlineText(slot.record) : "Rolling deadline";
-        const previewText = slot => previewTitle(slot) + " — " + previewDeadline(slot);
+        const titleText = slot => slot.record.title_normalized;
+        const previewDeadline = slot => slot.record.deadline_parsed
+          ? "Closes " + deadlineText(slot.record) : "Rolling deadline";
+        const previewText = slot => titleText(slot) + " — " + previewDeadline(slot) +
+          (slot.neutral ? " — Neutral score" : "");
 
         byId("garden-season").textContent = season;
         byId("garden-feed-date").textContent = longDateFormat.format(feedDate);
+        byId("garden-plot-total").textContent = slots.length;
+        if (slots.length !== 786 || slotById.size !== 786) {
+          const status = byId("garden-preview-status");
+          status.textContent = "Two-level preview with " + slots.length +
+            " verified records. The full dated export is still needed.";
+          status.hidden = false;
+        }
         back.innerHTML = gardenLandscape();
         const weather = createGardenMotion({
           scene, back, front, camera, light: byId("garden-light"), canvas: byId("garden-canvas"),
@@ -1650,9 +1798,9 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
           getPanelRect: () => detail.open ? detail.getBoundingClientRect() : null
         });
         scene.style.setProperty("--layer-duration", motion.layer.transition + "ms");
-        scene.style.setProperty("--lift-duration", motion.hover.lift.duration + "ms");
-        scene.style.setProperty("--bloom-duration", motion.bloom.pulse.duration + "ms");
-        scene.style.setProperty("--bloom-scale", motion.bloom.pulse.scale);
+        landing.style.setProperty("--lift-duration", motion.hover.lift.duration + "ms");
+        landing.style.setProperty("--bloom-duration", motion.bloom.pulse.duration + "ms");
+        landing.style.setProperty("--bloom-scale", motion.bloom.pulse.scale);
 
         function fundingPresent(slot) {
           const amount = slot.record?.award_amount_parsed;
@@ -1662,185 +1810,204 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
         function sceneLayout() {
           const mobile = compact.matches;
           const columns = mobile ? 2 : 3;
-          const width = mobile ? 449 : 267;
-          const height = mobile ? 140 : 170;
-          scene.dataset.compact = String(mobile);
+          const width = mobile ? 450 : 286;
+          const height = mobile ? 146 : 172;
           layout = beds.map((bed, index) => ({
             index, w: width, h: height,
-            x: (mobile ? 34 : 79) + (index % columns) * (mobile ? 482 : 287),
-            y: (mobile ? 158 : 216) + Math.floor(index / columns) * (mobile ? 163 : 222),
+            x: (mobile ? 34 : 45) + index % columns * (mobile ? 482 : 312),
+            y: (mobile ? 132 : 176) + Math.floor(index / columns) * (mobile ? 178 : 238),
             funded: bed.slots.some(fundingPresent),
             fall: seasonName === "Fall",
             hasDry: bed.slots.some(slot => slot.crop === "corn") || !bed.slots.some(fundingPresent)
           }));
-          const bedDelay = index => index * motion.arrival.stagger / 10;
-          const skipArrival = scene.dataset.gardenArrived === "true" ? "animation:none;" : "";
+          scene.dataset.compact = String(mobile);
+          const delay = index => index * motion.arrival.stagger / 10;
+          const arrival = index => (scene.dataset.gardenArrived === "true" ? "animation:none;" : "") +
+            "--arrival-delay:" + delay(index) + "ms";
           map.innerHTML = layout.map(bed => {
             const channelY = bed.y + bed.h - 12;
-            return '<g class="garden-map-bed" style="' + skipArrival + '--arrival-delay:' + bedDelay(bed.index) + 'ms">' +
-              gardenBed(bed) + '<path d="M' + (bed.x + 13) + ' ' + channelY + 'H' + (bed.x + bed.w - 13) +
+            return '<g class="garden-map-bed" style="' + arrival(bed.index) + '">' + gardenBed(bed) +
+              '<path d="M' + (bed.x + 13) + ' ' + channelY + 'H' + (bed.x + bed.w - 13) +
               '" fill="none" stroke="#8A6B45" stroke-width="2" opacity=".5"/></g>';
-          }).join("");
-          labels.innerHTML = layout.map(bed =>
-            '<span class="garden-bed-label" style="' + skipArrival + '--arrival-delay:' + bedDelay(bed.index) +
-            'ms;--label-x:' + (bed.x + bed.w / 2) / 10 + '%;--label-y:' + (bed.y + bed.h + 15) / 7 +
-            '%">' + escape(beds[bed.index].topic) + '</span>').join("");
-          for (const slot of slots) {
-            const bed = layout[slot.bedIndex];
-            const x = bed.x + bed.w * (.19 + (slot.rank - 1) * .31);
-            const y = bed.y + bed.h * (.7 + (slot.rank === 2 ? .045 : 0));
-            slot.button.style.setProperty("--slot-x", (x / 10) + "%");
-            slot.button.style.setProperty("--slot-y", (y / 7) + "%");
-            slot.button.style.setProperty("--slot-width", (bed.w * (mobile ? .302 : .288) / 10) + "%");
+          }).join("") + renderGardenField({ beds, layout, compact: mobile });
+          for (const [index, group] of Array.from(map.querySelectorAll("[data-field-bed]")).entries()) {
+            group.style.cssText = arrival(index);
           }
-          if (opened && currentView === "garden") zoomTo(opened, 0);
-        }
-
-        function clearPreview() {
-          if (active) active.button.classList.remove("is-active", "is-pulsing");
-          active = null;
-          preview.hidden = true;
-        }
-
-        function showPreview(slot) {
-          if (detail.open || closing || currentView !== "garden" || active === slot) return;
-          clearPreview();
-          active = slot;
-          previewName.textContent = previewTitle(slot);
-          previewFact.textContent = " — " + previewDeadline(slot);
-          preview.hidden = false;
-          if (slot.record) {
-            slot.button.classList.add("is-active");
-            if (slot.bloom && !reduce.matches) slot.button.classList.add("is-pulsing");
+          for (const [index, bed] of beds.entries()) {
+            const box = layout[index];
+            const button = fieldButtons[index];
+            button.style.cssText = arrival(index) + ";--bed-left:" + box.x / 10 + "%;--bed-top:" +
+              box.y / 7 + "%;--bed-width:" + box.w / 10 + "%;--bed-height:" + box.h / 7 + "%";
           }
+          applyFilters();
         }
 
-        function mountPlant(slot, index) {
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "garden-plant";
-          button.dataset.slot = slot.key;
-          button.dataset.crop = slot.crop;
-          button.dataset.neutral = String(slot.neutral);
-          if (slot.record) button.dataset.opportunityId = slot.record.opportunity_id;
-          else button.setAttribute("aria-disabled", "true");
-          button.setAttribute("aria-label", previewText(slot));
-          const [minAmp, maxAmp] = motion.sway.amplitude;
-          const [minPeriod, maxPeriod] = motion.sway.period;
-          let amp = minAmp + (maxAmp - minAmp) * (index * 7 % 13) / 12;
-          let period = minPeriod + (maxPeriod - minPeriod) * (index * 107 % 17) / 16;
-          if (slot.crop === "corn") ({ amplitude: amp, period } = motion.sway.rut);
-          button.style.setProperty("--sway-angle", amp + "deg");
-          button.style.setProperty("--active-angle", (amp * 1.18) + "deg");
-          button.style.setProperty("--sway-period", period + "ms");
-          button.style.setProperty("--sway-delay", -(index * 571 % period) + "ms");
-          button.style.setProperty("--arrival-delay", slot.bedIndex * motion.arrival.stagger / 10 + "ms");
-          button.innerHTML = gardenCrop({ ...slot, id: slot.key });
-          let pointerType = "";
-          button.addEventListener("pointerenter", event => {
-            if (slot.record && event.pointerType !== "touch") showPreview(slot);
-          });
-          button.addEventListener("pointerleave", event => {
-            if (event.pointerType !== "touch" && active === slot && !button.matches(":focus-visible")) clearPreview();
-          });
-          button.addEventListener("focus", () => {
-            if (button.matches(":focus-visible")) showPreview(slot);
-          });
-          button.addEventListener("blur", () => {
-            if (active === slot) clearPreview();
-          });
-          button.addEventListener("pointerdown", event => { pointerType = event.pointerType; }, { passive: true });
-          button.addEventListener("click", event => {
-            const isTouch = event.detail > 0 && (event.pointerType || pointerType) === "touch";
-            if (!slot.record) {
-              if (event.detail > 0) clearPreview();
-              return;
-            }
-            if (isTouch && active !== slot) showPreview(slot);
-            else openDetail(slot, button);
-          });
-          button.addEventListener("animationend", event => {
-            if (event.animationName === "garden-bloom-pulse") button.classList.remove("is-pulsing");
-          });
-          slot.button = button;
-          targets.append(button);
+        function detailRow(slot) {
+          const p = slot.record;
+          const id = escape(p.opportunity_id);
+          return '<li class="garden-list-row" data-record-row="' + id + '"><button type="button" data-record="' +
+            id + '">' + escape(p.title_normalized) + '</button><span>' + escape(p.sponsor_normalized) +
+            '</span><span>' + escape(deadlineText(p)) + '</span><span>Gap ' + escape(scoreText(slot)) +
+            '</span>' + sourceLink(sourceUrl(p, "title_normalized"), "Grants.gov") + '</li>';
         }
 
-        slots.forEach(mountPlant);
-        scene.addEventListener("pointerdown", event => {
-          if (!event.target.closest(".garden-plant")) clearPreview();
-        }, { passive: true });
-        sceneLayout();
-        compact.addEventListener("change", sceneLayout);
-        new ResizeObserver(() => {
-          for (const slot of slots) {
-            const scale = slot.button.offsetWidth / 110;
-            if (scale > 0) slot.button.style.setProperty("--lift-distance", (-motion.hover.lift.distance / scale) + "px");
-          }
-        }).observe(scene);
-
-        function listMarkup() {
-          return beds.map(bed => '<section class="garden-list-bed" aria-labelledby="garden-list-' + bed.id + '">' +
-            '<h3 id="garden-list-' + bed.id + '">' + escape(bed.topic) + '</h3><ol>' +
-            bed.slots.map(slot => {
-              const row = '<li class="garden-list-row" data-slot="' + slot.key + '">';
-              if (!slot.record) return row + '<button type="button" aria-disabled="true" title="' +
-                escape(previewText(slot)) + '">Empty plot</button><span>No eligible open opportunity</span></li>';
-              const p = slot.record;
-              return row + '<button type="button" data-record="' + escape(p.opportunity_id) + '">' +
-                escape(p.title_normalized) + '</button><span>' + escape(p.sponsor_normalized) +
-                '</span><span>' + escape(deadlineText(p)) + '</span><span>Gap ' + escape(scoreText(slot)) +
-                '</span>' + sourceLink(sourceUrl(p, "title_normalized"), "Grants.gov") + '</li>';
-            }).join("") + '</ol></section>').join("");
+        function plantCard(slot) {
+          const id = slot.record.opportunity_id;
+          return '<li class="garden-plant-card" data-record-row="' + escape(id) + '"><button class="garden-bed-plant" ' +
+            'type="button" data-record="' + escape(id) + '" aria-label="' + escape(previewText(slot)) + '">' +
+            gardenCrop({ ...slot, id }) + '<span class="garden-plant-name">' + escape(titleText(slot)) + '</span>' +
+            '<span class="garden-plant-fact">' + escape(previewDeadline(slot)) + (slot.neutral ? ' · Neutral' : '') +
+            '</span></button></li>';
         }
 
-        list.innerHTML = listMarkup();
-        list.addEventListener("click", event => {
-          const button = event.target.closest("button[data-record]");
-          if (!button) return;
-          const slot = slots.find(item => item.key === button.closest("[data-slot]").dataset.slot);
-          openDetail(slot, button);
-        });
-
-        function matched(slot) {
-          return (currentTopic === "all" || beds[slot.bedIndex].id === currentTopic)
-            && (minimumGap === 0 || (slot.record && !slot.neutral && slot.score >= minimumGap));
+        function bedButton(bed, className) {
+          return '<button type="button" class="' + className + '" data-open-bed="' + bed.id +
+            '" aria-controls="garden-bed-view"><span class="garden-choice-label">' + escape(bed.topic) +
+            '<span class="garden-choice-count">' + bed.slots.length + '</span></span></button>';
         }
 
         function applyFilters() {
-          for (const slot of slots) {
-            const dim = !matched(slot);
-            slot.button.classList.toggle("is-dim", dim);
-            list.querySelector('[data-slot="' + slot.key + '"]').classList.toggle("is-dim", dim);
+          const visibleRecords = currentBed ? currentBed.slots : slots;
+          const matches = slot => minimumGap === 0 || (!slot.neutral && slot.score >= minimumGap);
+          byId("bed-count").textContent = "Showing " + visibleRecords.filter(matches).length +
+            " of " + visibleRecords.length + " open opportunities · Bed: " +
+            (currentBed ? currentBed.topic : "Whole garden") + " · Min gap score " + minimumGap;
+          for (const marker of map.querySelectorAll("[data-opportunity-id]")) {
+            marker.classList.toggle("is-dim", !matches(slotById.get(marker.dataset.opportunityId)));
           }
-          const name = currentTopic === "all" ? "Whole garden" : beds.find(bed => bed.id === currentTopic).topic;
-          byId("bed-count").textContent = "Showing " + slots.filter(slot => slot.record && matched(slot)).length +
-            " of " + slots.filter(slot => slot.record).length + " open opportunities · Bed: " + name +
-            " · Min gap score " + minimumGap;
-          clearPreview();
+          for (const row of bedView.querySelectorAll("[data-record-row]")) {
+            row.classList.toggle("is-dim", !matches(slotById.get(row.dataset.recordRow)));
+          }
         }
 
-        const chips = byId("topic-chips");
-        for (const { id, topic } of [{ id: "all", topic: "Whole garden" }, ...beds]) {
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "garden-switch";
-          button.setAttribute("aria-pressed", String(id === currentTopic));
-          button.textContent = topic;
-          button.addEventListener("click", () => {
-            chips.querySelector('[aria-pressed="true"]').setAttribute("aria-pressed", "false");
-            button.setAttribute("aria-pressed", "true");
-            currentTopic = id;
-            applyFilters();
-          });
-          chips.append(button);
+        function updateView() {
+          const field = currentBed === null;
+          scene.hidden = !field || currentView !== "garden";
+          list.hidden = !field || currentView !== "list";
+          bedView.hidden = field;
+          plantGrid.hidden = currentView !== "garden";
+          topicList.hidden = currentView !== "list";
+          byId("garden").querySelector('[data-view="garden"]').setAttribute("aria-controls", field ? scene.id : plantGrid.id);
+          byId("garden").querySelector('[data-view="list"]').setAttribute("aria-controls", field ? list.id : topicList.id);
+          if (currentBed) {
+            const previous = beds[(currentBed.index + beds.length - 1) % beds.length];
+            const next = beds[(currentBed.index + 1) % beds.length];
+            bedView.dataset.bed = currentBed.id;
+            bedHeading.textContent = currentBed.topic;
+            byId("garden-selected-count").textContent = currentBed.slots.length + " open opportunities";
+            previousButton.setAttribute("aria-label", "Previous bed, " + previous.topic);
+            nextButton.setAttribute("aria-label", "Next bed, " + next.topic);
+            plantGrid.innerHTML = currentView === "garden" ? currentBed.slots.map(plantCard).join("") : "";
+            topicList.innerHTML = currentView === "list" ? currentBed.slots.map(detailRow).join("") : "";
+            emptyBed.hidden = currentBed.slots.length !== 0;
+          } else {
+            delete bedView.dataset.bed;
+            plantGrid.replaceChildren();
+            topicList.replaceChildren();
+          }
+          for (const button of chips.querySelectorAll("button")) {
+            button.setAttribute("aria-pressed", String(button.dataset.openBed === (currentBed?.id ?? "all")));
+          }
+          applyFilters();
+          applyVisibility();
         }
+
+        function cameraTransform(bed) {
+          const box = layout[bed.index];
+          const scale = Math.min(2.65, 840 / box.w);
+          const x = (500 - box.x - box.w / 2) / 10 * scale;
+          const y = (350 - box.y - box.h / 2) / 7 * scale;
+          return "translate(" + x + "%," + y + "%) scale(" + scale + ")";
+        }
+
+        function animateCamera(transform, duration, finish) {
+          transitionRunning = true;
+          camera.style.setProperty("--garden-zoom", duration + "ms");
+          camera.style.transform = transform;
+          if (duration) {
+            setTimeout(() => {
+              transitionRunning = false;
+              finish();
+            }, duration);
+          } else {
+            transitionRunning = false;
+            finish();
+          }
+        }
+
+        function enterBed(bed) {
+          if (!bed || currentBed === bed || transitionRunning || detail.open) return;
+          const fromField = currentBed === null;
+          if (fromField) {
+            fieldScroll = window.scrollY;
+            fieldEntryBed = bed;
+          }
+          const finish = () => {
+            currentBed = bed;
+            updateView();
+            window.scrollTo({ top: landing.offsetTop, behavior: "instant" });
+            bedHeading.focus({ preventScroll: true });
+          };
+          if (!fromField || reduce.matches || scene.hidden || !isOnScreen) {
+            finish();
+          } else {
+            weather.setVisible(false);
+            animateCamera(cameraTransform(bed), motion.zoom.detail, finish);
+          }
+        }
+
+        function leaveBed() {
+          if (!currentBed || transitionRunning || detail.open) return;
+          const previous = currentBed;
+          const animated = currentView === "garden" && !reduce.matches;
+          transitionRunning = animated;
+          currentBed = null;
+          if (animated) {
+            camera.style.setProperty("--garden-zoom", "0ms");
+            camera.style.transform = cameraTransform(previous);
+          }
+          updateView();
+          window.scrollTo({ top: fieldScroll, behavior: "instant" });
+          const finish = () => {
+            applyVisibility();
+            (currentView === "garden" ? targets : list).querySelector('[data-open-bed="' + fieldEntryBed.id + '"]')
+              .focus({ preventScroll: true });
+          };
+          if (animated) camera.getBoundingClientRect();
+          animateCamera("", animated ? motion.zoom.return : 0, finish);
+        }
+
+        targets.innerHTML = beds.map(bed => bedButton(bed, "garden-bed-target")).join("");
+        const fieldButtons = Array.from(targets.querySelectorAll("button"));
+        list.innerHTML = '<ul class="garden-bed-index">' + beds.map(bed => '<li>' +
+          bedButton(bed, "garden-bed-list-button") + '</li>').join("") + '</ul>';
+        const chips = byId("topic-chips");
+        chips.innerHTML = [{ id: "all", topic: "Whole garden" }, ...beds].map(({ id, topic }) =>
+          '<button type="button" class="garden-switch" data-open-bed="' + id + '" aria-pressed="' +
+          (id === "all") + '">' + escape(topic) + '</button>').join("");
+
+        for (const region of [targets, list, chips]) {
+          region.addEventListener("click", event => {
+            const button = event.target.closest("button[data-open-bed]");
+            if (!button) return;
+            if (button.dataset.openBed === "all") leaveBed();
+            else enterBed(beds.find(bed => bed.id === button.dataset.openBed));
+          });
+        }
+        byId("garden-bed-back").addEventListener("click", leaveBed);
+        previousButton.addEventListener("click", () => enterBed(beds[(currentBed.index + beds.length - 1) % beds.length]));
+        nextButton.addEventListener("click", () => enterBed(beds[(currentBed.index + 1) % beds.length]));
+        bedView.addEventListener("click", event => {
+          const button = event.target.closest("button[data-record]");
+          if (button) openDetail(slotById.get(button.dataset.record), button);
+        });
         byId("fit-range").addEventListener("input", event => {
           minimumGap = Number(event.target.value);
           byId("fit-out").value = minimumGap;
           applyFilters();
         });
-        applyFilters();
+        sceneLayout();
+        compact.addEventListener("change", sceneLayout);
 
         function amountText(amount) {
           if (!amount?.currency || (amount.floor == null && amount.ceiling == null)) return "Unspecified";
@@ -1862,7 +2029,7 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
 
         function renderDetail(slot) {
           const p = slot.record;
-          const topicGap = beds[slot.bedIndex].gap;
+          const topicGap = beds[slot.bedIndex].gap ?? {};
           byId("garden-detail-heading").textContent = p.title_normalized;
           byId("garden-detail-agency").textContent = p.sponsor_normalized;
           const proof = p.score_evidence;
@@ -1904,46 +2071,47 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
             ' · Feed generated ' + escape(dateFormat.format(new Date(p.feed_generated_at))) + '</p>';
         }
 
-        function zoomTo(slot, duration) {
-          const bed = layout[slot.bedIndex];
-          const scale = 1.16;
-          const x = (500 - bed.x - bed.w / 2) / 10 * scale;
-          const y = (350 - bed.y - bed.h / 2) / 7 * scale;
-          camera.style.setProperty("--garden-zoom", duration + "ms");
-          camera.style.transform = "translate(" + x + "%," + y + "%) scale(" + scale + ")";
+        async function loadDetail(slot, signal) {
+          if (Array.isArray(slot.record.linked_awards) && Array.isArray(slot.record.linked_papers)) return slot.record;
+          const id = slot.record.opportunity_id;
+          const response = await fetch("./details/" + encodeURIComponent(id) + ".json", { signal });
+          if (!response.ok) throw new Error("Opportunity detail request failed");
+          const record = await response.json();
+          if (record.opportunity_id !== id || record.feed_generated_at !== snapshot.feed_generated_at ||
+              record.linked_awards?.length !== slot.awards || record.linked_papers?.length !== slot.papers) {
+            throw new Error("Opportunity detail does not match the garden snapshot");
+          }
+          return record;
         }
 
-        function openDetail(slot, button) {
-          if (!slot?.record || detail.open || closing) return;
+        async function openDetail(slot, button) {
+          if (!slot || detail.open || transitionRunning) return;
           trigger = button;
-          opened = slot;
-          clearPreview();
-          slot.button.classList.add("is-detail");
-          renderDetail(slot);
+          const request = new AbortController();
+          detailRequest = request;
+          byId("garden-detail-heading").textContent = titleText(slot);
+          byId("garden-detail-agency").textContent = slot.record.sponsor_normalized;
+          const body = byId("garden-detail-body");
+          body.textContent = "Loading opportunity…";
           landing.dataset.detail = "";
-          if (currentView === "garden") zoomTo(slot, reduce.matches ? 0 : motion.zoom.detail);
           detail.showModal();
           detail.scrollTop = 0;
-          weather.setPanel(layout[slot.bedIndex]);
+          try {
+            const record = await loadDetail(slot, request.signal);
+            if (detailRequest === request) renderDetail({ ...slot, record });
+          } catch {
+            if (detailRequest === request) body.textContent = "Opportunity details could not be loaded. Close and reopen to retry.";
+          }
         }
 
         function closeDetail() {
           if (!detail.open) return;
-          closing = true;
+          detailRequest?.abort();
+          detailRequest = null;
           detail.close();
           delete landing.dataset.detail;
-          const duration = currentView === "list" || reduce.matches ? 0 : motion.zoom.return;
-          camera.style.setProperty("--garden-zoom", duration + "ms");
-          camera.style.transform = "";
-          const finish = () => {
-            opened.button.classList.remove("is-detail");
-            opened = null;
-            weather.setPanel(null);
-            closing = false;
-          };
           trigger?.focus({ preventScroll: true });
-          if (duration) setTimeout(finish, duration);
-          else finish();
+          trigger = null;
         }
 
         byId("garden-detail-close").addEventListener("click", closeDetail);
@@ -1966,25 +2134,23 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
         });
 
         function applyVisibility() {
-          const visible = currentView === "garden" && isOnScreen;
+          const visible = currentView === "garden" && currentBed === null && !transitionRunning && isOnScreen;
           weather.setVisible(visible);
           if (visible) weather.arrive();
         }
 
         document.querySelectorAll("#garden [data-view]").forEach(button => button.addEventListener("click", () => {
-          if (currentView === button.dataset.view) return;
+          if (currentView === button.dataset.view || transitionRunning) return;
           currentView = button.dataset.view;
           document.querySelectorAll("#garden [data-view]").forEach(item =>
             item.setAttribute("aria-pressed", String(item === button)));
-          scene.hidden = currentView !== "garden";
-          list.hidden = currentView !== "list";
-          clearPreview();
-          applyVisibility();
+          updateView();
         }));
         document.querySelectorAll("#garden [data-layer]").forEach(button => button.addEventListener("click", () => {
           const on = button.getAttribute("aria-pressed") !== "true";
           button.setAttribute("aria-pressed", String(on));
           scene.dataset[button.dataset.layer] = String(on);
+          landing.dataset[button.dataset.layer] = String(on);
           weather.setLayer(button.dataset.layer, on);
         }));
 
