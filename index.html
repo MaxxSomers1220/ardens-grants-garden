@@ -1199,7 +1199,7 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
   let cssWidth = 0;
   let cssHeight = 0;
   let density = 1;
-  let slowFrames = 0;
+  let slowTime = 0;
   let quality = 0;
   let particleCount = 0;
   let averageFrameTime = 0;
@@ -1422,9 +1422,9 @@ function createGardenMotion({scene, back, front, camera, light, canvas, readLayo
     if (!delta || delta >= 250) return;
     averageFrameTime = averageFrameTime ? blend(averageFrameTime, delta, 0.04) : delta;
     if (quality >= 3) return;
-    slowFrames = Math.max(0, slowFrames + (delta > 22 ? 1 : -2));
-    if (slowFrames < 24) return;
-    slowFrames = 0;
+    slowTime = averageFrameTime > 22 ? slowTime + delta : 0;
+    if (slowTime < 900) return;
+    slowTime = 0;
     quality += 1;
     scene.dataset.gardenQuality = quality === 3 ? 'reduced-parallax' : 'reduced-particles';
   }
