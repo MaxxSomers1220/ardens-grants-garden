@@ -1,0 +1,1639 @@
+{
+  "url": "http://127.0.0.1:18431/",
+  "time": "2026-11-21T15:58:44.132Z",
+  "chromium": "156.0.8078.79",
+  "data": "Real served data, no record overrides.",
+  "cases": {
+    "performance-desktop": {
+      "result": "passed",
+      "assumption": "A 0.05 FPS tolerance covers normal floating-point and display cadence rounding.",
+      "diagnosticCss": null,
+      "profile": "desktop",
+      "cpuThrottle": 1,
+      "servedHtmlSHA256": "cdfa482f74eb924854dcb2dc35de14ca2893fddb358841d425f6662b86bc76d3",
+      "baseHtmlSHA256": null,
+      "fixtureShape": null,
+      "mountBefore": {
+        "mounted": 769,
+        "distinct": 769,
+        "missingIds": 0,
+        "fieldBedTabStops": 7,
+        "browserDpr": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sceneHidden": false,
+        "backingCanvases": [
+          {
+            "width": 1440,
+            "height": 900,
+            "cssWidth": 1440,
+            "cssHeight": 900
+          }
+        ],
+        "quality": "reduced-particles"
+      },
+      "mountAfter": {
+        "mounted": 769,
+        "distinct": 769,
+        "missingIds": 0,
+        "fieldBedTabStops": 7,
+        "browserDpr": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sceneHidden": false,
+        "backingCanvases": [
+          {
+            "width": 1440,
+            "height": 900,
+            "cssWidth": 1440,
+            "cssHeight": 900
+          }
+        ],
+        "quality": "reduced-particles"
+      },
+      "fps": 60,
+      "frames": 481,
+      "durationMs": 8016.3,
+      "p50Ms": 16.7,
+      "p95Ms": 16.7,
+      "p99Ms": 16.8,
+      "maximumIntervalMs": 16.8,
+      "over22MsPercent": 0,
+      "quality": [
+        {
+          "ms": 0,
+          "value": "reduced-particles"
+        }
+      ],
+      "cdpPerformance": {
+        "durations": {
+          "ScriptDuration": {
+            "ms": 67.86,
+            "percentOfWall": 0.85
+          },
+          "LayoutDuration": {
+            "ms": 0,
+            "percentOfWall": 0
+          },
+          "RecalcStyleDuration": {
+            "ms": 108.33,
+            "percentOfWall": 1.35
+          },
+          "TaskDuration": {
+            "ms": 1816.79,
+            "percentOfWall": 22.66
+          },
+          "V8CompileDuration": {
+            "ms": 0,
+            "percentOfWall": 0
+          }
+        },
+        "counters": {
+          "LayoutCount": {
+            "before": 0,
+            "after": 0
+          },
+          "RecalcStyleCount": {
+            "before": 0,
+            "after": 482
+          },
+          "Nodes": {
+            "before": 2448,
+            "after": 2421
+          },
+          "JSHeapUsedSize": {
+            "before": 4412704,
+            "after": 3157140
+          },
+          "Documents": {
+            "before": 4,
+            "after": 1
+          },
+          "Frames": {
+            "before": 4,
+            "after": 1
+          }
+        },
+        "note": "CDP cumulative counters; task time can include overlapping script and rendering timers."
+      },
+      "errors": []
+    },
+    "performance-mobile": {
+      "result": "below-target",
+      "assumption": "A 0.05 FPS tolerance covers normal floating-point and display cadence rounding.",
+      "diagnosticCss": null,
+      "profile": "mobile",
+      "cpuThrottle": 4,
+      "servedHtmlSHA256": "cdfa482f74eb924854dcb2dc35de14ca2893fddb358841d425f6662b86bc76d3",
+      "baseHtmlSHA256": null,
+      "fixtureShape": null,
+      "mountBefore": {
+        "mounted": 769,
+        "distinct": 769,
+        "missingIds": 0,
+        "fieldBedTabStops": 7,
+        "browserDpr": 2.25,
+        "viewport": {
+          "width": 480,
+          "height": 1040
+        },
+        "sceneHidden": false,
+        "backingCanvases": [
+          {
+            "width": 480,
+            "height": 1040,
+            "cssWidth": 480,
+            "cssHeight": 1040
+          }
+        ],
+        "quality": "reduced-particles"
+      },
+      "mountAfter": {
+        "mounted": 769,
+        "distinct": 769,
+        "missingIds": 0,
+        "fieldBedTabStops": 7,
+        "browserDpr": 2.25,
+        "viewport": {
+          "width": 480,
+          "height": 1040
+        },
+        "sceneHidden": false,
+        "backingCanvases": [
+          {
+            "width": 480,
+            "height": 1040,
+            "cssWidth": 480,
+            "cssHeight": 1040
+          }
+        ],
+        "quality": "reduced-particles"
+      },
+      "fps": 57.88,
+      "frames": 464,
+      "durationMs": 8016.3,
+      "p50Ms": 16.7,
+      "p95Ms": 16.8,
+      "p99Ms": 33.4,
+      "maximumIntervalMs": 83.2,
+      "over22MsPercent": 3.02,
+      "quality": [
+        {
+          "ms": 0,
+          "value": "reduced-particles"
+        }
+      ],
+      "cdpPerformance": {
+        "durations": {
+          "ScriptDuration": {
+            "ms": 319.98,
+            "percentOfWall": 3.99
+          },
+          "LayoutDuration": {
+            "ms": 0,
+            "percentOfWall": 0
+          },
+          "RecalcStyleDuration": {
+            "ms": 557.53,
+            "percentOfWall": 6.96
+          },
+          "TaskDuration": {
+            "ms": 6177.55,
+            "percentOfWall": 77.06
+          },
+          "V8CompileDuration": {
+            "ms": 0,
+            "percentOfWall": 0
+          }
+        },
+        "counters": {
+          "LayoutCount": {
+            "before": 0,
+            "after": 0
+          },
+          "RecalcStyleCount": {
+            "before": 1,
+            "after": 468
+          },
+          "Nodes": {
+            "before": 2558,
+            "after": 2531
+          },
+          "JSHeapUsedSize": {
+            "before": 4250496,
+            "after": 3387880
+          },
+          "Documents": {
+            "before": 4,
+            "after": 1
+          },
+          "Frames": {
+            "before": 4,
+            "after": 1
+          }
+        },
+        "note": "CDP cumulative counters; task time can include overlapping script and rendering timers."
+      },
+      "errors": []
+    },
+    "diagnostic-mobile": {
+      "profile": "mobile",
+      "durationMs": 3000,
+      "before": {
+        "mounted": 769,
+        "distinct": 769,
+        "missingIds": 0,
+        "fieldBedTabStops": 7,
+        "browserDpr": 2.25,
+        "viewport": {
+          "width": 480,
+          "height": 1040
+        },
+        "sceneHidden": false,
+        "backingCanvases": [
+          {
+            "width": 480,
+            "height": 1040,
+            "cssWidth": 480,
+            "cssHeight": 1040
+          }
+        ],
+        "quality": "reduced-particles"
+      },
+      "observedEventCount": 64717,
+      "observedThreadCount": 21,
+      "scopes": {
+        "other": {
+          "RunTask": {
+            "count": 189,
+            "ms": 14.61,
+            "maxMs": 4.16
+          },
+          "RasterTask": {
+            "count": 300,
+            "ms": 255.73,
+            "maxMs": 5.19
+          },
+          "UpdateLayer": {
+            "count": 9,
+            "ms": 0.01,
+            "maxMs": 0
+          }
+        },
+        "compositor-raster": {
+          "RunTask": {
+            "count": 2823,
+            "ms": 796.39,
+            "maxMs": 15.59
+          }
+        },
+        "renderer-main": {
+          "PrePaint": {
+            "count": 169,
+            "ms": 139.34,
+            "maxMs": 7.98
+          },
+          "UpdateLayer": {
+            "count": 755,
+            "ms": 12.59,
+            "maxMs": 1.16
+          },
+          "RunTask": {
+            "count": 1039,
+            "ms": 2493.85,
+            "maxMs": 32
+          },
+          "FireAnimationFrame": {
+            "count": 169,
+            "ms": 148.82,
+            "maxMs": 15.98
+          },
+          "FunctionCall": {
+            "count": 169,
+            "ms": 128.75,
+            "maxMs": 15.95
+          },
+          "UpdateLayoutTree": {
+            "count": 169,
+            "ms": 187.38,
+            "maxMs": 5.4
+          },
+          "Paint": {
+            "count": 24,
+            "ms": 60.33,
+            "maxMs": 6.75
+          }
+        }
+      },
+      "note": "Inclusive trace event durations in separate sample. Nested and cross-thread events can overlap. Unobserved events are omitted.",
+      "dataLossOccurred": false,
+      "servedHtmlSHA256": "cdfa482f74eb924854dcb2dc35de14ca2893fddb358841d425f6662b86bc76d3",
+      "baseHtmlSHA256": null,
+      "fixtureShape": null,
+      "errors": []
+    },
+    "structure": {
+      "servedHtmlSHA256": "cdfa482f74eb924854dcb2dc35de14ca2893fddb358841d425f6662b86bc76d3",
+      "baseHtmlSHA256": null,
+      "fixtureShape": null,
+      "mounted": {
+        "mounted": 769,
+        "distinct": 769,
+        "missingIds": 0,
+        "fieldBedTabStops": 7,
+        "browserDpr": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sceneHidden": false,
+        "backingCanvases": [
+          {
+            "width": 1440,
+            "height": 900,
+            "cssWidth": 1440,
+            "cssHeight": 900
+          }
+        ],
+        "quality": "full"
+      },
+      "metadata": {
+        "known": 769,
+        "expectedRecords": 769
+      },
+      "marks": {
+        "neutral": 736,
+        "urgent": 132,
+        "neutralMismatches": {
+          "count": 0,
+          "examples": []
+        },
+        "urgentMismatches": {
+          "count": 0,
+          "examples": []
+        },
+        "visualMismatches": {
+          "count": 0,
+          "examples": []
+        },
+        "markerHrefBySnapshotState": {
+          "true/false": [
+            [
+              null,
+              605
+            ]
+          ],
+          "false/false": [
+            [
+              null,
+              32
+            ]
+          ],
+          "true/true": [
+            [
+              null,
+              131
+            ]
+          ],
+          "false/true": [
+            [
+              null,
+              1
+            ]
+          ]
+        },
+        "markerShapeBySnapshotState": {
+          "true/false": [
+            [
+              "5642ce34d4",
+              605
+            ]
+          ],
+          "false/false": [
+            [
+              "5ffb07b93b",
+              20
+            ],
+            [
+              "f0cfc31a14",
+              7
+            ],
+            [
+              "597eea6340",
+              5
+            ]
+          ],
+          "true/true": [
+            [
+              "5642ce34d4",
+              131
+            ]
+          ],
+          "false/true": [
+            [
+              "b2e838fde1",
+              1
+            ]
+          ]
+        },
+        "combinedBloomPaths": [
+          {
+            "bed": "rare",
+            "observed": 0,
+            "expected": 0,
+            "matches": true
+          },
+          {
+            "bed": "neuro",
+            "observed": 0,
+            "expected": 0,
+            "matches": true
+          },
+          {
+            "bed": "cancer",
+            "observed": 0,
+            "expected": 0,
+            "matches": true
+          },
+          {
+            "bed": "climate",
+            "observed": 7,
+            "expected": 7,
+            "matches": true
+          },
+          {
+            "bed": "ai",
+            "observed": 1,
+            "expected": 1,
+            "matches": true
+          },
+          {
+            "bed": "infectious",
+            "observed": 0,
+            "expected": 0,
+            "matches": true
+          },
+          {
+            "bed": "other",
+            "observed": 124,
+            "expected": 124,
+            "matches": true
+          }
+        ]
+      },
+      "authoritativeFeed": {
+        "feedGeneratedAt": "2026-11-21T06:00:54.859651+00:00",
+        "expectedFeedGeneratedAt": "2026-11-21T06:00:54.859651+00:00",
+        "feedGenerationMatches": true,
+        "sourceGzipSHA256": "78f85982122fc93e4530c871d15a0ea61a5096d8d8d9c37b6a7d6c673cc1e182",
+        "expectedCount": 769,
+        "snapshotCount": 769,
+        "snapshotUniqueIds": 769,
+        "slotIdsMissingFromSource": [],
+        "sourceIdsMissingFromSnapshot": [],
+        "recordsWithInlineFullDetail": 0,
+        "compactFieldMismatchCount": 0,
+        "compactFieldMismatchExamples": [],
+        "indexCount": 769,
+        "indexUniqueCount": 769,
+        "indexStatus": 200,
+        "assignmentsStatus": 200,
+        "sourceDigestMatches": true,
+        "assignmentsGenerationMatches": true
+      },
+      "fieldNavigationTabStops": [
+        {
+          "id": "rare",
+          "tabIndex": 0,
+          "accessibleName": "Rare disease, 5 open opportunities"
+        },
+        {
+          "id": "neuro",
+          "tabIndex": 0,
+          "accessibleName": "Neuroscience, 42 open opportunities"
+        },
+        {
+          "id": "cancer",
+          "tabIndex": 0,
+          "accessibleName": "Cancer, 39 open opportunities"
+        },
+        {
+          "id": "climate",
+          "tabIndex": 0,
+          "accessibleName": "Climate & energy, 12 open opportunities"
+        },
+        {
+          "id": "ai",
+          "tabIndex": 0,
+          "accessibleName": "AI & data science, 15 open opportunities"
+        },
+        {
+          "id": "infectious",
+          "tabIndex": 0,
+          "accessibleName": "Infectious disease, 24 open opportunities"
+        },
+        {
+          "id": "other",
+          "tabIndex": 0,
+          "accessibleName": "Other opportunities, 632 open opportunities"
+        }
+      ],
+      "beds": [
+        {
+          "id": "rare",
+          "expectedCount": 5,
+          "fieldCount": 5,
+          "fieldSameIds": true,
+          "fieldOrderMatches": true,
+          "enteredBed": "rare",
+          "listModeBed": "rare",
+          "listRowDataMatchesSnapshot": true,
+          "bedPlantCount": 5,
+          "listCount": 5,
+          "bedMatchesSnapshotOrder": true,
+          "listMatchesPlantOrder": true,
+          "bedLabelsMatchTitles": true,
+          "listLabelsMatchTitles": true,
+          "tabbablePlantCount": 5,
+          "tabbableListCount": 5,
+          "fieldMismatches": [],
+          "nativeTabSample": [
+            "gg-357570",
+            "gg-356879"
+          ],
+          "nativeTabMatches": true,
+          "keyboardFocus": {
+            "focusVisible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "boxShadow": "none"
+          },
+          "backRestoresBedFocus": true
+        },
+        {
+          "id": "neuro",
+          "expectedCount": 42,
+          "fieldCount": 42,
+          "fieldSameIds": true,
+          "fieldOrderMatches": true,
+          "enteredBed": "neuro",
+          "listModeBed": "neuro",
+          "listRowDataMatchesSnapshot": true,
+          "bedPlantCount": 42,
+          "listCount": 42,
+          "bedMatchesSnapshotOrder": true,
+          "listMatchesPlantOrder": true,
+          "bedLabelsMatchTitles": true,
+          "listLabelsMatchTitles": true,
+          "tabbablePlantCount": 42,
+          "tabbableListCount": 42,
+          "fieldMismatches": [],
+          "nativeTabSample": [
+            "gg-356870",
+            "gg-353055"
+          ],
+          "nativeTabMatches": true,
+          "keyboardFocus": {
+            "focusVisible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "boxShadow": "none"
+          },
+          "backRestoresBedFocus": true
+        },
+        {
+          "id": "cancer",
+          "expectedCount": 39,
+          "fieldCount": 39,
+          "fieldSameIds": true,
+          "fieldOrderMatches": true,
+          "enteredBed": "cancer",
+          "listModeBed": "cancer",
+          "listRowDataMatchesSnapshot": true,
+          "bedPlantCount": 39,
+          "listCount": 39,
+          "bedMatchesSnapshotOrder": true,
+          "listMatchesPlantOrder": true,
+          "bedLabelsMatchTitles": true,
+          "listLabelsMatchTitles": true,
+          "tabbablePlantCount": 39,
+          "tabbableListCount": 39,
+          "fieldMismatches": [],
+          "nativeTabSample": [
+            "gg-357075",
+            "gg-356690"
+          ],
+          "nativeTabMatches": true,
+          "keyboardFocus": {
+            "focusVisible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "boxShadow": "none"
+          },
+          "backRestoresBedFocus": true
+        },
+        {
+          "id": "climate",
+          "expectedCount": 12,
+          "fieldCount": 12,
+          "fieldSameIds": true,
+          "fieldOrderMatches": true,
+          "enteredBed": "climate",
+          "listModeBed": "climate",
+          "listRowDataMatchesSnapshot": true,
+          "bedPlantCount": 12,
+          "listCount": 12,
+          "bedMatchesSnapshotOrder": true,
+          "listMatchesPlantOrder": true,
+          "bedLabelsMatchTitles": true,
+          "listLabelsMatchTitles": true,
+          "tabbablePlantCount": 12,
+          "tabbableListCount": 12,
+          "fieldMismatches": [],
+          "nativeTabSample": [
+            "gg-364177",
+            "gg-364178"
+          ],
+          "nativeTabMatches": true,
+          "keyboardFocus": {
+            "focusVisible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "boxShadow": "none"
+          },
+          "backRestoresBedFocus": true
+        },
+        {
+          "id": "ai",
+          "expectedCount": 15,
+          "fieldCount": 15,
+          "fieldSameIds": true,
+          "fieldOrderMatches": true,
+          "enteredBed": "ai",
+          "listModeBed": "ai",
+          "listRowDataMatchesSnapshot": true,
+          "bedPlantCount": 15,
+          "listCount": 15,
+          "bedMatchesSnapshotOrder": true,
+          "listMatchesPlantOrder": true,
+          "bedLabelsMatchTitles": true,
+          "listLabelsMatchTitles": true,
+          "tabbablePlantCount": 15,
+          "tabbableListCount": 15,
+          "fieldMismatches": [],
+          "nativeTabSample": [
+            "gg-361526",
+            "gg-357273"
+          ],
+          "nativeTabMatches": true,
+          "keyboardFocus": {
+            "focusVisible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "boxShadow": "none"
+          },
+          "backRestoresBedFocus": true
+        },
+        {
+          "id": "infectious",
+          "expectedCount": 24,
+          "fieldCount": 24,
+          "fieldSameIds": true,
+          "fieldOrderMatches": true,
+          "enteredBed": "infectious",
+          "listModeBed": "infectious",
+          "listRowDataMatchesSnapshot": true,
+          "bedPlantCount": 24,
+          "listCount": 24,
+          "bedMatchesSnapshotOrder": true,
+          "listMatchesPlantOrder": true,
+          "bedLabelsMatchTitles": true,
+          "listLabelsMatchTitles": true,
+          "tabbablePlantCount": 24,
+          "tabbableListCount": 24,
+          "fieldMismatches": [],
+          "nativeTabSample": [
+            "gg-362954",
+            "gg-361832"
+          ],
+          "nativeTabMatches": true,
+          "keyboardFocus": {
+            "focusVisible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "boxShadow": "none"
+          },
+          "backRestoresBedFocus": true
+        },
+        {
+          "id": "other",
+          "expectedCount": 632,
+          "fieldCount": 632,
+          "fieldSameIds": true,
+          "fieldOrderMatches": true,
+          "enteredBed": "other",
+          "listModeBed": "other",
+          "listRowDataMatchesSnapshot": true,
+          "bedPlantCount": 632,
+          "listCount": 632,
+          "bedMatchesSnapshotOrder": true,
+          "listMatchesPlantOrder": true,
+          "bedLabelsMatchTitles": true,
+          "listLabelsMatchTitles": true,
+          "tabbablePlantCount": 632,
+          "tabbableListCount": 632,
+          "fieldMismatches": [],
+          "nativeTabSample": [
+            "gg-357140",
+            "gg-360368"
+          ],
+          "nativeTabMatches": true,
+          "keyboardFocus": {
+            "focusVisible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "boxShadow": "none"
+          },
+          "backRestoresBedFocus": true
+        }
+      ],
+      "navigation": {
+        "firstBed": "rare",
+        "afterNext": "neuro",
+        "afterPrevious": "rare",
+        "expectedNext": "neuro",
+        "returnsToFirst": true
+      },
+      "mainListEntry": {
+        "focusable": true,
+        "enteredBed": "rare",
+        "listCount": 5,
+        "matchesFirstBed": true
+      },
+      "stateBefore": {
+        "funding": "true",
+        "research": "true",
+        "gapFilter": "0",
+        "scrollY": 0
+      },
+      "stateAfter": {
+        "funding": "true",
+        "research": "true",
+        "gapFilter": "0",
+        "scrollY": 0
+      },
+      "layerAndFilterStatePreserved": true,
+      "mountAfterNavigation": {
+        "mounted": 769,
+        "distinct": 769,
+        "missingIds": 0,
+        "fieldBedTabStops": 7,
+        "browserDpr": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sceneHidden": false,
+        "backingCanvases": [
+          {
+            "width": 1440,
+            "height": 900,
+            "cssWidth": 1440,
+            "cssHeight": 900
+          }
+        ],
+        "quality": "reduced-particles"
+      },
+      "lazyLoading": {
+        "requestsBeforeNavigation": 0,
+        "requestsBeforeOpeningAnyDetail": 0,
+        "requestCountAfterSelectedDetails": 17
+      },
+      "details": [
+        {
+          "id": "gg-357570",
+          "bed": "rare",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 16786,
+          "delayMs": 1000,
+          "expectedRange": "bytes=11829446-11832426",
+          "fallback": false,
+          "loadingVisibleWhilePending": true,
+          "status": 206,
+          "responseAfterMs": 1049,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 11829446-11832426/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 1081,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-359645",
+          "bed": "rare",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 16624,
+          "delayMs": 0,
+          "expectedRange": "bytes=17547130-17550060",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 24,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 17547130-17550060/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 72,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-356879",
+          "bed": "rare",
+          "neutral": true,
+          "urgent": false,
+          "awards": 25,
+          "papers": 0,
+          "expectedCanonicalBytes": 37928,
+          "delayMs": 0,
+          "expectedRange": "bytes=5519546-5524904",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 24,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 5519546-5524904/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 149,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-356870",
+          "bed": "neuro",
+          "neutral": false,
+          "urgent": false,
+          "awards": 6,
+          "papers": 50,
+          "expectedCanonicalBytes": 83437,
+          "delayMs": 0,
+          "expectedRange": "bytes=5507015-5515441",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 40,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 5507015-5515441/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 183,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-353055",
+          "bed": "neuro",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 16805,
+          "delayMs": 0,
+          "expectedRange": "bytes=624319-627358",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 32,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 624319-627358/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 56,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-357075",
+          "bed": "cancer",
+          "neutral": false,
+          "urgent": false,
+          "awards": 29,
+          "papers": 203,
+          "expectedCanonicalBytes": 302374,
+          "delayMs": 0,
+          "expectedRange": "bytes=5685690-5714285",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 33,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 5685690-5714285/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 343,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-356690",
+          "bed": "cancer",
+          "neutral": true,
+          "urgent": false,
+          "awards": 1,
+          "papers": 0,
+          "expectedCanonicalBytes": 17828,
+          "delayMs": 0,
+          "expectedRange": "bytes=5471966-5475275",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 37,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 5471966-5475275/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 141,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-364177",
+          "bed": "climate",
+          "neutral": true,
+          "urgent": true,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 16582,
+          "delayMs": 0,
+          "expectedRange": "bytes=27430858-27434389",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 29,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 27430858-27434389/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 51,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-358100",
+          "bed": "climate",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 14151,
+          "delayMs": 0,
+          "expectedRange": "bytes=17196142-17198560",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 33,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 17196142-17198560/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 53,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-361526",
+          "bed": "ai",
+          "neutral": true,
+          "urgent": true,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 15046,
+          "delayMs": 0,
+          "expectedRange": "bytes=26923700-26926654",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 28,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 26923700-26926654/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 72,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-357273",
+          "bed": "ai",
+          "neutral": true,
+          "urgent": false,
+          "awards": 1,
+          "papers": 0,
+          "expectedCanonicalBytes": 17615,
+          "delayMs": 0,
+          "expectedRange": "bytes=11601064-11604412",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 22,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 11601064-11604412/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 110,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-353475",
+          "bed": "ai",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 16452,
+          "delayMs": 0,
+          "expectedRange": "bytes=738213-741710",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 26,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 738213-741710/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 48,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-362954",
+          "bed": "infectious",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 15947,
+          "delayMs": 0,
+          "expectedRange": "bytes=27065385-27068273",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 59,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 27065385-27068273/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 95,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-361204",
+          "bed": "infectious",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 17630,
+          "delayMs": 0,
+          "expectedRange": "bytes=26859057-26862171",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 52,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 26859057-26862171/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 94,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-358934",
+          "bed": "other",
+          "neutral": false,
+          "urgent": false,
+          "awards": 7,
+          "papers": 324,
+          "expectedCanonicalBytes": 435157,
+          "delayMs": 0,
+          "expectedRange": "bytes=17416353-17449451",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 78,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 17416353-17449451/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 449,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-351124",
+          "bed": "other",
+          "neutral": false,
+          "urgent": true,
+          "awards": 24,
+          "papers": 432,
+          "expectedCanonicalBytes": 588162,
+          "delayMs": 0,
+          "expectedRange": "bytes=331175-391707",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 37,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 331175-391707/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 524,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-357813",
+          "bed": "other",
+          "neutral": false,
+          "urgent": false,
+          "awards": 358,
+          "papers": 1076,
+          "expectedCanonicalBytes": 1701720,
+          "delayMs": 0,
+          "expectedRange": "bytes=16840220-17022242",
+          "fallback": false,
+          "status": 206,
+          "responseAfterMs": 60,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": "bytes 16840220-17022242/27654991",
+          "contentRangeMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 2081,
+          "focusRestored": true
+        }
+      ],
+      "checks": {
+        "authoritativeFeed": true,
+        "overview": true,
+        "markerState": true,
+        "allBedsAndLists": true,
+        "navigationAndState": true,
+        "lazyLoad": true,
+        "actualFullDetails": true,
+        "runtime": true
+      },
+      "result": "passed",
+      "errors": []
+    },
+    "fallback": {
+      "servedHtmlSHA256": "cdfa482f74eb924854dcb2dc35de14ca2893fddb358841d425f6662b86bc76d3",
+      "archiveRequests": [
+        {
+          "url": "http://127.0.0.1:18431/data/feed.json.gz?sha256=6693c905d770f5209032a5f2e2386b1c3233bd9bab3e74b1010f8f6d929da5e6",
+          "method": "GET",
+          "range": "bytes=11829446-11832426"
+        }
+      ],
+      "details": [
+        {
+          "id": "gg-357570",
+          "bed": "rare",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 16786,
+          "delayMs": 0,
+          "expectedRange": "bytes=11829446-11832426",
+          "fallback": true,
+          "status": 200,
+          "responseAfterMs": 34,
+          "versionedURL": true,
+          "requestedExactRange": true,
+          "contentRange": null,
+          "fullResponseLengthMatches": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 1,
+          "readyAfterMs": 149,
+          "focusRestored": true
+        },
+        {
+          "id": "gg-359645",
+          "bed": "rare",
+          "neutral": true,
+          "urgent": false,
+          "awards": 0,
+          "papers": 0,
+          "expectedCanonicalBytes": 16624,
+          "delayMs": 0,
+          "expectedRange": "bytes=17547130-17550060",
+          "fallback": true,
+          "rawRecordMatchesIndex": true,
+          "canonicalRecordEqual": true,
+          "fieldNamesEqual": true,
+          "canonicalGrantsGovURL": true,
+          "researchListsDeferred": true,
+          "ui": {
+            "loaded": true,
+            "title": true,
+            "sponsor": true,
+            "summary": true,
+            "deadline": true,
+            "amount": true,
+            "gap": true,
+            "scores": true,
+            "scoreEvidence": true,
+            "methodology": true,
+            "requirements": true,
+            "grantsGov": true,
+            "awards": true,
+            "papers": true
+          },
+          "newArchiveRequests": 0,
+          "readyAfterMs": 41,
+          "focusRestored": true
+        }
+      ],
+      "errors": [],
+      "result": "passed"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "errors": [],
+  "counts": {
+    "rare": 5,
+    "neuro": 42,
+    "cancer": 39,
+    "climate": 12,
+    "ai": 15,
+    "infectious": 24,
+    "other": 632
+  },
+  "largestGrant": {
+    "id": "gg-360368",
+    "elapsedMs": 2495,
+    "totalPapers": 55509,
+    "firstPage": 100
+  }
+}
