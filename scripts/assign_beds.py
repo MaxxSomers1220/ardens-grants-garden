@@ -3,7 +3,7 @@
 
 Scores describe the feed's research evidence and only affect ordering within
 each bed. Topic assignment uses explicit phrases in the grant title and the
-opening of its Grants.gov synopsis, with the feed summary as a fallback.
+opening of its Grants.gov synopsis.
 """
 import argparse
 from collections import Counter
@@ -24,26 +24,29 @@ OTHER_ID = "other"
 BEDS = (
     ("rare", "Rare disease", (
         r"rare(?: (?:genetic|neurologic(?:al)?|neurodevelopmental|inherited))? (?:diseases?|disorders?|conditions?)",
+        r"rare neurologic(?:al)? and neuromuscular (?:diseases?|disorders?)",
         r"orphan (?:diseases?|conditions?|drugs?|products?)",
     )),
     ("neuro", "Neuroscience", (
         r"neuroscien\w*|neurobiolog\w*|neurobehavior\w*|neurodegenerati\w*|neurodevelopment\w*",
         r"neuroimag\w*|neuropsych\w*|neurotherapeutic\w*|neuromodulat\w*|neurostimulat\w*",
         r"neurologists?|neurologic(?:al)? (?:or neuromuscular )?(?:diseases?|disorders?|conditions?|research|mechanisms?|outcomes?)",
-        r"neuronal|neural (?:circuits?|activity|development|ensembles?)",
+        r"neuronal|neural (?:circuits?|circuitry|activity|development|ensembles?)|translational neural devices",
         r"brains?|spinal cords?|cerebral|nervous systems?",
-        r"alzheimer(?:'s)?|parkinson(?:'s)?|dementia|epileps\w*|strokes?",
+        r"alzheimer(?:'?s)?|parkinson(?:'s)?|dementias?|epileps\w*|strokes?",
     )),
     ("cancer", "Cancer", (
         r"cancers?|oncolog\w*|tumou?rs?(?! necrosis factors?\b)|neoplas\w*",
         r"carcinomas?|carcinogens?|leuk(?:e|ae)mias?|lymphomas?|melanomas?|glioblastomas?|metastas\w*",
+        r"hematologic(?:al)? malignanc(?:y|ies)|gliomas?|sarcomas?|neuroblastomas?",
     )),
     ("climate", "Climate & energy", (
-        r"climate (?:chang\w*|variabil\w*|adapt\w*|resilien\w*|science|model\w*|mitigat\w*|risk\w*|impacts?|solutions?)",
+        r"climate[- ](?:chang\w*|variabil\w*|adapt\w*|resilien\w*|science|model\w*|mitigat\w*|risk\w*|impacts?|solutions?)",
         r"decarboni\w*|greenhouse gas(?:es)?|carbon sequestration|carbon stewardship|low[- ]carbon",
         r"(?:renewable|clean|sustainable|solar|wind|nuclear) energy",
         r"energy (?:storage|systems?|efficien\w*|technolog\w*|infrastructur\w*)",
         r"bioenergy|geothermal|alternative (?:jet )?fuels?|fossil fuels?|(?:electric|power) grids?|solar power|wind power",
+        r"carbon dioxide removal|offshore wind|photovoltaics?|university nuclear leadership program",
     )),
     ("ai", "AI & data science", (
         r"artificial intelligence|augmented intelligence|(?:machine|deep|statistical) learning",
@@ -51,17 +54,121 @@ BEDS = (
         r"(?:research|scientific|biomedical) data (?:commons|infrastructur\w*)",
         r"large language models?|(?:generative|responsible|trustworthy|explainable|applied|with|using) ai",
         r"ai[- ](?:enabled|powered|driven|systems?|models?|research|infrastructure|readiness|ready|development|education|for)",
+        r"computational (?:modeling and analysis of the impact of genomic variation|genomics)",
+        r"(?:grants?|research|methods?|resources?) (?:for |in |on )?(?:clinical informatics|bioinformatics)",
     )),
     ("infectious", "Infectious disease", (
         r"(?:infectious|communicable) diseases?|infections?|disease outbreaks?|pandemics?",
         r"(?:antimicrobial|antibiotic) resistance|antivirals?|vaccines?|vaccination",
         r"(?:viral|bacterial|fungal|parasitic) diseases?|(?:disease|human|animal|zoonotic|viral|bacterial) pathogens?|host[- ]pathogens?",
         r"tuberculosis|hiv(?:/aids)?|aids research|covid(?:-19)?|malaria|hepatitis|influenza|ebola",
+        r"animal disease preparedness(?: and response)?|human virome",
+    )),
+    ("earth", "Earth & environment", (
+        r"earth sciences?|geolog\w*|geophysic\w*|geochem\w*|geo(?:sphere|sciences?)|cryosphere|hydrosphere",
+        r"atmospheric sciences?|atmosphere|cooperative ecosystems? studies|ocean (?:science|drilling|research|mapping)",
+        r"coastal (?:resilien\w*|habitats?|management|flood protection)|watersheds?|wetlands?|landslide\w*",
+        r"water (?:resources?|research|conservation|pollution|quality)|water[- ]use (?:data|estimation)",
+        r"environmental (?:monitoring|research|media|pollution|restoration|quality)|brownfields?|air pollution|pfas",
+        r"flood (?:mitigation|management|risk)|ecosystem (?:restoration|management|science|conserv\w*)",
+        r"ecological (?:research|restoration|monitoring)|stream (?:restoration|flow)|biodiversity conservation",
+        r"marine (?:science|ecosystems?|protected areas?)|wildlife (?:habitats?|conserv\w*|management)|fish passage",
+        r"oceanographic (?:facilities|research)|oceanic and atmospheric research",
+    )),
+    ("engineering", "Science & engineering", (
+        r"mathematics(?! education)|mathematical sciences?|statistics|statistical science|combinatorics|(?:abstract |linear )?algebra",
+        r"differential equations?|number theory|(?:geometry|topology|probability) (?:research|theory|and)",
+        r"physics|chemistry|chemical sciences?|electrochemistry|photochemistry|molecular spectroscopy",
+        r"chemical (?:synthesis|reaction|process)(?:es|ing)?|transport phenomena|simulation and modeling",
+        r"robotics|materials (?:research|science|engineering|design)|manufacturing|semi[- ]?conductors?",
+        r"(?:civil|mechanical|chemical|electrical|structural|systems|industrial|aerospace) engineering",
+        r"engineering (?:research|design|science|materials|innovation|education centers?)",
+        r"engineering (?:and|of) (?:computer|material|cell|biological|civil)\w*|nanotechnolog\w*|microelectronics",
+        r"computing|computer science|cyberinfrastructure|cybersecurity|cyber[- ]physical systems?",
+        r"secure open[- ]source|programming languages?|quantum (?:information|computing|science|systems?|materials?|technolog\w*)",
+    )),
+    ("education", "Education & workforce", (
+        r"(?:stem|science|mathematics|marine|tribal|undergraduate|graduate|special|environmental|secondary|bilingual|adult|career and technical) education",
+        r"education (?:research|innovation|program for|partnerships?|and workforce|grants program)",
+        r"early childhood (?:education|development)|teaching and learning|k[-– ]12|prek[–-]12",
+        r"teacher (?:preparation|training|professional development)|training for teachers|educator professional development",
+        r"undergraduate (?:education|students|institutions|programs|scholarships|curriculum)|undergraduate[- ]focused institutions",
+        r"graduate research opportunities|curriculum development|workforce (?:development|training|education|readiness)",
+        r"tribal colleges and universities program|community college workforce|schools and school districts|scholarships?",
+        r"(?:digital|financial|scientific|adult) literacy|research experiences for (?:undergraduates|teachers)",
+        r"scientific research workforce",
+    )),
+    ("careers", "Research careers", (
+        r"(?:research )?career (?:development|enhancement|transition|excellence) (?:award|program)s?",
+        r"early[- ]career (?:research(?:ers?| awards?)?|scientists?|investigators?)",
+        r"(?:early[- ]stage|emerging|midcareer|new|outstanding|independent) (?:scientist|investigator) (?:research )?(?:award|program|research project grant)s?",
+        r"pathway to independence award|research in residency|medical scientist training|clinical research scholar",
+        r"(?:predoctoral|postdoctoral|individual senior|dissertation|research) fellowships?|fellowship for students",
+        r"(?:institutional|predoctoral|postdoctoral|dual[- ]degree|undergraduate|graduate) (?:biomedical )?research training",
+        r"predoctoral to postdoctoral transition award|national research service award|research training (?:and leadership|grants?|programs?)",
+        r"research (?:education(?:al)?|mentoring) (?:programs?|networks?)",
+        r"mentored (?:research|clinical scientist|quantitative research|research scientist) development award",
+    )),
+    ("biomed", "Biomedical methods", (
+        r"genomic (?:data generation|variants?|variation|interactions|characterization)|animal genomics|genome function",
+        r"genetic architecture of complex human traits|structural biology|cryo[- ]electron (?:microscopy|tomography)",
+        r"cellular senescence network|single[- ]cell (?:analysis|sequencing)|tissue engineering|biospecimens?",
+        r"development of (?:animal )?models and related (?:biological )?materials|animal and biological material resource centers",
+        r"bioengineering (?:research|partnerships)|biomedical technolog\w*|medical device (?:prototypes?|design|development)",
+        r"biomarker validation|(?:in vivo|intravital|medical) imaging|imaging the olfactory system",
+        r"clinical (?:and|&) translational (?:science|research)|translational science award",
+        r"assay development|target identification and validation|shared instrumentation grant|seed instrumentation support",
+    )),
+    ("medicine", "Clinical medicine", (
+        r"hematolog\w*|cardiovascular|heart failure|heart, lung, and blood disorders|hlbs disorders|diabetes",
+        r"gastrointestinal|digestive diseases?|kidney (?:disease|disorders?|research)|urolog(?:y|ic(?:al)?)|renal (?:disease|disorders?)",
+        r"arthritis|musculoskeletal (?:disease|disorders?|health)|down syndrome|newborn (?:screening|period)|screenable disorders in newborns",
+        r"vision[- ]related|vision research|(?:hearing|auditory|vestibular|communication) disorders?",
+        r"oral(?:[- ]systemic)? health|dental (?:health|diseases?|caries)|reproductive health|contraception|family planning services",
+        r"immune tolerance network|congenital anomalies|human congenital|palliative care",
+    )),
+    ("publichealth", "Public health & safety", (
+        r"public health (?:crisis|research|emergency|response|systems?|services?|infrastructur\w*|practice|preparedness|surveillance|interventions?)",
+        r"occupational (?:safety|health)|construction safety|health services|maternal (?:and child )?health|community health",
+        r"(?:child|family|population|environmental) health (?:outcomes|sciences|interventions)|health disparities|health ?care delivery",
+        r"injury prevention|patient safety|worker safety|smoking cessation|nursing research|health surveillance",
+        r"food (?:safety|defense) (?:systems?|testing|preparedness|standards)|(?:poisoning|exposure) prevention|health promotion",
+        r"world trade center health program|native american health|native american research centers for health",
+        r"dissemination and implementation research in health|health systems strengthening",
+    )),
+    ("behavioral", "Mental health & addiction", (
+        r"mental (?:health|disorders?|illness(?:es)?)|psychosis|psychiatric (?:conditions?|disorders?|interventions?)",
+        r"psychotropic (?:drugs?|interventions?)|depressive disorders?|substance use",
+        r"(?:drug|alcohol|opioid|tobacco) use (?:and misuse|disorders?)|(?:opioid|drug) overdose",
+        r"addiction (?:research|epidemiology|prevention|treatment|recovery)|fetal alcohol spectrum disorders?",
+        r"alcohol research centers?|suicide prevent\w*",
+    )),
+    ("civic", "Civic & community services", (
+        r"human trafficking|trafficking in persons|anti[- ]trafficking|trafficking survivors|modern slavery",
+        r"crime victims?|criminal justice|justice assistance|correctional|prisons?|law enforcement|school safety",
+        r"reentry (?:programs?|initiatives?)|affordable housing|homeless housing|homelessness|children and families|domestic violence",
+        r"economic development|community development|local technical assistance|community entrepreneurship|rural development",
+        r"small business (?:innovation|research|development)|community capacity|community revitalization|ambassador's special self[- ]help",
+        r"legal services|victim services|victim assistance|civil legal aid|(?:refugee|immigrant) (?:services|resettlement)",
+        r"neighborhood (?:development|revitalization)",
+    )),
+    ("defense", "Defense & security", (
+        r"warfight\w*|national security|national defense|warfare|counter (?:weapons of mass destruction|chemical threats)",
+        r"military (?:operations?|technolog\w*|capabilit\w*|readiness|medicine|health|threats?|personnel|research)",
+        r"defense (?:industrial base|research|technology|science|sciences office|security cooperation|systems?|mission)",
+        r"defense established program to stimulate competitive research",
+        r"department of war (?:cyber service academy|(?:\(dow\) )?multidisciplinary research program)",
+        r"(?:navy and marine corps|naval) (?:science and technology|operations?)|armed forces (?:capabilit\w*|readiness)",
+        r"tactical (?:communications?|sensing|systems?)|army research (?:laboratory|institute)|army combat capabilities",
+        r"air force (?:combat|operations|needs|requirements)|air force school of aerospace medicine",
     )),
     (OTHER_ID, "Other opportunities", ()),
 )
-# Direct disease subjects take precedence over methods when equally supported.
-TIE_ORDER = ("rare", "cancer", "infectious", "neuro", "climate", "ai")
+# Keep the original tie precedence. For the new beds, prioritize an explicit
+# education or training aim over the discipline it teaches when scores tie.
+TIE_ORDER = ("rare", "cancer", "infectious", "neuro", "climate", "ai",
+             "education", "careers", "earth", "engineering", "biomed", "medicine",
+             "publichealth", "behavioral", "civic", "defense")
 PATTERNS = {
     bed: re.compile(r"\b(?:" + "|".join(terms) + r")\b", re.IGNORECASE)
     for bed, _, terms in BEDS if terms
@@ -78,7 +185,14 @@ ILLUSTRATIVE_CLAUSE = re.compile(
 )
 SYNOPSIS_CONTEXT = re.compile(
     r"\b(?:National Cancer Institute|National Institute of Neurological Disorders and Stroke|"
-    r"National Institute of Allergy and Infectious Diseases|brain and/or body)\b",
+    r"National Institute of Allergy and Infectious Diseases|brain and/or body|"
+    r"National Science Foundation|Office of Naval Research|Army Research Office|"
+    r"Air Force Office of Scientific Research|Department of Defense|Department of War|"
+    r"Department of Education|Department of Agriculture|U\.S\. Geological Survey|"
+    r"National Aeronautics and Space Administration|National Institute for Occupational Safety and Health|"
+    r"National Institute on Drug Abuse|National Institute of Mental Health|"
+    r"Office to Monitor and Combat Trafficking in Persons|National Institute of Arthritis and Musculoskeletal and Skin Diseases|"
+    r"National Centers for Coastal Ocean Science|Public Health Service Act)\b",
     re.IGNORECASE,
 )
 
@@ -88,8 +202,7 @@ def normalized(text):
 
 
 def opening_scope(record):
-    description = normalized(record.get("description") or "")
-    source = description or normalized(record.get("summary_short") or "")
+    source = normalized(record.get("description") or "")
     if len(source) > SYNOPSIS_CHARACTERS:
         source = source[:SYNOPSIS_CHARACTERS].rsplit(" ", 1)[0]
     plain_scope = " ".join(
@@ -148,7 +261,7 @@ def assign_beds(feed):
             else:
                 chosen = min(strongest, key=TIE_ORDER.index)
                 supporting_fields[
-                    "title" if highest >= TITLE_POINTS else "opening_synopsis_or_summary"
+                    "title" if highest >= TITLE_POINTS else "opening_synopsis"
                 ] += 1
         if len(matches) > 1:
             overlaps.append({
@@ -164,22 +277,33 @@ def assign_beds(feed):
         "record_count": feed["record_count"],
         "method": (
             "Explicit topical phrases earn 3 points in the title and 1 in the first 480 "
-            "characters of the Grants.gov synopsis, using the feed summary when the synopsis "
-            "is absent. Explicit program abbreviations in titles also count. Synopsis agency "
-            "names and example-list tails provide context only. Highest score wins. Strongest "
-            "title ties follow the order rare disease, cancer, infectious disease, neuroscience, "
-            "climate and energy, and AI and data science. Synopsis-only ties and records with "
-            "no match go to Other opportunities. This is a garden grouping based on source text. "
-            "Bed order uses descending gap score, ascending deadline with rolling last, and "
-            "opportunity ID."
+            "characters of the normalized Grants.gov synopsis. If no synopsis is available, "
+            "only the title contributes. Each field earns points once per bed. The matching phrases "
+            "below are case-insensitive, whole-word regular expressions, with case-sensitive "
+            "exceptions for the listed title abbreviations. Named synopsis context and "
+            "example-list tails are excluded. Highest score wins. The listed title tie order "
+            "resolves equal title scores. Synopsis-only ties and records with no match go to "
+            "Other opportunities. The original six beds keep their display order, followed "
+            "by new topics with at least 20 supported grants among the previously unmatched "
+            "records in the discovery snapshot. Records within each bed are sorted by descending "
+            "gap score, ascending deadline with rolling last, then opportunity ID."
         ),
+        "title_tie_order": list(TIE_ORDER),
+        "matching_phrases": {
+            bed: {
+                "title_and_opening_synopsis": list(terms),
+                **({"title_only_abbreviations": TITLE_ACRONYMS[bed].pattern}
+                   if bed in TITLE_ACRONYMS else {}),
+            }
+            for bed, _, terms in BEDS if terms
+        },
         "beds": [
             {"id": bed, "topic": title, "opportunity_ids": assignments[bed]}
             for bed, title, _ in BEDS
         ],
         "audit": {
             "assigned_title_match_count": supporting_fields["title"],
-            "assigned_opening_match_count": supporting_fields["opening_synopsis_or_summary"],
+            "assigned_opening_match_count": supporting_fields["opening_synopsis"],
             "unmatched_count": len(assignments[OTHER_ID]) - ambiguous_count,
             "ambiguous_opening_count": ambiguous_count,
             "overlap_count": len(overlaps),
