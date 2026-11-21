@@ -2,7 +2,7 @@
   "version": 1,
   "feed_generated_at": "2026-11-21T06:00:54.859651+00:00",
   "record_count": 769,
-  "method": "Explicit topical phrases earn 3 points in the title and 1 in the first 480 characters of the normalized Grants.gov synopsis. If no synopsis is available, only the title contributes. Each field earns points once per bed. The matching phrases below are case-insensitive, whole-word regular expressions, with case-sensitive exceptions for the listed title abbreviations. Named synopsis context and example-list tails are excluded. Highest score wins. The listed title tie order resolves equal title scores. Synopsis-only ties and records with no match go to Other opportunities. The original six beds keep their display order, followed by new topics with at least 20 supported grants among the previously unmatched records in the discovery snapshot. Records within each bed are sorted by descending gap score, ascending deadline with rolling last, then opportunity ID.",
+  "method": "Explicit topical phrases earn 3 points in the title and 1 in the first 480 characters of the normalized Grants.gov synopsis. If no synopsis is available, only the title contributes. Each field earns points once per bed. The matching phrases below are case-insensitive, whole-word regular expressions, with case-sensitive exceptions for the listed title abbreviations. Named synopsis context is excluded without moving the 480-character boundary. Example-list tails are excluded. Highest score wins. The listed title tie order resolves equal title scores. Synopsis-only ties and records with no match go to Other opportunities. The original six beds and the ten beds added in the first split keep their display order. The second split appends topics supported by at least 10 of the 262 previously residual records. Records within each bed are sorted by descending gap score, ascending deadline with rolling last, then opportunity ID.",
   "title_tie_order": [
     "rare",
     "cancer",
@@ -19,7 +19,12 @@
     "publichealth",
     "behavioral",
     "civic",
-    "defense"
+    "defense",
+    "agriculture",
+    "heritage",
+    "society",
+    "capacity",
+    "diplomacy"
   ],
   "matching_phrases": {
     "rare": {
@@ -55,7 +60,8 @@
         "(?:renewable|clean|sustainable|solar|wind|nuclear) energy",
         "energy (?:storage|systems?|efficien\\w*|technolog\\w*|infrastructur\\w*)",
         "bioenergy|geothermal|alternative (?:jet )?fuels?|fossil fuels?|(?:electric|power) grids?|solar power|wind power",
-        "carbon dioxide removal|offshore wind|photovoltaics?|university nuclear leadership program"
+        "carbon dioxide removal|offshore wind|photovoltaics?|university nuclear leadership program",
+        "nuclear fuel rods?|alternative chemicals,? fuels,? and feedstocks|energy and trade security"
       ]
     },
     "ai": {
@@ -66,7 +72,9 @@
         "large language models?|(?:generative|responsible|trustworthy|explainable|applied|with|using) ai",
         "ai[- ](?:enabled|powered|driven|systems?|models?|research|infrastructure|readiness|ready|development|education|for)",
         "computational (?:modeling and analysis of the impact of genomic variation|genomics)",
-        "(?:grants?|research|methods?|resources?) (?:for |in |on )?(?:clinical informatics|bioinformatics)"
+        "(?:grants?|research|methods?|resources?) (?:for |in |on )?(?:clinical informatics|bioinformatics)",
+        "computational and data[- ]enabled science|integrated data systems (?:and|&) services",
+        "automated processes for knowledge discovery and information retrieval"
       ]
     },
     "infectious": {
@@ -89,7 +97,11 @@
         "flood (?:mitigation|management|risk)|ecosystem (?:restoration|management|science|conserv\\w*)",
         "ecological (?:research|restoration|monitoring)|stream (?:restoration|flow)|biodiversity conservation",
         "marine (?:science|ecosystems?|protected areas?)|wildlife (?:habitats?|conserv\\w*|management)|fish passage",
-        "oceanographic (?:facilities|research)|oceanic and atmospheric research"
+        "oceanographic (?:facilities|research)|oceanic and atmospheric research",
+        "aquatic invasive species|aquatic nuisance species|landscape[- ]scale restoration",
+        "desalination (?:construction|projects?|technolog\\w*)|water reclamation and reuse",
+        "marine mammal (?:rescue|rescue and response)|forest and open space conservation|diesel emissions reduction",
+        "contaminated (?:alaska native claims settlement act lands|lands?|sites?)|solid waste management"
       ]
     },
     "engineering": {
@@ -103,7 +115,10 @@
         "engineering (?:research|design|science|materials|innovation|education centers?)",
         "engineering (?:and|of) (?:computer|material|cell|biological|civil)\\w*|nanotechnolog\\w*|microelectronics",
         "computing|computer science|cyberinfrastructure|cybersecurity|cyber[- ]physical systems?",
-        "secure open[- ]source|programming languages?|quantum (?:information|computing|science|systems?|materials?|technolog\\w*)"
+        "secure open[- ]source|programming languages?|quantum (?:information|computing|science|systems?|materials?|technolog\\w*)",
+        "aerothermoelasticity|aerospace capabilities,? engineering and research|research in the formation of engineers",
+        "foundations of trusted systems|chemical, bioengineering, energy,? and transport systems",
+        "directed energy \\(rd\\) university assistance"
       ]
     },
     "education": {
@@ -116,7 +131,9 @@
         "graduate research opportunities|curriculum development|workforce (?:development|training|education|readiness)",
         "tribal colleges and universities program|community college workforce|schools and school districts|scholarships?",
         "(?:digital|financial|scientific|adult) literacy|research experiences for (?:undergraduates|teachers)",
-        "scientific research workforce"
+        "scientific research workforce",
+        "graduate medical education|informal education (?:programs?|institutions?)",
+        "dislocated worker grants?|specialized education in critical technologies|graduate[- ]level internship program"
       ]
     },
     "careers": {
@@ -129,7 +146,11 @@
         "(?:institutional|predoctoral|postdoctoral|dual[- ]degree|undergraduate|graduate) (?:biomedical )?research training",
         "predoctoral to postdoctoral transition award|national research service award|research training (?:and leadership|grants?|programs?)",
         "research (?:education(?:al)?|mentoring) (?:programs?|networks?)",
-        "mentored (?:research|clinical scientist|quantitative research|research scientist) development award"
+        "mentored (?:research|clinical scientist|quantitative research|research scientist) development award",
+        "academic career excellence(?: \\(ace\\))? award|mid[- ]career advancement|research software engineer(?: \\(rse\\))? award",
+        "small grant program for new investigators|maximizing investigators'? research award|epscor research fellows",
+        "emerging global leader award|transition to aging research|support for early[- ]career clinician[- ]scientists",
+        "graduate fellowship pilot|doctoral training pilots?"
       ]
     },
     "biomed": {
@@ -141,7 +162,13 @@
         "bioengineering (?:research|partnerships)|biomedical technolog\\w*|medical device (?:prototypes?|design|development)",
         "biomarker validation|(?:in vivo|intravital|medical) imaging|imaging the olfactory system",
         "clinical (?:and|&) translational (?:science|research)|translational science award",
-        "assay development|target identification and validation|shared instrumentation grant|seed instrumentation support"
+        "assay development|target identification and validation|shared instrumentation grant|seed instrumentation support",
+        "engineering biological and biomedical systems|clinical trial (?:pilot studies|(?:planning and )?implementation cooperative agreements?)",
+        "(?:clinical|data) coordinating center for multi[- ]site investigator[- ]initiated clinical trials",
+        "single[- ]site investigator[- ]initiated clinical trials|novel or greatly improved research tools and methods",
+        "translation of technologies for diagnosis and treatment|medtech translator|drugging the undruggable",
+        "precision probiotic therapies|(?:small molecules,? biologics,? and combination products)|instrumentation grant program",
+        "enabling technologies and transformative platforms for hlbs research|whole person health restoration"
       ]
     },
     "medicine": {
@@ -151,7 +178,9 @@
         "arthritis|musculoskeletal (?:disease|disorders?|health)|down syndrome|newborn (?:screening|period)|screenable disorders in newborns",
         "vision[- ]related|vision research|(?:hearing|auditory|vestibular|communication) disorders?",
         "oral(?:[- ]systemic)? health|dental (?:health|diseases?|caries)|reproductive health|contraception|family planning services",
-        "immune tolerance network|congenital anomalies|human congenital|palliative care"
+        "immune tolerance network|congenital anomalies|human congenital|palliative care",
+        "craniofacial (?:conditions?|disorders?|diseases?)|generic (?:medicines|drugs?)|complex generics",
+        "analgesic (?:discovery|therapeutics)|pain research enhancement"
       ]
     },
     "publichealth": {
@@ -162,7 +191,9 @@
         "injury prevention|patient safety|worker safety|smoking cessation|nursing research|health surveillance",
         "food (?:safety|defense) (?:systems?|testing|preparedness|standards)|(?:poisoning|exposure) prevention|health promotion",
         "world trade center health program|native american health|native american research centers for health",
-        "dissemination and implementation research in health|health systems strengthening"
+        "dissemination and implementation research in health|health systems strengthening",
+        "strengthen(?:ing)? health systems|advancing global health|state process for informing consumers of recalls",
+        "human and animal food testing laboratories|laboratory flexible funding model|medical countermeasures"
       ]
     },
     "behavioral": {
@@ -171,7 +202,8 @@
         "psychotropic (?:drugs?|interventions?)|depressive disorders?|substance use",
         "(?:drug|alcohol|opioid|tobacco) use (?:and misuse|disorders?)|(?:opioid|drug) overdose",
         "addiction (?:research|epidemiology|prevention|treatment|recovery)|fetal alcohol spectrum disorders?",
-        "alcohol research centers?|suicide prevent\\w*"
+        "alcohol research centers?|suicide prevent\\w*",
+        "psychotropic interventional drugs?|emotional well[- ]being mechanisms"
       ]
     },
     "civic": {
@@ -182,7 +214,14 @@
         "economic development|community development|local technical assistance|community entrepreneurship|rural development",
         "small business (?:innovation|research|development)|community capacity|community revitalization|ambassador's special self[- ]help",
         "legal services|victim services|victim assistance|civil legal aid|(?:refugee|immigrant) (?:services|resettlement)",
-        "neighborhood (?:development|revitalization)"
+        "neighborhood (?:development|revitalization)",
+        "fair housing|resident opportunit(?:y|ies) and self[- ]sufficiency|unaccompanied (?:alien )?children|hud[- ]assisted housing",
+        "postconviction testing|missing and unidentified human remains|violent crime",
+        "elder abuse|abuse,? neglect,? and exploitation of elderly|child protection compact|integrity in american elections",
+        "social impact partnerships to pay for results|(?:long[- ]term )?economic recovery strategies|eda fy ?[0-9]{2} disaster supplemental",
+        "community service and volunteerism|americorps state and national competitive grants",
+        "state veterans home construction grant|outdoor recreation (?:legacy partnership|opportunit\\w*)",
+        "adam walsh act|state criminal alien assistance program|special attorneys program|apex accelerator"
       ]
     },
     "defense": {
@@ -194,7 +233,58 @@
         "department of war (?:cyber service academy|(?:\\(dow\\) )?multidisciplinary research program)",
         "(?:navy and marine corps|naval) (?:science and technology|operations?)|armed forces (?:capabilit\\w*|readiness)",
         "tactical (?:communications?|sensing|systems?)|army research (?:laboratory|institute)|army combat capabilities",
-        "air force (?:combat|operations|needs|requirements)|air force school of aerospace medicine"
+        "air force (?:combat|operations|needs|requirements)|air force school of aerospace medicine",
+        "army applications lab|military academy broad agency announcement",
+        "research (?:interests of the united states air force academy|initiatives at the naval postgraduate school)",
+        "air force basic research sciences|extramural biomedical and human performance research and development department of defense",
+        "homeland security missions|geospatial intelligence|boosting innovative geoint"
+      ]
+    },
+    "agriculture": {
+      "title_and_opening_synopsis": [
+        "cooperative agriculture|agriculture innovation centers?|agricultural (?:research|production|sciences|producers?)",
+        "specialty crops?|plant biotic interactions|plant genome research|designated new animal drugs|veterinary innovation centers?",
+        "food and agricultural sciences|dairy business innovation|meat and poultry processing|national school lunch program",
+        "bycatch reduction|(?:atlantic |sefsc )?bluefin tuna research|fisheries management|wolf livestock loss"
+      ]
+    },
+    "heritage": {
+      "title_and_opening_synopsis": [
+        "arts and artifacts|(?:art|architecture) biennal(?:es?|s)|artist exchange|state arts agencies",
+        "public humanities|advancing the humanities|collections stewardship|national digital newspaper program",
+        "documenting endangered (?:human )?languages|cultural heritage preservation"
+      ]
+    },
+    "society": {
+      "title_and_opening_synopsis": [
+        "science of organizations|accountable institutions and behavior|law (?:and|&) science",
+        "social psychology|social and behavio[u]?ral sciences?|social scientific studies of law",
+        "anthropolog\\w*|archaeolog\\w*|archaeometr\\w*|linguistics|sociology",
+        "decision,? risk and management sciences|the economics program|^economics$",
+        "developmental sciences|measurement of language development|human[- ]environment and geographical sciences",
+        "a science of science approach|science of science: discovery"
+      ]
+    },
+    "capacity": {
+      "title_and_opening_synopsis": [
+        "epscor research infrastructure improvement|established program to stimulate competitive research",
+        "research (?:infrastructure|capacity)[- ](?:improvement|building)",
+        "research capacity at (?:tribal colleges|historically black colleges and universities)",
+        "infrastructure innovation for biological research|research enhancement award program",
+        "support for research excellence|centers? of biomedical research excellence|biomedical research environment and sponsored programs administration",
+        "pediatric data resource center|kids first training and outreach core|resource[- ]related research projects",
+        "major research instrumentation program|findable accessible interoperable reusable open science",
+        "niams p30 centers program|research on research security program|research facilities act program",
+        "institutional review board establishment and enhancement|clinical research network infrastructure",
+        "state-of-the-art equipment, technologies, research tools"
+      ]
+    },
+    "diplomacy": {
+      "title_and_opening_synopsis": [
+        "public diplomacy programs?|commercial diplomacy|bilateral commercial cooperation|priorities in the multilateral sphere",
+        "u\\.s\\. policy at more than [0-9]+ international organizations",
+        "austrian[- ]american partnership fund|international development graduate fellowship",
+        "(?:foreign|international) affairs (?:graduate )?fellowship(?: program)?"
       ]
     }
   },
@@ -306,9 +396,12 @@
       "topic": "Climate & energy",
       "opportunity_ids": [
         "gg-363815",
+        "gg-364240",
+        "gg-364026",
         "gg-360205",
         "gg-358100",
         "gg-364174",
+        "gg-364070",
         "gg-243973",
         "gg-356623",
         "gg-329436"
@@ -327,11 +420,14 @@
         "gg-364165",
         "gg-361238",
         "gg-356888",
+        "gg-361915",
         "gg-356517",
         "gg-363268",
         "gg-363481",
         "gg-359003",
-        "gg-359004"
+        "gg-359004",
+        "gg-356370",
+        "gg-356055"
       ]
     },
     {
@@ -369,6 +465,7 @@
       "id": "earth",
       "topic": "Earth & environment",
       "opportunity_ids": [
+        "gg-363992",
         "gg-364177",
         "gg-364178",
         "gg-364179",
@@ -380,6 +477,7 @@
         "gg-364185",
         "gg-364186",
         "gg-364187",
+        "gg-363929",
         "gg-363240",
         "gg-364190",
         "gg-364191",
@@ -399,12 +497,18 @@
         "gg-364237",
         "gg-364238",
         "gg-364239",
+        "gg-361418",
         "gg-364125",
+        "gg-362893",
         "gg-364288",
         "gg-364194",
         "gg-354620",
         "gg-364278",
         "gg-359996",
+        "gg-362303",
+        "gg-362498",
+        "gg-362749",
+        "gg-364018",
         "gg-364231",
         "gg-344715",
         "gg-349724",
@@ -416,12 +520,17 @@
         "gg-364200",
         "gg-364201",
         "gg-364202",
+        "gg-363936",
+        "gg-364144",
+        "gg-364145",
         "gg-363789",
         "gg-364196",
         "gg-363958",
         "gg-364265",
         "gg-364124",
         "gg-363699",
+        "gg-362395",
+        "gg-362396",
         "gg-362394",
         "gg-345083",
         "gg-348830",
@@ -429,6 +538,7 @@
         "gg-362755",
         "gg-364142",
         "gg-364130",
+        "gg-351547",
         "gg-254073",
         "gg-330296",
         "gg-363684"
@@ -450,6 +560,7 @@
         "gg-363622",
         "gg-361333",
         "gg-324456",
+        "gg-364172",
         "gg-355196",
         "gg-332894",
         "gg-363623",
@@ -457,11 +568,15 @@
         "gg-363233",
         "gg-340828",
         "gg-350338",
+        "gg-357464",
         "gg-349343",
+        "gg-355499",
+        "gg-349554",
         "gg-275109",
         "gg-308873",
         "gg-324369",
         "gg-347679",
+        "gg-350230",
         "gg-353475",
         "gg-357554",
         "gg-359499",
@@ -486,15 +601,19 @@
         "gg-363846",
         "gg-363752",
         "gg-363880",
+        "gg-363111",
         "gg-364086",
         "gg-364087",
         "gg-364008",
         "gg-361169",
         "gg-354081",
         "gg-334326",
+        "gg-363510",
         "gg-344124",
         "gg-344608",
+        "gg-364205",
         "gg-357498",
+        "gg-363985",
         "gg-364247",
         "gg-351947",
         "gg-353413",
@@ -504,6 +623,7 @@
         "gg-357282",
         "gg-345938",
         "gg-362034",
+        "gg-362325",
         "gg-359157",
         "gg-363677",
         "gg-358403",
@@ -521,10 +641,15 @@
         "gg-357996",
         "gg-353792",
         "gg-353793",
+        "gg-356723",
+        "gg-356724",
+        "gg-355439",
         "gg-363829",
+        "gg-364033",
         "gg-356309",
         "gg-356310",
         "gg-357744",
+        "gg-341086",
         "gg-358552",
         "gg-353821",
         "gg-353822",
@@ -550,6 +675,7 @@
         "gg-353745",
         "gg-353756",
         "gg-357072",
+        "gg-357201",
         "gg-357206",
         "gg-357511",
         "gg-358114",
@@ -559,16 +685,20 @@
         "gg-358831",
         "gg-358832",
         "gg-358833",
+        "gg-359862",
         "gg-360909",
         "gg-361187",
+        "gg-359940",
         "gg-358879",
         "gg-359861",
         "gg-359676",
+        "gg-360593",
         "gg-359702",
         "gg-361159",
         "gg-361160",
         "gg-359703",
         "gg-361251",
+        "gg-362581",
         "gg-358824",
         "gg-343875",
         "gg-353758",
@@ -599,17 +729,30 @@
         "gg-359656",
         "gg-356018",
         "gg-361104",
+        "gg-357606",
+        "gg-357800",
         "gg-357622",
+        "gg-356925",
+        "gg-356927",
         "gg-357019",
         "gg-357712",
         "gg-356316",
         "gg-357667",
+        "gg-357330",
         "gg-357334",
+        "gg-357337",
         "gg-357339",
         "gg-357340",
+        "gg-356691",
+        "gg-356815",
+        "gg-357462",
         "gg-357138",
         "gg-357627",
         "gg-357651",
+        "gg-357962",
+        "gg-357963",
+        "gg-358823",
+        "gg-359154",
         "gg-358967",
         "gg-360532",
         "gg-360882",
@@ -617,10 +760,17 @@
         "gg-359646",
         "gg-359648",
         "gg-360947",
+        "gg-358850",
+        "gg-358851",
+        "gg-358938",
+        "gg-360364",
         "gg-360446",
         "gg-360883",
+        "gg-359859",
         "gg-359946",
-        "gg-360543"
+        "gg-360543",
+        "gg-359941",
+        "gg-362062"
       ]
     },
     {
@@ -628,7 +778,10 @@
       "topic": "Clinical medicine",
       "opportunity_ids": [
         "gg-357004",
+        "gg-358090",
+        "gg-364267",
         "gg-361754",
+        "gg-356460",
         "gg-359145",
         "gg-362946",
         "gg-360551",
@@ -656,6 +809,7 @@
         "gg-360654",
         "gg-360655",
         "gg-358864",
+        "gg-359161",
         "gg-360583",
         "gg-360160",
         "gg-360675"
@@ -672,7 +826,9 @@
         "gg-358373",
         "gg-358375",
         "gg-363546",
+        "gg-364212",
         "gg-337086",
+        "gg-363912",
         "gg-357713",
         "gg-359816",
         "gg-353623",
@@ -686,13 +842,16 @@
         "gg-357379",
         "gg-357946",
         "gg-357947",
+        "gg-358411",
         "gg-334971",
         "gg-334972",
         "gg-358816",
         "gg-359146",
         "gg-359650",
+        "gg-361833",
         "gg-355417",
         "gg-355722",
+        "gg-359695",
         "gg-356893"
       ]
     },
@@ -705,6 +864,7 @@
         "gg-360048",
         "gg-360366",
         "gg-361216",
+        "gg-363875",
         "gg-357941",
         "gg-357421",
         "gg-357422",
@@ -724,6 +884,7 @@
         "gg-357382",
         "gg-357386",
         "gg-359019",
+        "gg-359155",
         "gg-358937",
         "gg-362672",
         "gg-360553",
@@ -735,30 +896,48 @@
       "topic": "Civic & community services",
       "opportunity_ids": [
         "gg-364048",
+        "gg-364062",
+        "gg-364063",
+        "gg-364138",
         "gg-364139",
         "gg-364140",
         "gg-364275",
         "gg-364029",
+        "gg-364097",
+        "gg-364122",
         "gg-364222",
+        "gg-364163",
+        "gg-364297",
+        "gg-364224",
         "gg-364276",
         "gg-364293",
         "gg-364171",
+        "gg-364134",
+        "gg-362827",
+        "gg-362880",
+        "gg-361994",
         "gg-364143",
+        "gg-363696",
         "gg-364298",
-        "gg-364188",
+        "gg-361206",
         "gg-364206",
         "gg-362551",
         "gg-364255",
         "gg-359671",
+        "gg-364003",
         "gg-362364",
+        "gg-364213",
         "gg-363446",
         "gg-361822",
         "gg-355100",
         "gg-359758",
+        "gg-362715",
+        "gg-362717",
         "gg-337460",
         "gg-345478",
         "gg-358289",
         "gg-363381",
+        "gg-363383",
         "gg-363384",
         "gg-325599",
         "gg-332052",
@@ -768,7 +947,10 @@
         "gg-332137",
         "gg-332138",
         "gg-346203",
-        "gg-346815"
+        "gg-346815",
+        "gg-347414",
+        "gg-359225",
+        "gg-58617"
       ]
     },
     {
@@ -776,15 +958,18 @@
       "topic": "Defense & security",
       "opportunity_ids": [
         "gg-362871",
+        "gg-351404",
         "gg-359782",
         "gg-356605",
         "gg-364129",
         "gg-363946",
+        "gg-325932",
         "gg-363526",
         "gg-363530",
         "gg-363899",
         "gg-363905",
         "gg-363906",
+        "gg-364244",
         "gg-363738",
         "gg-343640",
         "gg-343725",
@@ -793,13 +978,133 @@
         "gg-344592",
         "gg-345241",
         "gg-347858",
+        "gg-349586",
         "gg-349804",
+        "gg-355150",
+        "gg-363745",
+        "gg-361099",
         "gg-358380",
         "gg-360012",
         "gg-356612",
         "gg-320087",
+        "gg-330175",
         "gg-352238",
         "gg-362681"
+      ]
+    },
+    {
+      "id": "agriculture",
+      "topic": "Agriculture & food",
+      "opportunity_ids": [
+        "gg-361876",
+        "gg-363804",
+        "gg-363729",
+        "gg-364006",
+        "gg-364164",
+        "gg-364133",
+        "gg-363692",
+        "gg-354573",
+        "gg-363833",
+        "gg-355044",
+        "gg-352845",
+        "gg-327047",
+        "gg-352500"
+      ]
+    },
+    {
+      "id": "heritage",
+      "topic": "Arts & heritage",
+      "opportunity_ids": [
+        "gg-362982",
+        "gg-364253",
+        "gg-361480",
+        "gg-364098",
+        "gg-364030",
+        "gg-364195",
+        "gg-364245",
+        "gg-342475",
+        "gg-362983",
+        "gg-362984",
+        "gg-361554",
+        "gg-363225"
+      ]
+    },
+    {
+      "id": "society",
+      "topic": "Social sciences",
+      "opportunity_ids": [
+        "gg-347331",
+        "gg-358689",
+        "gg-344634",
+        "gg-356659",
+        "gg-356943",
+        "gg-45812",
+        "gg-348058",
+        "gg-344001",
+        "gg-352455",
+        "gg-347026",
+        "gg-357186",
+        "gg-357187",
+        "gg-112354",
+        "gg-314126",
+        "gg-320098",
+        "gg-329432",
+        "gg-348164",
+        "gg-350469",
+        "gg-358882",
+        "gg-45810"
+      ]
+    },
+    {
+      "id": "capacity",
+      "topic": "Research infrastructure",
+      "opportunity_ids": [
+        "gg-358934",
+        "gg-362029",
+        "gg-358959",
+        "gg-358960",
+        "gg-354269",
+        "gg-355987",
+        "gg-356902",
+        "gg-364243",
+        "gg-364188",
+        "gg-364271",
+        "gg-351923",
+        "gg-358036",
+        "gg-357725",
+        "gg-357724",
+        "gg-348599",
+        "gg-359733",
+        "gg-357730",
+        "gg-358875",
+        "gg-359152",
+        "gg-359692",
+        "gg-360613",
+        "gg-360611",
+        "gg-347680",
+        "gg-352339",
+        "gg-358684",
+        "gg-357568",
+        "gg-358829"
+      ]
+    },
+    {
+      "id": "diplomacy",
+      "topic": "Diplomacy & exchange",
+      "opportunity_ids": [
+        "gg-364154",
+        "gg-364155",
+        "gg-364158",
+        "gg-364159",
+        "gg-364161",
+        "gg-364162",
+        "gg-363660",
+        "gg-364147",
+        "gg-355211",
+        "gg-362489",
+        "gg-326733",
+        "gg-344437",
+        "gg-363786"
       ]
     },
     {
@@ -807,205 +1112,53 @@
       "topic": "Other opportunities",
       "opportunity_ids": [
         "gg-360368",
-        "gg-358934",
         "gg-351124",
         "gg-358024",
         "gg-355354",
         "gg-357812",
-        "gg-358090",
-        "gg-364062",
-        "gg-364154",
-        "gg-364063",
-        "gg-364155",
-        "gg-364158",
-        "gg-364159",
-        "gg-364161",
-        "gg-364162",
         "gg-364166",
         "gg-364167",
-        "gg-363992",
-        "gg-364138",
-        "gg-347331",
-        "gg-358689",
-        "gg-363929",
-        "gg-364097",
-        "gg-364122",
-        "gg-356723",
-        "gg-356724",
         "gg-363747",
-        "gg-355439",
-        "gg-361876",
         "gg-363734",
-        "gg-364240",
-        "gg-362982",
-        "gg-363804",
-        "gg-364026",
         "gg-364149",
-        "gg-361418",
-        "gg-364163",
-        "gg-364297",
-        "gg-363111",
-        "gg-351404",
-        "gg-364253",
-        "gg-364267",
-        "gg-361480",
         "gg-361896",
-        "gg-364224",
-        "gg-362893",
-        "gg-364098",
         "gg-364277",
         "gg-364263",
-        "gg-364134",
         "gg-352741",
-        "gg-362029",
-        "gg-362303",
-        "gg-362498",
-        "gg-362749",
-        "gg-363729",
-        "gg-364018",
         "gg-364019",
         "gg-361080",
-        "gg-362827",
-        "gg-362880",
-        "gg-364006",
-        "gg-361994",
-        "gg-358959",
-        "gg-358960",
-        "gg-364164",
-        "gg-364033",
-        "gg-363696",
-        "gg-364030",
-        "gg-364195",
-        "gg-364245",
-        "gg-344634",
-        "gg-356460",
-        "gg-356659",
-        "gg-356943",
         "gg-357826",
-        "gg-363510",
-        "gg-364133",
-        "gg-45812",
-        "gg-348058",
-        "gg-363692",
-        "gg-363936",
-        "gg-361206",
-        "gg-354269",
-        "gg-364144",
-        "gg-364145",
-        "gg-355987",
-        "gg-356902",
-        "gg-354573",
-        "gg-364243",
         "gg-363715",
-        "gg-363833",
-        "gg-344001",
-        "gg-352455",
-        "gg-364205",
         "gg-364221",
-        "gg-364212",
         "gg-364039",
         "gg-351889",
-        "gg-347026",
-        "gg-363912",
-        "gg-342475",
         "gg-364280",
-        "gg-341086",
-        "gg-357606",
-        "gg-363985",
         "gg-359659",
-        "gg-362983",
-        "gg-364271",
-        "gg-357800",
         "gg-364032",
-        "gg-325932",
-        "gg-364172",
         "gg-359757",
-        "gg-364003",
-        "gg-351923",
-        "gg-358036",
-        "gg-364070",
         "gg-359966",
-        "gg-364244",
-        "gg-363660",
         "gg-357893",
-        "gg-356925",
-        "gg-356927",
-        "gg-362984",
-        "gg-363875",
         "gg-362905",
-        "gg-364213",
         "gg-355353",
-        "gg-357725",
-        "gg-361915",
-        "gg-357724",
-        "gg-362395",
-        "gg-362396",
         "gg-328902",
-        "gg-357186",
-        "gg-357187",
         "gg-363993",
-        "gg-364147",
         "gg-364105",
-        "gg-348599",
-        "gg-359733",
-        "gg-357730",
         "gg-357250",
         "gg-364292",
-        "gg-357330",
-        "gg-357337",
-        "gg-356691",
-        "gg-356815",
-        "gg-357462",
         "gg-356637",
         "gg-357157",
-        "gg-357201",
         "gg-357805",
         "gg-357809",
-        "gg-357962",
-        "gg-357963",
-        "gg-358411",
-        "gg-358823",
-        "gg-359154",
-        "gg-355044",
-        "gg-359862",
-        "gg-359155",
-        "gg-359940",
-        "gg-349586",
-        "gg-358875",
         "gg-364069",
         "gg-364099",
-        "gg-361833",
-        "gg-358850",
-        "gg-358851",
-        "gg-358938",
-        "gg-359695",
         "gg-359675",
-        "gg-357464",
-        "gg-362325",
-        "gg-360364",
-        "gg-360593",
-        "gg-359161",
-        "gg-359152",
-        "gg-352845",
-        "gg-355150",
         "gg-359669",
         "gg-360581",
         "gg-354445",
-        "gg-359692",
         "gg-359732",
-        "gg-360613",
         "gg-361279",
-        "gg-360611",
-        "gg-359859",
-        "gg-362581",
-        "gg-355499",
-        "gg-363745",
-        "gg-356370",
         "gg-361322",
-        "gg-359941",
         "gg-360545",
-        "gg-351547",
-        "gg-361099",
         "gg-359236",
         "gg-350582",
         "gg-350584",
@@ -1022,61 +1175,28 @@
         "gg-350654",
         "gg-350655",
         "gg-350656",
-        "gg-362715",
-        "gg-362717",
-        "gg-349554",
         "gg-360258",
         "gg-328026",
-        "gg-355211",
-        "gg-361554",
-        "gg-362489",
-        "gg-363225",
-        "gg-363383",
-        "gg-112354",
-        "gg-314126",
-        "gg-320098",
-        "gg-326733",
-        "gg-327047",
-        "gg-329432",
-        "gg-330175",
-        "gg-344437",
-        "gg-347414",
-        "gg-347680",
-        "gg-348164",
-        "gg-350230",
-        "gg-350469",
-        "gg-352339",
-        "gg-352500",
-        "gg-356055",
         "gg-356425",
         "gg-356559",
         "gg-356561",
         "gg-356562",
-        "gg-358684",
-        "gg-358882",
-        "gg-359225",
         "gg-360664",
-        "gg-362062",
         "gg-363615",
         "gg-363620",
-        "gg-363786",
-        "gg-45810",
-        "gg-58617",
         "gg-357813",
         "gg-357112",
-        "gg-357568",
-        "gg-358829",
         "gg-356617",
         "gg-357807"
       ]
     }
   ],
   "audit": {
-    "assigned_title_match_count": 432,
-    "assigned_opening_match_count": 75,
-    "unmatched_count": 257,
-    "ambiguous_opening_count": 5,
-    "overlap_count": 107,
+    "assigned_title_match_count": 600,
+    "assigned_opening_match_count": 92,
+    "unmatched_count": 76,
+    "ambiguous_opening_count": 1,
+    "overlap_count": 117,
     "overlaps": [
       {
         "opportunity_id": "gg-364048",
@@ -1192,6 +1312,14 @@
         }
       },
       {
+        "opportunity_id": "gg-361169",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "education": 4,
+          "agriculture": 1
+        }
+      },
+      {
         "opportunity_id": "gg-356690",
         "assigned_bed": "cancer",
         "matching_beds": {
@@ -1265,6 +1393,14 @@
         }
       },
       {
+        "opportunity_id": "gg-364188",
+        "assigned_bed": "capacity",
+        "matching_beds": {
+          "civic": 1,
+          "capacity": 3
+        }
+      },
+      {
         "opportunity_id": "gg-360562",
         "assigned_bed": "neuro",
         "matching_beds": {
@@ -1329,6 +1465,14 @@
         }
       },
       {
+        "opportunity_id": "gg-364271",
+        "assigned_bed": "capacity",
+        "matching_beds": {
+          "agriculture": 1,
+          "capacity": 3
+        }
+      },
+      {
         "opportunity_id": "gg-363946",
         "assigned_bed": "defense",
         "matching_beds": {
@@ -1338,9 +1482,9 @@
       },
       {
         "opportunity_id": "gg-364172",
-        "assigned_bed": "other",
+        "assigned_bed": "engineering",
         "matching_beds": {
-          "engineering": 1,
+          "engineering": 4,
           "defense": 1
         }
       },
@@ -1351,6 +1495,30 @@
           "ai": 4,
           "engineering": 4,
           "education": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-363526",
+        "assigned_bed": "defense",
+        "matching_beds": {
+          "defense": 4,
+          "capacity": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-363530",
+        "assigned_bed": "defense",
+        "matching_beds": {
+          "defense": 4,
+          "capacity": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-351923",
+        "assigned_bed": "capacity",
+        "matching_beds": {
+          "careers": 3,
+          "capacity": 4
         }
       },
       {
@@ -1387,9 +1555,9 @@
       },
       {
         "opportunity_id": "gg-361915",
-        "assigned_bed": "other",
+        "assigned_bed": "ai",
         "matching_beds": {
-          "ai": 1,
+          "ai": 4,
           "engineering": 1
         }
       },
@@ -1652,6 +1820,14 @@
         }
       },
       {
+        "opportunity_id": "gg-357462",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "biomed": 3,
+          "medicine": 1
+        }
+      },
+      {
         "opportunity_id": "gg-356909",
         "assigned_bed": "medicine",
         "matching_beds": {
@@ -1733,10 +1909,10 @@
       },
       {
         "opportunity_id": "gg-358411",
-        "assigned_bed": "other",
+        "assigned_bed": "publichealth",
         "matching_beds": {
           "engineering": 1,
-          "publichealth": 1
+          "publichealth": 4
         }
       },
       {
@@ -1788,11 +1964,19 @@
         }
       },
       {
+        "opportunity_id": "gg-359648",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "biomed": 3,
+          "capacity": 3
+        }
+      },
+      {
         "opportunity_id": "gg-359152",
-        "assigned_bed": "other",
+        "assigned_bed": "capacity",
         "matching_beds": {
           "education": 1,
-          "medicine": 1
+          "capacity": 3
         }
       },
       {
@@ -1893,6 +2077,14 @@
         }
       },
       {
+        "opportunity_id": "gg-347680",
+        "assigned_bed": "capacity",
+        "matching_beds": {
+          "biomed": 1,
+          "capacity": 4
+        }
+      },
+      {
         "opportunity_id": "gg-353475",
         "assigned_bed": "engineering",
         "matching_beds": {
@@ -1923,6 +2115,14 @@
           "climate": 1,
           "ai": 1,
           "engineering": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-363616",
+        "assigned_bed": "engineering",
+        "matching_beds": {
+          "engineering": 4,
+          "biomed": 1
         }
       },
       {
