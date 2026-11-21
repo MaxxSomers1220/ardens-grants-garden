@@ -2,13 +2,209 @@
   "version": 1,
   "feed_generated_at": "2026-11-21T06:00:54.859651+00:00",
   "record_count": 769,
-  "method": "Explicit topical phrases earn 3 points in the title and 1 in the first 480 characters of the Grants.gov synopsis, using the feed summary when the synopsis is absent. Explicit program abbreviations in titles also count. Synopsis agency names and example-list tails provide context only. Highest score wins. Strongest title ties follow the order rare disease, cancer, infectious disease, neuroscience, climate and energy, and AI and data science. Synopsis-only ties and records with no match go to Other opportunities. This is a garden grouping based on source text. Bed order uses descending gap score, ascending deadline with rolling last, and opportunity ID.",
+  "method": "Explicit topical phrases earn 3 points in the title and 1 in the first 480 characters of the normalized Grants.gov synopsis. If no synopsis is available, only the title contributes. Each field earns points once per bed. The matching phrases below are case-insensitive, whole-word regular expressions, with case-sensitive exceptions for the listed title abbreviations. Named synopsis context and example-list tails are excluded. Highest score wins. The listed title tie order resolves equal title scores. Synopsis-only ties and records with no match go to Other opportunities. The original six beds keep their display order, followed by new topics with at least 20 supported grants among the previously unmatched records in the discovery snapshot. Records within each bed are sorted by descending gap score, ascending deadline with rolling last, then opportunity ID.",
+  "title_tie_order": [
+    "rare",
+    "cancer",
+    "infectious",
+    "neuro",
+    "climate",
+    "ai",
+    "education",
+    "careers",
+    "earth",
+    "engineering",
+    "biomed",
+    "medicine",
+    "publichealth",
+    "behavioral",
+    "civic",
+    "defense"
+  ],
+  "matching_phrases": {
+    "rare": {
+      "title_and_opening_synopsis": [
+        "rare(?: (?:genetic|neurologic(?:al)?|neurodevelopmental|inherited))? (?:diseases?|disorders?|conditions?)",
+        "rare neurologic(?:al)? and neuromuscular (?:diseases?|disorders?)",
+        "orphan (?:diseases?|conditions?|drugs?|products?)"
+      ]
+    },
+    "neuro": {
+      "title_and_opening_synopsis": [
+        "neuroscien\\w*|neurobiolog\\w*|neurobehavior\\w*|neurodegenerati\\w*|neurodevelopment\\w*",
+        "neuroimag\\w*|neuropsych\\w*|neurotherapeutic\\w*|neuromodulat\\w*|neurostimulat\\w*",
+        "neurologists?|neurologic(?:al)? (?:or neuromuscular )?(?:diseases?|disorders?|conditions?|research|mechanisms?|outcomes?)",
+        "neuronal|neural (?:circuits?|circuitry|activity|development|ensembles?)|translational neural devices",
+        "brains?|spinal cords?|cerebral|nervous systems?",
+        "alzheimer(?:'?s)?|parkinson(?:'s)?|dementias?|epileps\\w*|strokes?"
+      ],
+      "title_only_abbreviations": "\\b(?:NINDS|AD/ADRD|ADRD)\\b"
+    },
+    "cancer": {
+      "title_and_opening_synopsis": [
+        "cancers?|oncolog\\w*|tumou?rs?(?! necrosis factors?\\b)|neoplas\\w*",
+        "carcinomas?|carcinogens?|leuk(?:e|ae)mias?|lymphomas?|melanomas?|glioblastomas?|metastas\\w*",
+        "hematologic(?:al)? malignanc(?:y|ies)|gliomas?|sarcomas?|neuroblastomas?"
+      ],
+      "title_only_abbreviations": "\\bNCI\\b"
+    },
+    "climate": {
+      "title_and_opening_synopsis": [
+        "climate[- ](?:chang\\w*|variabil\\w*|adapt\\w*|resilien\\w*|science|model\\w*|mitigat\\w*|risk\\w*|impacts?|solutions?)",
+        "decarboni\\w*|greenhouse gas(?:es)?|carbon sequestration|carbon stewardship|low[- ]carbon",
+        "(?:renewable|clean|sustainable|solar|wind|nuclear) energy",
+        "energy (?:storage|systems?|efficien\\w*|technolog\\w*|infrastructur\\w*)",
+        "bioenergy|geothermal|alternative (?:jet )?fuels?|fossil fuels?|(?:electric|power) grids?|solar power|wind power",
+        "carbon dioxide removal|offshore wind|photovoltaics?|university nuclear leadership program"
+      ]
+    },
+    "ai": {
+      "title_and_opening_synopsis": [
+        "artificial intelligence|augmented intelligence|(?:machine|deep|statistical) learning",
+        "data scien\\w*|data analytics|data mining|big data|computer vision",
+        "(?:research|scientific|biomedical) data (?:commons|infrastructur\\w*)",
+        "large language models?|(?:generative|responsible|trustworthy|explainable|applied|with|using) ai",
+        "ai[- ](?:enabled|powered|driven|systems?|models?|research|infrastructure|readiness|ready|development|education|for)",
+        "computational (?:modeling and analysis of the impact of genomic variation|genomics)",
+        "(?:grants?|research|methods?|resources?) (?:for |in |on )?(?:clinical informatics|bioinformatics)"
+      ]
+    },
+    "infectious": {
+      "title_and_opening_synopsis": [
+        "(?:infectious|communicable) diseases?|infections?|disease outbreaks?|pandemics?",
+        "(?:antimicrobial|antibiotic) resistance|antivirals?|vaccines?|vaccination",
+        "(?:viral|bacterial|fungal|parasitic) diseases?|(?:disease|human|animal|zoonotic|viral|bacterial) pathogens?|host[- ]pathogens?",
+        "tuberculosis|hiv(?:/aids)?|aids research|covid(?:-19)?|malaria|hepatitis|influenza|ebola",
+        "animal disease preparedness(?: and response)?|human virome"
+      ],
+      "title_only_abbreviations": "\\b(?:CFAR|D-CFAR)\\b"
+    },
+    "earth": {
+      "title_and_opening_synopsis": [
+        "earth sciences?|geolog\\w*|geophysic\\w*|geochem\\w*|geo(?:sphere|sciences?)|cryosphere|hydrosphere",
+        "atmospheric sciences?|atmosphere|cooperative ecosystems? studies|ocean (?:science|drilling|research|mapping)",
+        "coastal (?:resilien\\w*|habitats?|management|flood protection)|watersheds?|wetlands?|landslide\\w*",
+        "water (?:resources?|research|conservation|pollution|quality)|water[- ]use (?:data|estimation)",
+        "environmental (?:monitoring|research|media|pollution|restoration|quality)|brownfields?|air pollution|pfas",
+        "flood (?:mitigation|management|risk)|ecosystem (?:restoration|management|science|conserv\\w*)",
+        "ecological (?:research|restoration|monitoring)|stream (?:restoration|flow)|biodiversity conservation",
+        "marine (?:science|ecosystems?|protected areas?)|wildlife (?:habitats?|conserv\\w*|management)|fish passage",
+        "oceanographic (?:facilities|research)|oceanic and atmospheric research"
+      ]
+    },
+    "engineering": {
+      "title_and_opening_synopsis": [
+        "mathematics(?! education)|mathematical sciences?|statistics|statistical science|combinatorics|(?:abstract |linear )?algebra",
+        "differential equations?|number theory|(?:geometry|topology|probability) (?:research|theory|and)",
+        "physics|chemistry|chemical sciences?|electrochemistry|photochemistry|molecular spectroscopy",
+        "chemical (?:synthesis|reaction|process)(?:es|ing)?|transport phenomena|simulation and modeling",
+        "robotics|materials (?:research|science|engineering|design)|manufacturing|semi[- ]?conductors?",
+        "(?:civil|mechanical|chemical|electrical|structural|systems|industrial|aerospace) engineering",
+        "engineering (?:research|design|science|materials|innovation|education centers?)",
+        "engineering (?:and|of) (?:computer|material|cell|biological|civil)\\w*|nanotechnolog\\w*|microelectronics",
+        "computing|computer science|cyberinfrastructure|cybersecurity|cyber[- ]physical systems?",
+        "secure open[- ]source|programming languages?|quantum (?:information|computing|science|systems?|materials?|technolog\\w*)"
+      ]
+    },
+    "education": {
+      "title_and_opening_synopsis": [
+        "(?:stem|science|mathematics|marine|tribal|undergraduate|graduate|special|environmental|secondary|bilingual|adult|career and technical) education",
+        "education (?:research|innovation|program for|partnerships?|and workforce|grants program)",
+        "early childhood (?:education|development)|teaching and learning|k[-– ]12|prek[–-]12",
+        "teacher (?:preparation|training|professional development)|training for teachers|educator professional development",
+        "undergraduate (?:education|students|institutions|programs|scholarships|curriculum)|undergraduate[- ]focused institutions",
+        "graduate research opportunities|curriculum development|workforce (?:development|training|education|readiness)",
+        "tribal colleges and universities program|community college workforce|schools and school districts|scholarships?",
+        "(?:digital|financial|scientific|adult) literacy|research experiences for (?:undergraduates|teachers)",
+        "scientific research workforce"
+      ]
+    },
+    "careers": {
+      "title_and_opening_synopsis": [
+        "(?:research )?career (?:development|enhancement|transition|excellence) (?:award|program)s?",
+        "early[- ]career (?:research(?:ers?| awards?)?|scientists?|investigators?)",
+        "(?:early[- ]stage|emerging|midcareer|new|outstanding|independent) (?:scientist|investigator) (?:research )?(?:award|program|research project grant)s?",
+        "pathway to independence award|research in residency|medical scientist training|clinical research scholar",
+        "(?:predoctoral|postdoctoral|individual senior|dissertation|research) fellowships?|fellowship for students",
+        "(?:institutional|predoctoral|postdoctoral|dual[- ]degree|undergraduate|graduate) (?:biomedical )?research training",
+        "predoctoral to postdoctoral transition award|national research service award|research training (?:and leadership|grants?|programs?)",
+        "research (?:education(?:al)?|mentoring) (?:programs?|networks?)",
+        "mentored (?:research|clinical scientist|quantitative research|research scientist) development award"
+      ]
+    },
+    "biomed": {
+      "title_and_opening_synopsis": [
+        "genomic (?:data generation|variants?|variation|interactions|characterization)|animal genomics|genome function",
+        "genetic architecture of complex human traits|structural biology|cryo[- ]electron (?:microscopy|tomography)",
+        "cellular senescence network|single[- ]cell (?:analysis|sequencing)|tissue engineering|biospecimens?",
+        "development of (?:animal )?models and related (?:biological )?materials|animal and biological material resource centers",
+        "bioengineering (?:research|partnerships)|biomedical technolog\\w*|medical device (?:prototypes?|design|development)",
+        "biomarker validation|(?:in vivo|intravital|medical) imaging|imaging the olfactory system",
+        "clinical (?:and|&) translational (?:science|research)|translational science award",
+        "assay development|target identification and validation|shared instrumentation grant|seed instrumentation support"
+      ]
+    },
+    "medicine": {
+      "title_and_opening_synopsis": [
+        "hematolog\\w*|cardiovascular|heart failure|heart, lung, and blood disorders|hlbs disorders|diabetes",
+        "gastrointestinal|digestive diseases?|kidney (?:disease|disorders?|research)|urolog(?:y|ic(?:al)?)|renal (?:disease|disorders?)",
+        "arthritis|musculoskeletal (?:disease|disorders?|health)|down syndrome|newborn (?:screening|period)|screenable disorders in newborns",
+        "vision[- ]related|vision research|(?:hearing|auditory|vestibular|communication) disorders?",
+        "oral(?:[- ]systemic)? health|dental (?:health|diseases?|caries)|reproductive health|contraception|family planning services",
+        "immune tolerance network|congenital anomalies|human congenital|palliative care"
+      ]
+    },
+    "publichealth": {
+      "title_and_opening_synopsis": [
+        "public health (?:crisis|research|emergency|response|systems?|services?|infrastructur\\w*|practice|preparedness|surveillance|interventions?)",
+        "occupational (?:safety|health)|construction safety|health services|maternal (?:and child )?health|community health",
+        "(?:child|family|population|environmental) health (?:outcomes|sciences|interventions)|health disparities|health ?care delivery",
+        "injury prevention|patient safety|worker safety|smoking cessation|nursing research|health surveillance",
+        "food (?:safety|defense) (?:systems?|testing|preparedness|standards)|(?:poisoning|exposure) prevention|health promotion",
+        "world trade center health program|native american health|native american research centers for health",
+        "dissemination and implementation research in health|health systems strengthening"
+      ]
+    },
+    "behavioral": {
+      "title_and_opening_synopsis": [
+        "mental (?:health|disorders?|illness(?:es)?)|psychosis|psychiatric (?:conditions?|disorders?|interventions?)",
+        "psychotropic (?:drugs?|interventions?)|depressive disorders?|substance use",
+        "(?:drug|alcohol|opioid|tobacco) use (?:and misuse|disorders?)|(?:opioid|drug) overdose",
+        "addiction (?:research|epidemiology|prevention|treatment|recovery)|fetal alcohol spectrum disorders?",
+        "alcohol research centers?|suicide prevent\\w*"
+      ]
+    },
+    "civic": {
+      "title_and_opening_synopsis": [
+        "human trafficking|trafficking in persons|anti[- ]trafficking|trafficking survivors|modern slavery",
+        "crime victims?|criminal justice|justice assistance|correctional|prisons?|law enforcement|school safety",
+        "reentry (?:programs?|initiatives?)|affordable housing|homeless housing|homelessness|children and families|domestic violence",
+        "economic development|community development|local technical assistance|community entrepreneurship|rural development",
+        "small business (?:innovation|research|development)|community capacity|community revitalization|ambassador's special self[- ]help",
+        "legal services|victim services|victim assistance|civil legal aid|(?:refugee|immigrant) (?:services|resettlement)",
+        "neighborhood (?:development|revitalization)"
+      ]
+    },
+    "defense": {
+      "title_and_opening_synopsis": [
+        "warfight\\w*|national security|national defense|warfare|counter (?:weapons of mass destruction|chemical threats)",
+        "military (?:operations?|technolog\\w*|capabilit\\w*|readiness|medicine|health|threats?|personnel|research)",
+        "defense (?:industrial base|research|technology|science|sciences office|security cooperation|systems?|mission)",
+        "defense established program to stimulate competitive research",
+        "department of war (?:cyber service academy|(?:\\(dow\\) )?multidisciplinary research program)",
+        "(?:navy and marine corps|naval) (?:science and technology|operations?)|armed forces (?:capabilit\\w*|readiness)",
+        "tactical (?:communications?|sensing|systems?)|army research (?:laboratory|institute)|army combat capabilities",
+        "air force (?:combat|operations|needs|requirements)|air force school of aerospace medicine"
+      ]
+    }
+  },
   "beds": [
     {
       "id": "rare",
       "topic": "Rare disease",
       "opportunity_ids": [
         "gg-357570",
+        "gg-357817",
         "gg-356879",
         "gg-360007",
         "gg-360008",
@@ -21,6 +217,7 @@
       "opportunity_ids": [
         "gg-356870",
         "gg-353055",
+        "gg-356903",
         "gg-350561",
         "gg-357137",
         "gg-360562",
@@ -40,8 +237,6 @@
         "gg-356800",
         "gg-356802",
         "gg-356953",
-        "gg-358229",
-        "gg-358230",
         "gg-357529",
         "gg-359068",
         "gg-357000",
@@ -52,6 +247,7 @@
         "gg-357309",
         "gg-357345",
         "gg-357346",
+        "gg-357943",
         "gg-360574",
         "gg-361518",
         "gg-360398",
@@ -79,10 +275,7 @@
         "gg-360905",
         "gg-361134",
         "gg-361276",
-        "gg-357712",
         "gg-357307",
-        "gg-357259",
-        "gg-358202",
         "gg-359892",
         "gg-356978",
         "gg-356979",
@@ -112,11 +305,6 @@
       "id": "climate",
       "topic": "Climate & energy",
       "opportunity_ids": [
-        "gg-364177",
-        "gg-364178",
-        "gg-364179",
-        "gg-364180",
-        "gg-364181",
         "gg-363815",
         "gg-360205",
         "gg-358100",
@@ -139,18 +327,19 @@
         "gg-364165",
         "gg-361238",
         "gg-356888",
-        "gg-361915",
-        "gg-361249",
+        "gg-356517",
         "gg-363268",
         "gg-363481",
         "gg-359003",
-        "gg-353475"
+        "gg-359004"
       ]
     },
     {
       "id": "infectious",
       "topic": "Infectious disease",
       "opportunity_ids": [
+        "gg-364214",
+        "gg-364215",
         "gg-362954",
         "gg-361832",
         "gg-362952",
@@ -160,10 +349,10 @@
         "gg-361816",
         "gg-361820",
         "gg-361821",
-        "gg-363946",
         "gg-360006",
         "gg-361050",
         "gg-343653",
+        "gg-361431",
         "gg-359657",
         "gg-358086",
         "gg-358082",
@@ -173,82 +362,31 @@
         "gg-359945",
         "gg-357937",
         "gg-360869",
-        "gg-360873",
-        "gg-361204"
+        "gg-360873"
       ]
     },
     {
-      "id": "other",
-      "topic": "Other opportunities",
+      "id": "earth",
+      "topic": "Earth & environment",
       "opportunity_ids": [
-        "gg-357140",
-        "gg-360368",
-        "gg-358934",
-        "gg-352810",
-        "gg-357996",
-        "gg-353792",
-        "gg-351124",
-        "gg-358024",
-        "gg-355354",
-        "gg-357004",
-        "gg-353793",
-        "gg-357812",
-        "gg-358090",
-        "gg-359168",
-        "gg-359169",
-        "gg-361817",
-        "gg-364048",
-        "gg-364062",
-        "gg-364154",
-        "gg-364063",
-        "gg-364155",
-        "gg-364158",
-        "gg-364159",
-        "gg-364161",
-        "gg-364162",
-        "gg-364166",
-        "gg-364167",
-        "gg-363992",
-        "gg-364138",
-        "gg-364139",
-        "gg-364140",
+        "gg-364177",
+        "gg-364178",
+        "gg-364179",
+        "gg-364180",
+        "gg-364181",
         "gg-364182",
         "gg-364183",
         "gg-364184",
         "gg-364185",
         "gg-364186",
         "gg-364187",
-        "gg-364275",
-        "gg-278447",
-        "gg-345738",
-        "gg-347331",
-        "gg-358689",
-        "gg-363929",
-        "gg-364029",
-        "gg-364097",
-        "gg-359150",
         "gg-363240",
-        "gg-364122",
         "gg-364190",
         "gg-364191",
         "gg-364192",
         "gg-364193",
-        "gg-356723",
-        "gg-356724",
-        "gg-363747",
-        "gg-363846",
-        "gg-348375",
-        "gg-355439",
-        "gg-361876",
-        "gg-363734",
         "gg-363759",
         "gg-364176",
-        "gg-364240",
-        "gg-362982",
-        "gg-363804",
-        "gg-364026",
-        "gg-364149",
-        "gg-364222",
         "gg-364226",
         "gg-364227",
         "gg-364228",
@@ -261,48 +399,464 @@
         "gg-364237",
         "gg-364238",
         "gg-364239",
-        "gg-356163",
-        "gg-360753",
-        "gg-361418",
-        "gg-364163",
-        "gg-364297",
+        "gg-364125",
+        "gg-364288",
+        "gg-364194",
+        "gg-354620",
+        "gg-364278",
+        "gg-359996",
+        "gg-364231",
+        "gg-344715",
+        "gg-349724",
+        "gg-364021",
+        "gg-364290",
+        "gg-364291",
+        "gg-364198",
+        "gg-364199",
+        "gg-364200",
+        "gg-364201",
+        "gg-364202",
+        "gg-363789",
+        "gg-364196",
+        "gg-363958",
+        "gg-364265",
+        "gg-364124",
+        "gg-363699",
+        "gg-362394",
+        "gg-345083",
+        "gg-348830",
+        "gg-363151",
+        "gg-362755",
+        "gg-364142",
+        "gg-364130",
+        "gg-254073",
+        "gg-330296",
+        "gg-363684"
+      ]
+    },
+    {
+      "id": "engineering",
+      "topic": "Science & engineering",
+      "opportunity_ids": [
+        "gg-278447",
+        "gg-348375",
+        "gg-302271",
+        "gg-355219",
+        "gg-358004",
+        "gg-314743",
+        "gg-328573",
+        "gg-343285",
+        "gg-356129",
+        "gg-363622",
+        "gg-361333",
+        "gg-324456",
+        "gg-355196",
+        "gg-332894",
+        "gg-363623",
+        "gg-359325",
+        "gg-363233",
+        "gg-340828",
+        "gg-350338",
+        "gg-349343",
+        "gg-275109",
+        "gg-308873",
+        "gg-324369",
+        "gg-347679",
+        "gg-353475",
+        "gg-357554",
+        "gg-359499",
+        "gg-360149",
+        "gg-361952",
+        "gg-362061",
+        "gg-362063",
+        "gg-363612",
+        "gg-363613",
+        "gg-363614",
+        "gg-363616",
+        "gg-363617",
+        "gg-363618",
+        "gg-363621",
+        "gg-364294"
+      ]
+    },
+    {
+      "id": "education",
+      "topic": "Education & workforce",
+      "opportunity_ids": [
+        "gg-363846",
         "gg-363752",
         "gg-363880",
-        "gg-362871",
-        "gg-363111",
-        "gg-363829",
         "gg-364086",
         "gg-364087",
-        "gg-364125",
-        "gg-351404",
+        "gg-364008",
+        "gg-361169",
+        "gg-354081",
+        "gg-334326",
+        "gg-344124",
+        "gg-344608",
+        "gg-357498",
+        "gg-364247",
+        "gg-351947",
+        "gg-353413",
+        "gg-355270",
+        "gg-348985",
+        "gg-350802",
+        "gg-357282",
+        "gg-345938",
+        "gg-362034",
+        "gg-359157",
+        "gg-363677",
+        "gg-358403",
+        "gg-360350",
+        "gg-361008",
+        "gg-357458"
+      ]
+    },
+    {
+      "id": "careers",
+      "topic": "Research careers",
+      "opportunity_ids": [
+        "gg-357140",
+        "gg-352810",
+        "gg-357996",
+        "gg-353792",
+        "gg-353793",
+        "gg-363829",
+        "gg-356309",
+        "gg-356310",
+        "gg-357744",
+        "gg-358552",
+        "gg-353821",
+        "gg-353822",
+        "gg-352270",
+        "gg-352273",
+        "gg-352635",
+        "gg-352636",
+        "gg-355395",
+        "gg-355399",
+        "gg-339594",
+        "gg-357632",
+        "gg-357836",
+        "gg-357838",
+        "gg-361249",
+        "gg-356620",
+        "gg-357259",
+        "gg-358202",
+        "gg-342747",
+        "gg-356763",
+        "gg-349280",
+        "gg-353709",
+        "gg-353710",
+        "gg-353745",
+        "gg-353756",
+        "gg-357072",
+        "gg-357206",
+        "gg-357511",
+        "gg-358114",
+        "gg-359130",
+        "gg-358828",
+        "gg-358830",
+        "gg-358831",
+        "gg-358832",
+        "gg-358833",
+        "gg-360909",
+        "gg-361187",
+        "gg-358879",
+        "gg-359861",
+        "gg-359676",
+        "gg-359702",
+        "gg-361159",
+        "gg-361160",
+        "gg-359703",
+        "gg-361251",
+        "gg-358824",
+        "gg-343875",
+        "gg-353758",
+        "gg-353763",
+        "gg-353461",
+        "gg-353458",
+        "gg-353751",
+        "gg-353746",
+        "gg-353749",
+        "gg-353762",
+        "gg-358848"
+      ]
+    },
+    {
+      "id": "biomed",
+      "topic": "Biomedical methods",
+      "opportunity_ids": [
+        "gg-359168",
+        "gg-359169",
+        "gg-361817",
         "gg-358854",
         "gg-358855",
         "gg-359170",
         "gg-359277",
+        "gg-357018",
+        "gg-357136",
+        "gg-358954",
+        "gg-359656",
+        "gg-356018",
+        "gg-361104",
+        "gg-357622",
+        "gg-357019",
+        "gg-357712",
+        "gg-356316",
+        "gg-357667",
+        "gg-357334",
+        "gg-357339",
+        "gg-357340",
+        "gg-357138",
+        "gg-357627",
+        "gg-357651",
+        "gg-358967",
+        "gg-360532",
+        "gg-360882",
+        "gg-359696",
+        "gg-359646",
+        "gg-359648",
+        "gg-360947",
+        "gg-360446",
+        "gg-360883",
+        "gg-359946",
+        "gg-360543"
+      ]
+    },
+    {
+      "id": "medicine",
+      "topic": "Clinical medicine",
+      "opportunity_ids": [
+        "gg-357004",
+        "gg-361754",
+        "gg-359145",
+        "gg-362946",
+        "gg-360551",
+        "gg-357542",
+        "gg-357543",
+        "gg-360436",
+        "gg-360623",
+        "gg-360625",
+        "gg-361208",
+        "gg-360626",
+        "gg-359274",
+        "gg-357742",
+        "gg-357979",
+        "gg-358023",
+        "gg-361207",
+        "gg-357485",
+        "gg-357487",
+        "gg-356909",
+        "gg-357010",
+        "gg-358116",
+        "gg-358118",
+        "gg-359942",
+        "gg-358935",
+        "gg-360653",
+        "gg-360654",
+        "gg-360655",
+        "gg-358864",
+        "gg-360583",
+        "gg-360160",
+        "gg-360675"
+      ]
+    },
+    {
+      "id": "publichealth",
+      "topic": "Public health & safety",
+      "opportunity_ids": [
+        "gg-345738",
+        "gg-359150",
+        "gg-356163",
+        "gg-360753",
+        "gg-358373",
+        "gg-358375",
+        "gg-363546",
+        "gg-337086",
+        "gg-357713",
+        "gg-359816",
+        "gg-353623",
+        "gg-357121",
+        "gg-357288",
+        "gg-357572",
+        "gg-357573",
+        "gg-356236",
+        "gg-356907",
+        "gg-356920",
+        "gg-357379",
+        "gg-357946",
+        "gg-357947",
+        "gg-334971",
+        "gg-334972",
+        "gg-358816",
+        "gg-359146",
+        "gg-359650",
+        "gg-355417",
+        "gg-355722",
+        "gg-356893"
+      ]
+    },
+    {
+      "id": "behavioral",
+      "topic": "Mental health & addiction",
+      "opportunity_ids": [
+        "gg-357376",
+        "gg-357524",
+        "gg-360048",
+        "gg-360366",
+        "gg-361216",
+        "gg-357941",
+        "gg-357421",
+        "gg-357422",
+        "gg-357423",
+        "gg-357426",
+        "gg-357427",
+        "gg-357434",
+        "gg-358229",
+        "gg-358230",
+        "gg-357544",
+        "gg-357545",
+        "gg-356923",
+        "gg-356924",
+        "gg-357034",
+        "gg-357341",
+        "gg-357342",
+        "gg-357382",
+        "gg-357386",
+        "gg-359019",
+        "gg-358937",
+        "gg-362672",
+        "gg-360553",
+        "gg-361204"
+      ]
+    },
+    {
+      "id": "civic",
+      "topic": "Civic & community services",
+      "opportunity_ids": [
+        "gg-364048",
+        "gg-364139",
+        "gg-364140",
+        "gg-364275",
+        "gg-364029",
+        "gg-364222",
+        "gg-364276",
+        "gg-364293",
+        "gg-364171",
+        "gg-364143",
+        "gg-364298",
+        "gg-364188",
+        "gg-364206",
+        "gg-362551",
+        "gg-364255",
+        "gg-359671",
+        "gg-362364",
+        "gg-363446",
+        "gg-361822",
+        "gg-355100",
+        "gg-359758",
+        "gg-337460",
+        "gg-345478",
+        "gg-358289",
+        "gg-363381",
+        "gg-363384",
+        "gg-325599",
+        "gg-332052",
+        "gg-332125",
+        "gg-332126",
+        "gg-332127",
+        "gg-332137",
+        "gg-332138",
+        "gg-346203",
+        "gg-346815"
+      ]
+    },
+    {
+      "id": "defense",
+      "topic": "Defense & security",
+      "opportunity_ids": [
+        "gg-362871",
+        "gg-359782",
+        "gg-356605",
+        "gg-364129",
+        "gg-363946",
+        "gg-363526",
+        "gg-363530",
+        "gg-363899",
+        "gg-363905",
+        "gg-363906",
+        "gg-363738",
+        "gg-343640",
+        "gg-343725",
+        "gg-360261",
+        "gg-360262",
+        "gg-344592",
+        "gg-345241",
+        "gg-347858",
+        "gg-349804",
+        "gg-358380",
+        "gg-360012",
+        "gg-356612",
+        "gg-320087",
+        "gg-352238",
+        "gg-362681"
+      ]
+    },
+    {
+      "id": "other",
+      "topic": "Other opportunities",
+      "opportunity_ids": [
+        "gg-360368",
+        "gg-358934",
+        "gg-351124",
+        "gg-358024",
+        "gg-355354",
+        "gg-357812",
+        "gg-358090",
+        "gg-364062",
+        "gg-364154",
+        "gg-364063",
+        "gg-364155",
+        "gg-364158",
+        "gg-364159",
+        "gg-364161",
+        "gg-364162",
+        "gg-364166",
+        "gg-364167",
+        "gg-363992",
+        "gg-364138",
+        "gg-347331",
+        "gg-358689",
+        "gg-363929",
+        "gg-364097",
+        "gg-364122",
+        "gg-356723",
+        "gg-356724",
+        "gg-363747",
+        "gg-355439",
+        "gg-361876",
+        "gg-363734",
+        "gg-364240",
+        "gg-362982",
+        "gg-363804",
+        "gg-364026",
+        "gg-364149",
+        "gg-361418",
+        "gg-364163",
+        "gg-364297",
+        "gg-363111",
+        "gg-351404",
         "gg-364253",
         "gg-364267",
-        "gg-302271",
         "gg-361480",
         "gg-361896",
         "gg-364224",
         "gg-362893",
         "gg-364098",
-        "gg-364276",
-        "gg-364008",
         "gg-364277",
-        "gg-364288",
-        "gg-364293",
-        "gg-359782",
-        "gg-364194",
-        "gg-364171",
         "gg-364263",
         "gg-364134",
         "gg-352741",
-        "gg-354620",
-        "gg-364278",
-        "gg-356605",
-        "gg-359996",
-        "gg-361169",
         "gg-362029",
         "gg-362303",
         "gg-362498",
@@ -315,387 +869,143 @@
         "gg-362880",
         "gg-364006",
         "gg-361994",
-        "gg-364231",
-        "gg-364143",
-        "gg-354081",
-        "gg-357018",
-        "gg-357136",
-        "gg-357376",
-        "gg-357524",
-        "gg-358373",
-        "gg-358375",
-        "gg-364214",
-        "gg-364215",
-        "gg-358954",
         "gg-358959",
         "gg-358960",
-        "gg-363546",
-        "gg-334326",
-        "gg-344715",
-        "gg-361754",
         "gg-364164",
         "gg-364033",
         "gg-363696",
         "gg-364030",
-        "gg-364129",
         "gg-364195",
         "gg-364245",
         "gg-344634",
-        "gg-349724",
         "gg-356460",
         "gg-356659",
         "gg-356943",
         "gg-357826",
         "gg-363510",
-        "gg-364021",
         "gg-364133",
         "gg-45812",
         "gg-348058",
-        "gg-355219",
-        "gg-364298",
-        "gg-344124",
-        "gg-358004",
-        "gg-364290",
-        "gg-364291",
-        "gg-344608",
-        "gg-364198",
-        "gg-364199",
-        "gg-364200",
-        "gg-364201",
-        "gg-364202",
         "gg-363692",
         "gg-363936",
-        "gg-356309",
-        "gg-356310",
         "gg-361206",
         "gg-354269",
-        "gg-359656",
-        "gg-360048",
-        "gg-360366",
         "gg-364144",
         "gg-364145",
         "gg-355987",
         "gg-356902",
-        "gg-359145",
-        "gg-361216",
-        "gg-314743",
-        "gg-356903",
-        "gg-363789",
         "gg-354573",
-        "gg-362946",
         "gg-364243",
         "gg-363715",
         "gg-363833",
         "gg-344001",
         "gg-352455",
-        "gg-360551",
-        "gg-364188",
-        "gg-364196",
         "gg-364205",
-        "gg-328573",
-        "gg-343285",
-        "gg-357542",
-        "gg-357543",
         "gg-364221",
         "gg-364212",
         "gg-364039",
         "gg-351889",
-        "gg-356129",
         "gg-347026",
-        "gg-360436",
-        "gg-337086",
-        "gg-356018",
-        "gg-363622",
-        "gg-363958",
         "gg-363912",
         "gg-342475",
-        "gg-364265",
         "gg-364280",
-        "gg-357744",
-        "gg-364124",
-        "gg-364206",
         "gg-341086",
-        "gg-361104",
-        "gg-357498",
-        "gg-361333",
         "gg-357606",
-        "gg-362551",
-        "gg-364255",
-        "gg-360623",
-        "gg-360625",
-        "gg-361208",
         "gg-363985",
-        "gg-357713",
         "gg-359659",
         "gg-362983",
-        "gg-360626",
         "gg-364271",
         "gg-357800",
         "gg-364032",
-        "gg-364247",
-        "gg-351947",
-        "gg-324456",
         "gg-325932",
-        "gg-359816",
         "gg-364172",
-        "gg-359671",
         "gg-359757",
-        "gg-363526",
-        "gg-363530",
-        "gg-355196",
         "gg-364003",
-        "gg-358552",
-        "gg-363899",
-        "gg-363905",
-        "gg-363906",
         "gg-351923",
-        "gg-353413",
         "gg-358036",
-        "gg-353623",
-        "gg-357121",
         "gg-364070",
-        "gg-353821",
-        "gg-353822",
-        "gg-332894",
-        "gg-363699",
-        "gg-352270",
-        "gg-352273",
-        "gg-352635",
-        "gg-352636",
-        "gg-357288",
         "gg-359966",
         "gg-364244",
-        "gg-357622",
         "gg-363660",
-        "gg-355270",
         "gg-357893",
         "gg-356925",
         "gg-356927",
         "gg-362984",
-        "gg-362364",
         "gg-363875",
-        "gg-359274",
         "gg-362905",
-        "gg-355395",
-        "gg-355399",
         "gg-364213",
         "gg-355353",
         "gg-357725",
-        "gg-363623",
-        "gg-339594",
+        "gg-361915",
         "gg-357724",
-        "gg-357941",
-        "gg-348985",
         "gg-362395",
         "gg-362396",
-        "gg-363738",
-        "gg-343640",
-        "gg-363446",
         "gg-328902",
-        "gg-357019",
         "gg-357186",
         "gg-357187",
-        "gg-357572",
-        "gg-362394",
-        "gg-359325",
-        "gg-363233",
-        "gg-340828",
-        "gg-356517",
-        "gg-356316",
-        "gg-357632",
-        "gg-357836",
-        "gg-357838",
-        "gg-356620",
-        "gg-343725",
-        "gg-360261",
-        "gg-360262",
         "gg-363993",
         "gg-364147",
-        "gg-361822",
-        "gg-355100",
-        "gg-357817",
-        "gg-357742",
-        "gg-350802",
-        "gg-342747",
-        "gg-356763",
-        "gg-357421",
-        "gg-357422",
-        "gg-357423",
-        "gg-357426",
-        "gg-357427",
-        "gg-357434",
-        "gg-357979",
         "gg-364105",
-        "gg-358023",
         "gg-348599",
-        "gg-357667",
-        "gg-349280",
-        "gg-361431",
         "gg-359733",
-        "gg-357573",
-        "gg-350338",
-        "gg-361207",
-        "gg-353709",
-        "gg-353710",
-        "gg-353745",
-        "gg-353756",
         "gg-357730",
-        "gg-357485",
-        "gg-357487",
         "gg-357250",
         "gg-364292",
-        "gg-344592",
-        "gg-357544",
-        "gg-357545",
         "gg-357330",
-        "gg-357334",
         "gg-357337",
-        "gg-357339",
-        "gg-357340",
-        "gg-345083",
-        "gg-345241",
         "gg-356691",
         "gg-356815",
         "gg-357462",
-        "gg-356236",
         "gg-356637",
-        "gg-356907",
-        "gg-356909",
-        "gg-356920",
-        "gg-356923",
-        "gg-356924",
-        "gg-357010",
-        "gg-357034",
-        "gg-357072",
-        "gg-357138",
         "gg-357157",
         "gg-357201",
-        "gg-357206",
-        "gg-357282",
-        "gg-357341",
-        "gg-357342",
-        "gg-357379",
-        "gg-357382",
-        "gg-357386",
-        "gg-357511",
-        "gg-357627",
-        "gg-357651",
         "gg-357805",
         "gg-357809",
-        "gg-357946",
-        "gg-357947",
         "gg-357962",
         "gg-357963",
-        "gg-358114",
-        "gg-358116",
-        "gg-358118",
-        "gg-348830",
-        "gg-359130",
         "gg-358411",
         "gg-358823",
-        "gg-334971",
-        "gg-334972",
-        "gg-363151",
-        "gg-345938",
-        "gg-362755",
-        "gg-359019",
         "gg-359154",
-        "gg-358967",
-        "gg-347858",
-        "gg-362034",
-        "gg-357943",
-        "gg-358816",
-        "gg-358828",
-        "gg-358830",
-        "gg-358831",
-        "gg-358832",
-        "gg-358833",
-        "gg-359942",
         "gg-355044",
-        "gg-358935",
         "gg-359862",
         "gg-359155",
-        "gg-360909",
-        "gg-360653",
-        "gg-360654",
-        "gg-360655",
-        "gg-360532",
-        "gg-360882",
-        "gg-359146",
-        "gg-361187",
         "gg-359940",
         "gg-349586",
-        "gg-349804",
-        "gg-358937",
-        "gg-359696",
-        "gg-358879",
         "gg-358875",
-        "gg-359650",
-        "gg-359861",
-        "gg-359646",
-        "gg-359648",
         "gg-364069",
         "gg-364099",
-        "gg-364142",
-        "gg-360947",
         "gg-361833",
-        "gg-359676",
-        "gg-355417",
-        "gg-355722",
         "gg-358850",
         "gg-358851",
         "gg-358938",
         "gg-359695",
         "gg-359675",
-        "gg-358864",
         "gg-357464",
         "gg-362325",
         "gg-360364",
-        "gg-360446",
         "gg-360593",
-        "gg-362672",
         "gg-359161",
         "gg-359152",
-        "gg-359004",
         "gg-352845",
-        "gg-349343",
-        "gg-360553",
         "gg-355150",
         "gg-359669",
-        "gg-359758",
-        "gg-359702",
-        "gg-361159",
-        "gg-361160",
         "gg-360581",
-        "gg-360583",
         "gg-354445",
-        "gg-359157",
         "gg-359692",
-        "gg-359703",
         "gg-359732",
         "gg-360613",
         "gg-361279",
         "gg-360611",
-        "gg-360883",
         "gg-359859",
-        "gg-359946",
-        "gg-360160",
-        "gg-360543",
-        "gg-361251",
         "gg-362581",
-        "gg-358824",
         "gg-355499",
         "gg-363745",
         "gg-356370",
         "gg-361322",
-        "gg-364130",
-        "gg-360675",
         "gg-359941",
         "gg-360545",
         "gg-351547",
         "gg-361099",
-        "gg-358380",
-        "gg-360012",
         "gg-359236",
         "gg-350582",
         "gg-350584",
@@ -714,52 +1024,27 @@
         "gg-350656",
         "gg-362715",
         "gg-362717",
-        "gg-363677",
-        "gg-356612",
         "gg-349554",
         "gg-360258",
         "gg-328026",
-        "gg-337460",
-        "gg-345478",
         "gg-355211",
-        "gg-358289",
         "gg-361554",
         "gg-362489",
         "gg-363225",
-        "gg-363381",
         "gg-363383",
-        "gg-363384",
         "gg-112354",
-        "gg-254073",
-        "gg-275109",
-        "gg-308873",
         "gg-314126",
-        "gg-320087",
         "gg-320098",
-        "gg-324369",
-        "gg-325599",
         "gg-326733",
         "gg-327047",
         "gg-329432",
         "gg-330175",
-        "gg-330296",
-        "gg-332052",
-        "gg-332125",
-        "gg-332126",
-        "gg-332127",
-        "gg-332137",
-        "gg-332138",
-        "gg-343875",
         "gg-344437",
-        "gg-346203",
-        "gg-346815",
         "gg-347414",
-        "gg-347679",
         "gg-347680",
         "gg-348164",
         "gg-350230",
         "gg-350469",
-        "gg-352238",
         "gg-352339",
         "gg-352500",
         "gg-356055",
@@ -767,62 +1052,120 @@
         "gg-356559",
         "gg-356561",
         "gg-356562",
-        "gg-357554",
-        "gg-358403",
         "gg-358684",
         "gg-358882",
         "gg-359225",
-        "gg-359499",
-        "gg-360149",
-        "gg-360350",
         "gg-360664",
-        "gg-361008",
-        "gg-361952",
-        "gg-362061",
         "gg-362062",
-        "gg-362063",
-        "gg-362681",
-        "gg-363612",
-        "gg-363613",
-        "gg-363614",
         "gg-363615",
-        "gg-363616",
-        "gg-363617",
-        "gg-363618",
         "gg-363620",
-        "gg-363621",
-        "gg-363684",
         "gg-363786",
-        "gg-364294",
         "gg-45810",
         "gg-58617",
         "gg-357813",
-        "gg-353758",
-        "gg-357458",
         "gg-357112",
         "gg-357568",
-        "gg-356893",
-        "gg-353763",
-        "gg-353461",
-        "gg-353458",
-        "gg-353751",
         "gg-358829",
-        "gg-353746",
-        "gg-353749",
-        "gg-353762",
         "gg-356617",
-        "gg-357807",
-        "gg-358848"
+        "gg-357807"
       ]
     }
   ],
   "audit": {
-    "assigned_title_match_count": 110,
-    "assigned_opening_match_count": 27,
-    "unmatched_count": 628,
-    "ambiguous_opening_count": 4,
-    "overlap_count": 9,
+    "assigned_title_match_count": 432,
+    "assigned_opening_match_count": 75,
+    "unmatched_count": 257,
+    "ambiguous_opening_count": 5,
+    "overlap_count": 107,
     "overlaps": [
+      {
+        "opportunity_id": "gg-364048",
+        "assigned_bed": "civic",
+        "matching_beds": {
+          "education": 1,
+          "civic": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-364177",
+        "assigned_bed": "earth",
+        "matching_beds": {
+          "climate": 1,
+          "earth": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-364178",
+        "assigned_bed": "earth",
+        "matching_beds": {
+          "climate": 1,
+          "earth": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-364179",
+        "assigned_bed": "earth",
+        "matching_beds": {
+          "climate": 1,
+          "earth": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-364180",
+        "assigned_bed": "earth",
+        "matching_beds": {
+          "climate": 1,
+          "earth": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-364181",
+        "assigned_bed": "earth",
+        "matching_beds": {
+          "climate": 1,
+          "earth": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-359150",
+        "assigned_bed": "publichealth",
+        "matching_beds": {
+          "careers": 3,
+          "publichealth": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-363846",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "education": 4,
+          "civic": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-356163",
+        "assigned_bed": "publichealth",
+        "matching_beds": {
+          "publichealth": 3,
+          "behavioral": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-359170",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "ai": 3,
+          "biomed": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-364276",
+        "assigned_bed": "civic",
+        "matching_beds": {
+          "publichealth": 1,
+          "civic": 4
+        }
+      },
       {
         "opportunity_id": "gg-361526",
         "assigned_bed": "ai",
@@ -832,11 +1175,45 @@
         }
       },
       {
+        "opportunity_id": "gg-364008",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "engineering": 3,
+          "education": 4,
+          "defense": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-364194",
+        "assigned_bed": "earth",
+        "matching_beds": {
+          "earth": 3,
+          "defense": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-356690",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "publichealth": 4
+        }
+      },
+      {
         "opportunity_id": "gg-357018",
-        "assigned_bed": "other",
+        "assigned_bed": "biomed",
         "matching_beds": {
           "cancer": 1,
-          "ai": 1
+          "ai": 1,
+          "biomed": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-357074",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "publichealth": 1
         }
       },
       {
@@ -848,11 +1225,340 @@
         }
       },
       {
+        "opportunity_id": "gg-361164",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "medicine": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-344124",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "engineering": 1,
+          "education": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-344608",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "engineering": 4,
+          "education": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-356309",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "careers": 4,
+          "publichealth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-356310",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "careers": 4,
+          "publichealth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-360562",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-364160",
+        "assigned_bed": "ai",
+        "matching_beds": {
+          "ai": 4,
+          "earth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-356018",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "biomed": 3,
+          "behavioral": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-361134",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 3,
+          "biomed": 3
+        }
+      },
+      {
         "opportunity_id": "gg-362952",
         "assigned_bed": "infectious",
         "matching_beds": {
           "ai": 1,
           "infectious": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-357498",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "engineering": 3,
+          "education": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-351847",
+        "assigned_bed": "infectious",
+        "matching_beds": {
+          "infectious": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-355867",
+        "assigned_bed": "infectious",
+        "matching_beds": {
+          "infectious": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-363946",
+        "assigned_bed": "defense",
+        "matching_beds": {
+          "infectious": 1,
+          "defense": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-364172",
+        "assigned_bed": "other",
+        "matching_beds": {
+          "engineering": 1,
+          "defense": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-361238",
+        "assigned_bed": "ai",
+        "matching_beds": {
+          "ai": 4,
+          "engineering": 4,
+          "education": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-359653",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-359655",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357622",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "careers": 1,
+          "biomed": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-361050",
+        "assigned_bed": "infectious",
+        "matching_beds": {
+          "infectious": 4,
+          "biomed": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-361915",
+        "assigned_bed": "other",
+        "matching_beds": {
+          "ai": 1,
+          "engineering": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-357712",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "cancer": 1,
+          "biomed": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357632",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "careers": 4,
+          "biomed": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357836",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "careers": 4,
+          "biomed": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357838",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "careers": 4,
+          "biomed": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-361249",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "ai": 1,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-363993",
+        "assigned_bed": "other",
+        "matching_beds": {
+          "earth": 1,
+          "engineering": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-357307",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "biomed": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-350802",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "engineering": 4,
+          "education": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357259",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "cancer": 3,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-358202",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "cancer": 3,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357424",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357430",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 3,
+          "behavioral": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-357433",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 3,
+          "behavioral": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-357434",
+        "assigned_bed": "behavioral",
+        "matching_beds": {
+          "publichealth": 1,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-349280",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "engineering": 4,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-356800",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "biomed": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-356978",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "publichealth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-356979",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "publichealth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-358229",
+        "assigned_bed": "behavioral",
+        "matching_beds": {
+          "neuro": 1,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-358230",
+        "assigned_bed": "behavioral",
+        "matching_beds": {
+          "neuro": 1,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357573",
+        "assigned_bed": "publichealth",
+        "matching_beds": {
+          "publichealth": 3,
+          "behavioral": 3
         }
       },
       {
@@ -864,27 +1570,367 @@
         }
       },
       {
+        "opportunity_id": "gg-350338",
+        "assigned_bed": "engineering",
+        "matching_beds": {
+          "engineering": 4,
+          "defense": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-358086",
+        "assigned_bed": "infectious",
+        "matching_beds": {
+          "infectious": 4,
+          "medicine": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-357474",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357476",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-353709",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "engineering": 1,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-353710",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "engineering": 1,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357748",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "engineering": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357193",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "publichealth": 4
+        }
+      },
+      {
         "opportunity_id": "gg-357544",
-        "assigned_bed": "other",
+        "assigned_bed": "behavioral",
         "matching_beds": {
           "neuro": 1,
-          "infectious": 1
+          "infectious": 1,
+          "behavioral": 3
         }
       },
       {
         "opportunity_id": "gg-357545",
-        "assigned_bed": "other",
+        "assigned_bed": "behavioral",
         "matching_beds": {
           "neuro": 1,
-          "infectious": 1
+          "infectious": 1,
+          "behavioral": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-356909",
+        "assigned_bed": "medicine",
+        "matching_beds": {
+          "biomed": 3,
+          "medicine": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357308",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357309",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357345",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357346",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357382",
+        "assigned_bed": "behavioral",
+        "matching_beds": {
+          "publichealth": 1,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357386",
+        "assigned_bed": "behavioral",
+        "matching_beds": {
+          "publichealth": 1,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357550",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "publichealth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-357946",
+        "assigned_bed": "publichealth",
+        "matching_beds": {
+          "publichealth": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357947",
+        "assigned_bed": "publichealth",
+        "matching_beds": {
+          "publichealth": 3,
+          "behavioral": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-358411",
+        "assigned_bed": "other",
+        "matching_beds": {
+          "engineering": 1,
+          "publichealth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-358967",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "biomed": 4,
+          "publichealth": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-362034",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "earth": 1,
+          "education": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-360574",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-361518",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-359696",
+        "assigned_bed": "biomed",
+        "matching_beds": {
+          "biomed": 3,
+          "medicine": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-358991",
+        "assigned_bed": "infectious",
+        "matching_beds": {
+          "infectious": 4,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-359152",
+        "assigned_bed": "other",
+        "matching_beds": {
+          "education": 1,
+          "medicine": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-359004",
+        "assigned_bed": "ai",
+        "matching_beds": {
+          "ai": 4,
+          "publichealth": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-356197",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-360554",
+        "assigned_bed": "neuro",
+        "matching_beds": {
+          "neuro": 4,
+          "biomed": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-359157",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "engineering": 1,
+          "education": 4,
+          "careers": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-359091",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "biomed": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-361204",
+        "assigned_bed": "behavioral",
+        "matching_beds": {
+          "infectious": 3,
+          "behavioral": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-360012",
+        "assigned_bed": "defense",
+        "matching_beds": {
+          "engineering": 1,
+          "defense": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-329436",
+        "assigned_bed": "climate",
+        "matching_beds": {
+          "climate": 4,
+          "education": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-363381",
+        "assigned_bed": "civic",
+        "matching_beds": {
+          "civic": 4,
+          "defense": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-363384",
+        "assigned_bed": "civic",
+        "matching_beds": {
+          "civic": 4,
+          "defense": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-343875",
+        "assigned_bed": "careers",
+        "matching_beds": {
+          "engineering": 1,
+          "careers": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-346203",
+        "assigned_bed": "civic",
+        "matching_beds": {
+          "education": 1,
+          "civic": 3
+        }
+      },
+      {
+        "opportunity_id": "gg-353475",
+        "assigned_bed": "engineering",
+        "matching_beds": {
+          "ai": 1,
+          "engineering": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-360149",
+        "assigned_bed": "engineering",
+        "matching_beds": {
+          "engineering": 4,
+          "education": 1
+        }
+      },
+      {
+        "opportunity_id": "gg-361008",
+        "assigned_bed": "education",
+        "matching_beds": {
+          "engineering": 1,
+          "education": 4
         }
       },
       {
         "opportunity_id": "gg-362063",
-        "assigned_bed": "other",
+        "assigned_bed": "engineering",
         "matching_beds": {
           "climate": 1,
-          "ai": 1
+          "ai": 1,
+          "engineering": 4
+        }
+      },
+      {
+        "opportunity_id": "gg-357192",
+        "assigned_bed": "cancer",
+        "matching_beds": {
+          "cancer": 4,
+          "publichealth": 4
         }
       },
       {
@@ -892,7 +1938,8 @@
         "assigned_bed": "cancer",
         "matching_beds": {
           "cancer": 4,
-          "ai": 1
+          "ai": 1,
+          "publichealth": 1
         }
       }
     ]
