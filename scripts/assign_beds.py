@@ -47,6 +47,7 @@ BEDS = (
         r"energy (?:storage|systems?|efficien\w*|technolog\w*|infrastructur\w*)",
         r"bioenergy|geothermal|alternative (?:jet )?fuels?|fossil fuels?|(?:electric|power) grids?|solar power|wind power",
         r"carbon dioxide removal|offshore wind|photovoltaics?|university nuclear leadership program",
+        r"nuclear fuel rods?|alternative chemicals,? fuels,? and feedstocks|energy and trade security",
     )),
     ("ai", "AI & data science", (
         r"artificial intelligence|augmented intelligence|(?:machine|deep|statistical) learning",
@@ -56,6 +57,8 @@ BEDS = (
         r"ai[- ](?:enabled|powered|driven|systems?|models?|research|infrastructure|readiness|ready|development|education|for)",
         r"computational (?:modeling and analysis of the impact of genomic variation|genomics)",
         r"(?:grants?|research|methods?|resources?) (?:for |in |on )?(?:clinical informatics|bioinformatics)",
+        r"computational and data[- ]enabled science|integrated data systems (?:and|&) services",
+        r"automated processes for knowledge discovery and information retrieval",
     )),
     ("infectious", "Infectious disease", (
         r"(?:infectious|communicable) diseases?|infections?|disease outbreaks?|pandemics?",
@@ -74,6 +77,10 @@ BEDS = (
         r"ecological (?:research|restoration|monitoring)|stream (?:restoration|flow)|biodiversity conservation",
         r"marine (?:science|ecosystems?|protected areas?)|wildlife (?:habitats?|conserv\w*|management)|fish passage",
         r"oceanographic (?:facilities|research)|oceanic and atmospheric research",
+        r"aquatic invasive species|aquatic nuisance species|landscape[- ]scale restoration",
+        r"desalination (?:construction|projects?|technolog\w*)|water reclamation and reuse",
+        r"marine mammal (?:rescue|rescue and response)|forest and open space conservation|diesel emissions reduction",
+        r"contaminated (?:alaska native claims settlement act lands|lands?|sites?)|solid waste management",
     )),
     ("engineering", "Science & engineering", (
         r"mathematics(?! education)|mathematical sciences?|statistics|statistical science|combinatorics|(?:abstract |linear )?algebra",
@@ -86,6 +93,9 @@ BEDS = (
         r"engineering (?:and|of) (?:computer|material|cell|biological|civil)\w*|nanotechnolog\w*|microelectronics",
         r"computing|computer science|cyberinfrastructure|cybersecurity|cyber[- ]physical systems?",
         r"secure open[- ]source|programming languages?|quantum (?:information|computing|science|systems?|materials?|technolog\w*)",
+        r"aerothermoelasticity|aerospace capabilities,? engineering and research|research in the formation of engineers",
+        r"foundations of trusted systems|chemical, bioengineering, energy,? and transport systems",
+        r"directed energy \(rd\) university assistance",
     )),
     ("education", "Education & workforce", (
         r"(?:stem|science|mathematics|marine|tribal|undergraduate|graduate|special|environmental|secondary|bilingual|adult|career and technical) education",
@@ -97,6 +107,8 @@ BEDS = (
         r"tribal colleges and universities program|community college workforce|schools and school districts|scholarships?",
         r"(?:digital|financial|scientific|adult) literacy|research experiences for (?:undergraduates|teachers)",
         r"scientific research workforce",
+        r"graduate medical education|informal education (?:programs?|institutions?)",
+        r"dislocated worker grants?|specialized education in critical technologies|graduate[- ]level internship program",
     )),
     ("careers", "Research careers", (
         r"(?:research )?career (?:development|enhancement|transition|excellence) (?:award|program)s?",
@@ -108,6 +120,10 @@ BEDS = (
         r"predoctoral to postdoctoral transition award|national research service award|research training (?:and leadership|grants?|programs?)",
         r"research (?:education(?:al)?|mentoring) (?:programs?|networks?)",
         r"mentored (?:research|clinical scientist|quantitative research|research scientist) development award",
+        r"academic career excellence(?: \(ace\))? award|mid[- ]career advancement|research software engineer(?: \(rse\))? award",
+        r"small grant program for new investigators|maximizing investigators'? research award|epscor research fellows",
+        r"emerging global leader award|transition to aging research|support for early[- ]career clinician[- ]scientists",
+        r"graduate fellowship pilot|doctoral training pilots?",
     )),
     ("biomed", "Biomedical methods", (
         r"genomic (?:data generation|variants?|variation|interactions|characterization)|animal genomics|genome function",
@@ -118,6 +134,12 @@ BEDS = (
         r"biomarker validation|(?:in vivo|intravital|medical) imaging|imaging the olfactory system",
         r"clinical (?:and|&) translational (?:science|research)|translational science award",
         r"assay development|target identification and validation|shared instrumentation grant|seed instrumentation support",
+        r"engineering biological and biomedical systems|clinical trial (?:pilot studies|(?:planning and )?implementation cooperative agreements?)",
+        r"(?:clinical|data) coordinating center for multi[- ]site investigator[- ]initiated clinical trials",
+        r"single[- ]site investigator[- ]initiated clinical trials|novel or greatly improved research tools and methods",
+        r"translation of technologies for diagnosis and treatment|medtech translator|drugging the undruggable",
+        r"precision probiotic therapies|(?:small molecules,? biologics,? and combination products)|instrumentation grant program",
+        r"enabling technologies and transformative platforms for hlbs research|whole person health restoration",
     )),
     ("medicine", "Clinical medicine", (
         r"hematolog\w*|cardiovascular|heart failure|heart, lung, and blood disorders|hlbs disorders|diabetes",
@@ -126,6 +148,8 @@ BEDS = (
         r"vision[- ]related|vision research|(?:hearing|auditory|vestibular|communication) disorders?",
         r"oral(?:[- ]systemic)? health|dental (?:health|diseases?|caries)|reproductive health|contraception|family planning services",
         r"immune tolerance network|congenital anomalies|human congenital|palliative care",
+        r"craniofacial (?:conditions?|disorders?|diseases?)|generic (?:medicines|drugs?)|complex generics",
+        r"analgesic (?:discovery|therapeutics)|pain research enhancement",
     )),
     ("publichealth", "Public health & safety", (
         r"public health (?:crisis|research|emergency|response|systems?|services?|infrastructur\w*|practice|preparedness|surveillance|interventions?)",
@@ -135,6 +159,8 @@ BEDS = (
         r"food (?:safety|defense) (?:systems?|testing|preparedness|standards)|(?:poisoning|exposure) prevention|health promotion",
         r"world trade center health program|native american health|native american research centers for health",
         r"dissemination and implementation research in health|health systems strengthening",
+        r"strengthen(?:ing)? health systems|advancing global health|state process for informing consumers of recalls",
+        r"human and animal food testing laboratories|laboratory flexible funding model|medical countermeasures",
     )),
     ("behavioral", "Mental health & addiction", (
         r"mental (?:health|disorders?|illness(?:es)?)|psychosis|psychiatric (?:conditions?|disorders?|interventions?)",
@@ -142,6 +168,7 @@ BEDS = (
         r"(?:drug|alcohol|opioid|tobacco) use (?:and misuse|disorders?)|(?:opioid|drug) overdose",
         r"addiction (?:research|epidemiology|prevention|treatment|recovery)|fetal alcohol spectrum disorders?",
         r"alcohol research centers?|suicide prevent\w*",
+        r"psychotropic interventional drugs?|emotional well[- ]being mechanisms",
     )),
     ("civic", "Civic & community services", (
         r"human trafficking|trafficking in persons|anti[- ]trafficking|trafficking survivors|modern slavery",
@@ -151,6 +178,13 @@ BEDS = (
         r"small business (?:innovation|research|development)|community capacity|community revitalization|ambassador's special self[- ]help",
         r"legal services|victim services|victim assistance|civil legal aid|(?:refugee|immigrant) (?:services|resettlement)",
         r"neighborhood (?:development|revitalization)",
+        r"fair housing|resident opportunit(?:y|ies) and self[- ]sufficiency|unaccompanied (?:alien )?children|hud[- ]assisted housing",
+        r"postconviction testing|missing and unidentified human remains|violent crime",
+        r"elder abuse|abuse,? neglect,? and exploitation of elderly|child protection compact|integrity in american elections",
+        r"social impact partnerships to pay for results|(?:long[- ]term )?economic recovery strategies|eda fy ?[0-9]{2} disaster supplemental",
+        r"community service and volunteerism|americorps state and national competitive grants",
+        r"state veterans home construction grant|outdoor recreation (?:legacy partnership|opportunit\w*)",
+        r"adam walsh act|state criminal alien assistance program|special attorneys program|apex accelerator",
     )),
     ("defense", "Defense & security", (
         r"warfight\w*|national security|national defense|warfare|counter (?:weapons of mass destruction|chemical threats)",
@@ -161,14 +195,55 @@ BEDS = (
         r"(?:navy and marine corps|naval) (?:science and technology|operations?)|armed forces (?:capabilit\w*|readiness)",
         r"tactical (?:communications?|sensing|systems?)|army research (?:laboratory|institute)|army combat capabilities",
         r"air force (?:combat|operations|needs|requirements)|air force school of aerospace medicine",
+        r"army applications lab|military academy broad agency announcement",
+        r"research (?:interests of the united states air force academy|initiatives at the naval postgraduate school)",
+        r"air force basic research sciences|extramural biomedical and human performance research and development department of defense",
+        r"homeland security missions|geospatial intelligence|boosting innovative geoint",
+    )),
+    ("agriculture", "Agriculture & food", (
+        r"cooperative agriculture|agriculture innovation centers?|agricultural (?:research|production|sciences|producers?)",
+        r"specialty crops?|plant biotic interactions|plant genome research|designated new animal drugs|veterinary innovation centers?",
+        r"food and agricultural sciences|dairy business innovation|meat and poultry processing|national school lunch program",
+        r"bycatch reduction|(?:atlantic |sefsc )?bluefin tuna research|fisheries management|wolf livestock loss",
+    )),
+    ("heritage", "Arts & heritage", (
+        r"arts and artifacts|(?:art|architecture) biennal(?:es?|s)|artist exchange|state arts agencies",
+        r"public humanities|advancing the humanities|collections stewardship|national digital newspaper program",
+        r"documenting endangered (?:human )?languages|cultural heritage preservation",
+    )),
+    ("society", "Social sciences", (
+        r"science of organizations|accountable institutions and behavior|law (?:and|&) science",
+        r"social psychology|social and behavio[u]?ral sciences?|social scientific studies of law",
+        r"anthropolog\w*|archaeolog\w*|archaeometr\w*|linguistics|sociology",
+        r"decision,? risk and management sciences|the economics program|^economics$",
+        r"developmental sciences|measurement of language development|human[- ]environment and geographical sciences",
+        r"a science of science approach|science of science: discovery",
+    )),
+    ("capacity", "Research infrastructure", (
+        r"epscor research infrastructure improvement|established program to stimulate competitive research",
+        r"research (?:infrastructure|capacity)[- ](?:improvement|building)",
+        r"research capacity at (?:tribal colleges|historically black colleges and universities)",
+        r"infrastructure innovation for biological research|research enhancement award program",
+        r"support for research excellence|centers? of biomedical research excellence|biomedical research environment and sponsored programs administration",
+        r"pediatric data resource center|kids first training and outreach core|resource[- ]related research projects",
+        r"major research instrumentation program|findable accessible interoperable reusable open science",
+        r"niams p30 centers program|research on research security program|research facilities act program",
+        r"institutional review board establishment and enhancement|clinical research network infrastructure",
+        r"state-of-the-art equipment, technologies, research tools",
+    )),
+    ("diplomacy", "Diplomacy & exchange", (
+        r"public diplomacy programs?|commercial diplomacy|bilateral commercial cooperation|priorities in the multilateral sphere",
+        r"u\.s\. policy at more than [0-9]+ international organizations",
+        r"austrian[- ]american partnership fund|international development graduate fellowship",
+        r"(?:foreign|international) affairs (?:graduate )?fellowship(?: program)?",
     )),
     (OTHER_ID, "Other opportunities", ()),
 )
-# Keep the original tie precedence. For the new beds, prioritize an explicit
-# education or training aim over the discipline it teaches when scores tie.
+# Keep the existing tie precedence. The latest beds follow it in display order.
 TIE_ORDER = ("rare", "cancer", "infectious", "neuro", "climate", "ai",
              "education", "careers", "earth", "engineering", "biomed", "medicine",
-             "publichealth", "behavioral", "civic", "defense")
+             "publichealth", "behavioral", "civic", "defense",
+             "agriculture", "heritage", "society", "capacity", "diplomacy")
 PATTERNS = {
     bed: re.compile(r"\b(?:" + "|".join(terms) + r")\b", re.IGNORECASE)
     for bed, _, terms in BEDS if terms
@@ -186,6 +261,7 @@ ILLUSTRATIVE_CLAUSE = re.compile(
 SYNOPSIS_CONTEXT = re.compile(
     r"\b(?:National Cancer Institute|National Institute of Neurological Disorders and Stroke|"
     r"National Institute of Allergy and Infectious Diseases|brain and/or body|"
+    r"National Institute of Dental and Craniofacial Research|"
     r"National Science Foundation|Office of Naval Research|Army Research Office|"
     r"Air Force Office of Scientific Research|Department of Defense|Department of War|"
     r"Department of Education|Department of Agriculture|U\.S\. Geological Survey|"
@@ -203,13 +279,15 @@ def normalized(text):
 
 def opening_scope(record):
     source = normalized(record.get("description") or "")
+    # Preserve the positions of actual evidence while excluding institution names
+    # that would otherwise be partially visible at the cutoff.
+    source = SYNOPSIS_CONTEXT.sub(lambda match: " " * len(match[0]), source)
     if len(source) > SYNOPSIS_CHARACTERS:
         source = source[:SYNOPSIS_CHARACTERS].rsplit(" ", 1)[0]
-    plain_scope = " ".join(
+    return " ".join(
         ILLUSTRATIVE_CLAUSE.split(sentence, maxsplit=1)[0]
         for sentence in SENTENCE_BREAK.split(source)
     )
-    return SYNOPSIS_CONTEXT.sub(" ", plain_scope)
 
 
 def match_beds(record):
@@ -280,12 +358,13 @@ def assign_beds(feed):
             "characters of the normalized Grants.gov synopsis. If no synopsis is available, "
             "only the title contributes. Each field earns points once per bed. The matching phrases "
             "below are case-insensitive, whole-word regular expressions, with case-sensitive "
-            "exceptions for the listed title abbreviations. Named synopsis context and "
-            "example-list tails are excluded. Highest score wins. The listed title tie order "
+            "exceptions for the listed title abbreviations. Named synopsis context is "
+            "excluded without moving the 480-character boundary. Example-list tails are "
+            "excluded. Highest score wins. The listed title tie order "
             "resolves equal title scores. Synopsis-only ties and records with no match go to "
-            "Other opportunities. The original six beds keep their display order, followed "
-            "by new topics with at least 20 supported grants among the previously unmatched "
-            "records in the discovery snapshot. Records within each bed are sorted by descending "
+            "Other opportunities. The original six beds and the ten beds added in the first "
+            "split keep their display order. The second split appends topics supported by at "
+            "least 10 of the 262 previously residual records. Records within each bed are sorted by descending "
             "gap score, ascending deadline with rolling last, then opportunity ID."
         ),
         "title_tie_order": list(TIE_ORDER),
