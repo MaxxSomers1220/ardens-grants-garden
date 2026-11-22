@@ -27,6 +27,12 @@
         --layer-sunlight: #F2C14E;
         --garden-sky-cream: #F7F1E3;
         --panel-ink: #2E3A45;
+        --arden-crayon-sky-blue: #2F6FD0;
+        --arden-pink-sky: #E754A8;
+        --arden-pod-purple: #9B8AC4;
+        --arden-hill-green: #69A84F;
+        --arden-sunshine-ground: #F5E98A;
+        --arden-bloom-gold: #F2B01E;
         --font-heading: "Bricolage Grotesque", "Public Sans", sans-serif;
         --font-body: "Public Sans", system-ui, sans-serif;
         --font-data: "IBM Plex Mono", ui-monospace, monospace;
@@ -175,7 +181,7 @@
       }
       .garden-heading { display: flex; flex-direction: column; align-items: start; gap: .42rem; }
       .garden-heading h2, .garden-season { background: var(--garden-cream); }
-      .garden-heading h2 { border-radius: 7px; padding: .16rem .18rem; }
+      .garden-heading h2 { border-radius: 7px; padding: .16rem .34rem; }
       .garden-heading h2 {
         font-family: var(--font-heading);
         font-weight: 800;
@@ -250,8 +256,14 @@
         background: linear-gradient(180deg, #D9A44128, transparent 56%);
         opacity: var(--garden-day-progress, 0);
       }
-      .garden-backdrop svg { display: block; width: 100%; height: 100%; }
-      .arden-mountain-lookout { transform: translate(112px, 78px) scale(.76); }
+      .garden-backdrop > svg { display: block; }
+      .garden-backdrop > svg:first-child { width: 100%; height: 100%; }
+      .garden-backdrop > :is(.arden-lookout-art, .arden-sky-heart) {
+        position: absolute;
+        top: calc(9.677% + var(--garden-header-height, 6rem) + 3px);
+      }
+      .arden-lookout-art { left: clamp(1rem, 7vw, 7rem); width: 68px; height: 44px; }
+      .arden-sky-heart { right: 8%; width: 24px; height: 24px; }
       .garden-camera { transform-origin: 50% 50%; }
       .garden-camera {
         transition-property: transform, opacity;
@@ -412,7 +424,7 @@
         .garden-home { gap: .12rem; }
         .garden-home svg { width: 18px; height: 18px; }
         .garden-switch[data-layer]::before { margin-right: .23rem; }
-        .arden-mountain-lookout { transform: translate(30px, 103px) scale(.70); }
+        .arden-sky-heart { width: 18px; height: 18px; }
         .garden-detail-head .garden-detail-actions { width: 100%; }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -455,7 +467,7 @@
         white-space: nowrap;
         font: 600 clamp(.67rem, .94vw, .86rem)/1.15 var(--font-data);
       }
-      .garden-choice-label .arden-keeper-icon { width: 14px; height: 13px; flex: none; }
+      .garden-choice-label .arden-keeper-icon { width: 16px; height: 13px; flex: none; }
       .garden-home .arden-house-icon { width: 21px; height: 21px; }
       .garden-choice-short { display: none; }
       @media (max-width: 1050px) {
@@ -464,7 +476,7 @@
       }
       @media (max-width: 500px) {
         .garden-bed-target .garden-choice-label { gap: .22rem; padding-inline: .24rem; }
-        .garden-choice-label .arden-keeper-icon { width: 11px; height: 10px; }
+        .garden-choice-label .arden-keeper-icon { width: 12px; height: 10px; }
       }
       .garden-choice-count {
         border: 1px solid var(--garden-line);
@@ -618,6 +630,108 @@
       @media (prefers-reduced-motion: reduce) {
         .garden-scene :is(.garden-map-bed, .garden-bed-target, [data-field-bed]) { opacity: 1; }
         .garden-bed-plant[data-attention] .garden-crop { transform: none; }
+      }
+
+      /* Neuroscience art preview */
+      .garden-bed-view[data-bed="neuro"] {
+        --arden-plant-height: clamp(7rem, 32vw, 8.6rem);
+        --arden-soil-depth: 2.6rem;
+        --arden-bed-backdrop: url("./assets/arden-neuroscience-backdrop.svg");
+        --arden-bed-furrow: url("./assets/arden-neuroscience-furrow.svg");
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-bed-plants {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(.5rem, 2vw, 1.25rem) 0;
+        isolation: isolate;
+        padding: .7rem clamp(.4rem, 3vw, 2rem) 1.55rem;
+        border-color: color-mix(in srgb, var(--garden-deep) 60%, transparent);
+        border-radius: 1.45rem .95rem 1.3rem .85rem;
+        background: var(--arden-bed-backdrop) center top / 100% 40rem repeat-y var(--arden-hill-green);
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-plant-card {
+        position: relative;
+        min-inline-size: 0;
+        contain-intrinsic-block-size: auto calc(var(--arden-plant-height) + 5.1rem);
+      }
+
+      /* The two vertical edges of the tile share the same curves and elevation. */
+      .garden-bed-view[data-bed="neuro"] .garden-plant-card::before {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        inset-block-start: calc(var(--arden-plant-height) * .79 + .25rem);
+        block-size: var(--arden-soil-depth);
+        background: var(--arden-bed-furrow) center center / 100% 100% no-repeat;
+        pointer-events: none;
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-plant-card:nth-child(even)::before {
+        transform: scaleX(-1);
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-bed-plant {
+        position: relative;
+        z-index: 1;
+        width: calc(100% - .9rem);
+        min-inline-size: 0;
+        margin-inline: .45rem;
+        padding: .25rem .14rem .5rem;
+        gap: .28rem;
+        grid-template-rows: var(--arden-plant-height) auto auto;
+        align-content: start;
+        scroll-margin-block: 4.25rem;
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-plant-art {
+        display: grid;
+        align-items: end;
+        justify-items: center;
+        width: 100%;
+        height: var(--arden-plant-height);
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-bed-plant .garden-crop {
+        width: min(100%, calc(var(--arden-plant-height) * .95));
+        height: var(--arden-plant-height);
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-plant-name,
+      .garden-bed-view[data-bed="neuro"] .garden-plant-fact {
+        max-inline-size: 100%;
+        padding: .13rem .22rem;
+        background: color-mix(in srgb, var(--garden-cream) 88%, transparent);
+        border-radius: .24rem;
+        color: var(--garden-ink);
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-plant-name {
+        font-size: clamp(.82rem, 3.4vw, .96rem);
+        font-weight: 700;
+        line-height: 1.24;
+        text-wrap: pretty;
+      }
+
+      .garden-bed-view[data-bed="neuro"] .garden-bed-plant:is(:focus-visible, [data-attention]) {
+        outline-offset: 1px;
+      }
+
+      @media (min-width: 595px) {
+        .garden-bed-view[data-bed="neuro"] .garden-bed-plants {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 910px) {
+        .garden-bed-view[data-bed="neuro"] {
+          --arden-plant-height: 10rem;
+          --arden-soil-depth: 3.1rem;
+        }
+
+        .garden-bed-view[data-bed="neuro"] .garden-bed-plants {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
       }
 
       /* ---------- Ask demo ---------- */
@@ -1051,7 +1165,12 @@ const gardenPaint = Object.freeze({
   light: gardenTokens.getPropertyValue("--layer-sunlight").trim(),
   cream: gardenTokens.getPropertyValue("--garden-sky-cream").trim(),
   ink: gardenTokens.getPropertyValue("--panel-ink").trim(),
-  bloom: gardenTokens.getPropertyValue("--gold-bright").trim(),
+  bloom: gardenTokens.getPropertyValue("--arden-bloom-gold").trim(),
+  crayonBlue: gardenTokens.getPropertyValue("--arden-crayon-sky-blue").trim(),
+  crayonPink: gardenTokens.getPropertyValue("--arden-pink-sky").trim(),
+  podPurple: gardenTokens.getPropertyValue("--arden-pod-purple").trim(),
+  hillGreen: gardenTokens.getPropertyValue("--arden-hill-green").trim(),
+  sunshineGround: gardenTokens.getPropertyValue("--arden-sunshine-ground").trim(),
   elephantRainbow: Object.freeze(["#BC586C", "#C95E43", "#E39F45", "#E4C35D", "#659849", "#79579A"]),
 });
 
@@ -1111,10 +1230,10 @@ function gardenMountainLookout(p = {}) {
 function gardenHouseIcon() {
   return `<svg class="arden-house-icon" viewBox="0 0 48 48" width="34" height="34"
     xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" stroke-linejoin="round">
-    <path d="M7 19.5 41 20.3 40.6 43.9 7.6 43.5Z" fill="var(--arden-house-blue, #7BA8BF)"
+    <path d="M7 19.5 41 20.3 40.6 43.9 7.6 43.5Z" fill="var(--arden-crayon-sky-blue)"
       stroke="var(--garden-ink, #2E3A45)" stroke-width="1.35"/>
     <path d="M3.3 21.3 23.1 5 43.9 20.6 39.7 23.1 24 18.9 7.2 23.4Z"
-      fill="var(--arden-roof, #AF839F)" stroke="var(--garden-ink, #2E3A45)" stroke-width="1.4"/>
+      fill="var(--arden-pod-purple)" stroke="var(--garden-ink, #2E3A45)" stroke-width="1.4"/>
     <path d="m9.8 19.8 4.2-3.5m1.4 2 5-4.9m1 3.3 4-4.3m2.4 5.8 3-3.9m.1 4.5 2.2-2.4m2.3 3 1.7-1.7"
       fill="none" stroke="var(--arden-motif-purple, #735887)" stroke-opacity=".7" stroke-width=".8"
       stroke-linecap="round"/>
@@ -1123,9 +1242,9 @@ function gardenHouseIcon() {
     <path d="M15.4 27v8.1m-3.7-3.8 7.7-.1m14.5-4.2.1 8.1m-3.6-3.9 7 .1"
       fill="none" stroke="var(--arden-motif-purple, #735887)" stroke-width="1.7" stroke-linecap="round"/>
     <path d="M20.3 43.6v-6.1c0-2.1 1.6-3.5 3.7-3.5 2.3 0 4 1.6 4 3.7v5.9Z"
-      fill="var(--arden-door, #E1AAC5)" stroke="var(--garden-ink, #2E3A45)" stroke-width=".9"/>
+      fill="var(--arden-pink-sky)" stroke="var(--garden-ink, #2E3A45)" stroke-width=".9"/>
     <path d="M24.1 42.3c-.8-.7-2.4-1.6-2.3-2.8.1-1.2 1.6-1.3 2.3-.2.7-1.2 2.2-1.1 2.3.1.1 1.2-1.5 2.2-2.3 2.9Z"
-      fill="var(--arden-heart, #A95782)"/>
+      fill="var(--arden-pod-purple)" stroke="var(--garden-ink)" stroke-width=".55"/>
   </svg>`;
 }
 
@@ -1133,7 +1252,7 @@ function gardenBedKeeperIcon() {
   return `<svg class="arden-keeper-icon" viewBox="0 0 36 24" width="24" height="16"
     xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" stroke-linejoin="round">
     <path d="M3 18.6c-1.8-2.8.3-6.5 3.2-6.6.1-3 3.1-4.5 5.4-3C13 5 16.5 4.1 19.1 7.6c2.3-3.2 6-2 7.3 1.9 2.7-1 5.1 1 5.6 3.8 2.9.4 3.4 4.9.6 6.3-7.4 1.6-19.3 1.3-29.6-1Z"
-      fill="var(--arden-keeper-fill, #C8B4D7)" stroke="var(--arden-motif-purple, #735887)" stroke-width="1.3"/>
+      fill="var(--arden-pod-purple)" stroke="var(--arden-motif-purple, #735887)" stroke-width="1.3"/>
     <path d="m8.6 12.3-.6 4.9m4.8-3.7-.4 5.2m11.3-5.9.5 6.6m4-5.9.5 4.5"
       stroke="var(--arden-motif-purple, #735887)" stroke-width=".65" stroke-opacity=".35"
       stroke-linecap="round"/>
@@ -1209,66 +1328,102 @@ function gardenElephantToothpasteArt(p, neutral = false) {
 
 function gardenLandscape() {
   const p = gardenPaint;
-  const random = gardenSeed("arden-slopes");
-  const fieldLines = Array.from({ length: 38 }, () => {
-    const x = Math.round(random() * 1000);
-    const y = Math.round(310 + random() * 385);
-    const reach = Math.round(7 + random() * 32);
-    return `<path d="M${x} ${y}q${reach * .42} -3 ${reach} -1"/>`;
-  }).join("");
+  const blue = p.crayonBlue;
+  const pink = p.crayonPink;
+  const purple = p.podPurple;
+  const green = p.hillGreen;
+  const lawn = p.sunshineGround;
+  const cloudOutline = gardenMix(blue, purple, .52);
+  const farSlope = gardenMix(green, p.cream, .28);
+  const slopeShade = gardenMix(green, p.evergreen, .33);
+  const grassInk = gardenMix(green, lawn, .38);
+  const random = gardenSeed("arden-crayon-lawn");
+
+  const grass = Array.from({ length: 36 }, () => {
+    const x = Math.round(5 + random() * 990);
+    const y = Math.round(328 + random() * 365);
+    const span = Math.round(5 + random() * 16);
+    return `M${x} ${y}q${Math.round(span * .42)} -2 ${span} -.7`;
+  }).join(" ");
 
   return `<svg viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="arden-land-sky" x2="0" y2="1">
-        <stop stop-color="${p.cream}"/>
-        <stop offset=".64" stop-color="${gardenMix(p.cream, p.water, .18)}"/>
-        <stop offset="1" stop-color="${gardenMix(p.cream, p.water, .28)}"/>
+      <linearGradient id="arden-crayon-sky" x1="0%" y1="17%" x2="100%" y2="39%">
+        <stop offset="0%" stop-color="${blue}"/>
+        <stop offset="42%" stop-color="${blue}"/>
+        <stop offset="51%" stop-color="${purple}"/>
+        <stop offset="62%" stop-color="${pink}"/>
+        <stop offset="100%" stop-color="${pink}"/>
       </linearGradient>
-      <linearGradient id="arden-land-field" x2="0" y2="1">
-        <stop stop-color="${gardenMix(p.leaf, p.cream, .57)}"/>
-        <stop offset=".53" stop-color="${gardenMix(p.leaf, p.cream, .48)}"/>
-        <stop offset="1" stop-color="${gardenMix(p.evergreen, p.cream, .49)}"/>
-      </linearGradient>
-      <radialGradient id="arden-land-haze">
-        <stop stop-color="${p.cream}" stop-opacity=".86"/>
-        <stop offset="1" stop-color="${p.cream}" stop-opacity="0"/>
-      </radialGradient>
     </defs>
-    <path d="M0 0H1000V700H0Z" fill="url(#arden-land-sky)"/>
-    <ellipse cx="256" cy="88" rx="403" ry="234" fill="url(#arden-land-haze)"/>
-    <path d="M0 132C129 102 233 107 350 116S577 141 689 114 899 87 1000 106V119C907 102 815 104 705 130S488 146 349 128 109 119 0 151Z" fill="${p.cream}" opacity=".55"/>
-    <g fill="${p.cream}" stroke="${p.water}" stroke-opacity=".32" stroke-linejoin="round" transform="translate(526 137)">
-      <path d="M0 10Q-2 3 6 3Q9-5 18-2Q24-10 32-6Q38-4 41 1Q50-4 54 5Q60 5 61 11Q37 16 12 14Q4 14 0 10Z"/>
-      <path d="m10 8 3-5 3 5zm15-1 4-7 4 7zm19 3 2-4 3 4z" fill="none"/>
+    <path d="M0 0H1000V700H0Z" fill="url(#arden-crayon-sky)"/>
+
+    <g fill="none" stroke="${p.cream}" stroke-linecap="round" opacity=".17">
+      <path d="M-48 113C91 45 195 45 341 31M2 144C136 79 241 70 412 51M-29 167C143 105 269 111 462 64"
+        stroke-width="2.8"/>
+      <path d="M551 120C701 58 788 102 1017 46M573 138C744 83 847 110 1033 76M655 155C807 124 908 134 1042 98"
+        stroke-width="2.6"/>
     </g>
-    <path d="M0 185C82 176 128 153 214 157S328 206 418 186 568 124 673 154 819 198 900 162 965 155 1000 151V293H0Z" fill="${p.dry}" opacity=".20"/>
-    <path d="M0 215C65 211 173 196 243 201S402 229 466 214 569 181 642 188 730 210 792 211 916 168 1000 172V258H0Z" fill="${p.leaf}" opacity=".27"/>
-    <path d="M0 236C111 205 156 243 267 236S394 202 470 221 609 249 682 226 849 236 919 210 1000 207 1000 207V286H0Z" fill="${p.evergreen}" opacity=".21"/>
-    ${gardenMountainLookout(p)}
-    <path d="M0 243C137 220 143 269 294 250S464 235 573 252 702 252 798 237 928 222 1000 237V700H0Z" fill="url(#arden-land-field)"/>
+
+    <g fill="${p.cream}" stroke="${cloudOutline}" stroke-opacity=".36" stroke-width="1.25" stroke-linejoin="round">
+      <path d="M217 109C210 103 216 93 226 92C226 81 239 76 249 83C254 69 275 68 282 82C293 76 303 83 305 92C322 88 331 98 327 108C315 116 232 119 217 109Z"/>
+      <path d="M385 144C380 137 386 129 396 128C398 118 410 115 419 120C424 111 438 112 444 120C456 116 467 124 465 131C478 128 488 135 485 143C467 148 404 151 385 144Z" opacity=".94"/>
+      <path d="M670 112C664 105 671 96 681 96C682 85 700 82 710 89C718 75 737 78 744 89C756 83 773 90 775 99C790 96 800 104 796 113C770 122 691 123 670 112Z" opacity=".95"/>
+    </g>
+    <g fill="none" stroke="${cloudOutline}" stroke-opacity=".37" stroke-linecap="round">
+      <path d="M222 107Q267 114 321 105M391 142Q435 146 479 140M677 110Q730 117 789 109"/>
+    </g>
+    <path d="M0 162C110 152 159 209 262 193S423 155 515 194 651 206 747 168 917 143 1000 173V383H0Z"
+      fill="${farSlope}"/>
+    <path d="M0 239C130 220 154 245 278 211S466 229 546 219 706 182 805 190 919 244 1000 210V450H0Z"
+      fill="${green}"/>
+    <path d="M0 264C139 235 213 269 313 239S470 250 601 252 749 218 843 228 925 256 1000 247V471H0Z"
+      fill="${slopeShade}" opacity=".42"/>
+    <path d="M-1 285C118 257 236 298 359 272S557 250 684 282 862 256 1001 250V700H-1Z"
+      fill="${green}"/>
+
+    <path d="M-4 351C103 338 155 302 274 318S411 339 514 315 682 304 778 318 927 335 1004 311V703H-4Z"
+      fill="${lawn}"/>
     <g fill="none" stroke-linecap="round">
-      <path d="M-50 340C197 286 300 308 449 271S764 237 1050 298M-36 432C193 363 353 408 551 365S840 362 1027 384M-35 598C176 530 380 583 564 530S846 513 1027 557" stroke="${p.cream}" stroke-width="16" opacity=".41"/>
-      <path d="M-25 355C174 307 304 335 437 303S736 262 1028 303M-40 460C148 401 337 440 507 402S813 390 1027 401M-25 637C157 581 350 628 589 589S823 566 1030 585" stroke="${p.dry}" stroke-width="1.4" opacity=".24"/>
-      <path d="M-20 688C188 642 376 687 558 653S795 622 1022 641" stroke="${p.soil}" stroke-width="2" opacity=".15"/>
-      <g stroke="${p.dry}" opacity=".22" stroke-width="1.1">${fieldLines}</g>
+      <path d="M-32 392C111 332 239 366 383 353S646 320 805 362 960 364 1027 349M-31 530C183 468 336 524 517 496S842 490 1029 507M-35 648C183 595 346 625 535 601S837 592 1030 614"
+        stroke="${p.cream}" stroke-width="13" opacity=".29"/>
+      <path d="M-32 392C111 332 239 366 383 353S646 320 805 362 960 364 1027 349M-31 530C183 468 336 524 517 496S842 490 1029 507M-35 648C183 595 346 625 535 601S837 592 1030 614"
+        stroke="${grassInk}" stroke-width="1.35" opacity=".42"/>
+      <path d="${grass}" stroke="${green}" stroke-width="1.1" opacity=".47"/>
     </g>
+  </svg>
+  <svg class="arden-lookout-art" viewBox="-16 51 260 177" aria-hidden="true" focusable="false">
+    ${gardenMountainLookout({ ...p, water: gardenMix(blue, p.cream, .45) })}
+  </svg>
+  <svg class="arden-sky-heart" viewBox="856 64 74 62" aria-hidden="true" focusable="false">
+    <path d="M892 123C882 115 859 101 858 85C857 69 876 64 889 80C901 63 923 70 925 86C927 101 903 118 892 123Z"
+      fill="${purple}" stroke="${p.cream}" stroke-opacity=".66" stroke-width="2.8"/>
+    <path d="M866 86Q872 76 880 82M898 78Q910 70 918 84"
+      fill="none" stroke="${p.cream}" stroke-opacity=".57" stroke-width="3" stroke-linecap="round"/>
   </svg>`;
 }
 
 function gardenBed({ x, y, w, h, index, hasDry }) {
   const p = gardenPaint;
   const random = gardenSeed("soil-" + index);
-  const inset = Math.min(w * .075, 14);
-  const border = `M${inset + 5} 3Q${w * .49} 1 ${w - inset - 6} 3Q${w - inset} 3 ${w - inset + 2} 8L${w - 3} ${h - 8}Q${w} ${h - 2} ${w - 8} ${h - 2}Q${w * .54} ${h + 1} 8 ${h - 2}Q1 ${h - 2} 3 ${h - 9}L${inset} 8Q${inset + 2} 3 ${inset + 5} 3Z`;
-  const tone = hasDry ? gardenMix(p.dry, p.evergreen, .54) : gardenMix(p.evergreen, p.leaf, .36);
+  const left = Math.round(w * (.045 + random() * .03));
+  const right = w - Math.round(w * (.045 + random() * .03));
+  const high = Math.round(2 + random() * 3);
+  const low = Math.round(3 + random() * 4);
+  const bow = Math.round(1 + random() * 4);
+  const border = `M${left + 5} ${high}C${w * .31} 1 ${w * .65} ${bow + 2} ${right - 8} ${low}
+    Q${right - 2} ${low + 1} ${right} ${low + 6}L${w - 4} ${h - 12}
+    Q${w} ${h - 3} ${w - 10} ${h - 3}C${w * .66} ${h + 1} ${w * .31} ${h - bow} 10 ${h - 3}
+    Q0 ${h - 3} 4 ${h - 12}L${left} ${high + 8}Q${left + 1} ${high + 1} ${left + 5} ${high}Z`;
+  const tone = hasDry ? gardenMix(p.evergreen, p.dry, .31) : gardenMix(p.evergreen, p.hillGreen, .14 + random() * .14);
   const grain = Array.from({ length: 18 }, () => {
     const startX = Math.round(17 + (w - 36) * random());
     const startY = Math.round(7 + (h - 15) * random());
     return `M${startX} ${startY}q2 -1 5 -.6`;
   }).join("");
   return `<g class="garden-bed-graphic" transform="translate(${x} ${y})" aria-hidden="true">
-    <path d="${border}" fill="${p.soil}" opacity=".34" transform="translate(0 2)"/>
-    <path class="garden-bed-soil" d="${border}" fill="${tone}" stroke="${p.cream}" stroke-width="2.4"/>
+    <path d="${border}" fill="${p.soil}" opacity=".64" transform="translate(0 2.5)"/>
+    <path class="garden-bed-soil" d="${border}" fill="${tone}" stroke="${p.cream}" stroke-width="1.85"/>
     <path d="${grain}" fill="none" stroke="${p.cream}" stroke-linecap="round" opacity=".21"/>
   </g>`;
 }
@@ -1410,9 +1565,9 @@ function gardenBloom(x, y) {
   const p = gardenPaint;
   const petals = Array.from({ length: 6 }, (_, i) => `<ellipse cx="0" cy="-5.1" rx="3.15" ry="4.9" transform="rotate(${i * 60})"/>`).join("");
   return `<g transform="translate(${x} ${y})"><g class="garden-bloom">
-    <circle r="13" fill="${p.light}" opacity=".24"/>
-    <g fill="${p.light}" stroke="${p.corn}" stroke-width=".47">${petals}</g>
-    <circle r="4.2" fill="${p.corn}"/><circle r="2.55" fill="${p.cream}"/>
+    <circle r="13" fill="${p.bloom}" opacity=".24"/>
+    <g fill="${p.bloom}" stroke="${p.soil}" stroke-width=".55">${petals}</g>
+    <circle r="4.2" fill="${p.bloom}" stroke="${p.soil}" stroke-width=".6"/><circle r="2.55" fill="${p.cream}"/>
     <path d="M-1 0 0-.8 1.15.25" fill="none" stroke="${p.soil}" stroke-linecap="round" stroke-width=".55"/>
   </g></g>`;
 }
@@ -1908,7 +2063,8 @@ function renderGardenField({ beds, layout, aspect }) {
     const size = Math.min(32, Math.min(dy, dx * aspect) * .98);
     const flowerPaths = [];
     const furrows = Array.from({ length: rows }, (_, row) =>
-      "M" + number(x + side) + " " + number(y + top + (row + 1) * dy) + "h" + number(width)).join("");
+      "M" + number(x + side) + " " + number(y + top + (row + 1) * dy) +
+      "q" + number(width * .52) + " " + (row % 2 === 0 ? "-3 " : "3 ") + number(width) + " 0").join("");
     const plants = slots.map((slot, rank) => {
       const row = Math.floor(rank / columns);
       const column = rank % columns;
@@ -2104,7 +2260,9 @@ function renderGardenField({ beds, layout, aspect }) {
             const gapX = mobile ? 16 : 23;
             const unitsPerPx = 700 / sceneHeight;
             const header = landing.querySelector(".garden-header");
-            const top = (header.offsetHeight + (mobile ? 27 : 23)) * unitsPerPx;
+            const headerHeight = header.offsetHeight;
+            scene.style.setProperty("--garden-header-height", headerHeight + "px");
+            const top = (headerHeight + 49) * unitsPerPx;
             const gapY = (mobile ? 7 : 11) * unitsPerPx;
             const labelHeight = (mobile ? 19 : 23) * unitsPerPx;
             const labelGap = 4 * unitsPerPx;
@@ -2119,7 +2277,7 @@ function renderGardenField({ beds, layout, aspect }) {
               const funded = bed.slots.some(fundingPresent);
               return {
                 index, w: width, h: height, labelY,
-                x: left + index % columns * (width + gapX),
+                x: left + index % columns * (width + gapX) + (row % 2 ? -5 : 4),
                 y: labelY + labelHeight + labelGap,
                 funded, fall: seasonName === "Fall",
                 hasDry: bed.slots.some(slot => slot.crop === "corn") || !funded
