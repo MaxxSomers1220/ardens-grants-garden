@@ -1,0 +1,2146 @@
+{
+  "mode": "acceptance",
+  "address": "http://127.0.0.1:18462/",
+  "feed": "2026-11-21T06:00:54.859651+00:00",
+  "date": "2026-11-25",
+  "errors": [],
+  "geometry": [
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "scene": [
+        0,
+        0,
+        1440,
+        900
+      ],
+      "labelPairs": [],
+      "textPairs": [],
+      "overflowingLabels": [],
+      "wrongClickTargets": [],
+      "plantIntersections": [],
+      "labels": [
+        {
+          "id": "rare",
+          "name": "Rare disease",
+          "aria": "Rare disease",
+          "box": [
+            148.95,
+            145,
+            284.12,
+            168
+          ]
+        },
+        {
+          "id": "neuro",
+          "name": "Neuroscience",
+          "aria": "Neuroscience",
+          "box": [
+            488.41,
+            145,
+            623.59,
+            168
+          ]
+        },
+        {
+          "id": "cancer",
+          "name": "Cancer",
+          "aria": "Cancer",
+          "box": [
+            852.31,
+            145,
+            938.66,
+            168
+          ]
+        },
+        {
+          "id": "climate",
+          "name": "Climate & energy",
+          "aria": "Climate & energy",
+          "box": [
+            1151.11,
+            145,
+            1318.83,
+            168
+          ]
+        },
+        {
+          "id": "ai",
+          "name": "AI & data science",
+          "aria": "AI & data science",
+          "box": [
+            115.63,
+            269.66,
+            291.49,
+            292.66
+          ]
+        },
+        {
+          "id": "infectious",
+          "name": "Infectious disease",
+          "aria": "Infectious disease",
+          "box": [
+            451.05,
+            269.66,
+            635.04,
+            292.66
+          ]
+        },
+        {
+          "id": "earth",
+          "name": "Earth & environment",
+          "aria": "Earth & environment",
+          "box": [
+            786.47,
+            269.66,
+            978.59,
+            292.66
+          ]
+        },
+        {
+          "id": "engineering",
+          "name": "Science & engineering",
+          "aria": "Science & engineering",
+          "box": [
+            1117.8,
+            269.66,
+            1326.2,
+            292.66
+          ]
+        },
+        {
+          "id": "education",
+          "name": "Education & workforce",
+          "aria": "Education & workforce",
+          "box": [
+            112.33,
+            394.33,
+            320.73,
+            417.33
+          ]
+        },
+        {
+          "id": "careers",
+          "name": "Research careers",
+          "aria": "Research careers",
+          "box": [
+            472.14,
+            394.33,
+            639.86,
+            417.33
+          ]
+        },
+        {
+          "id": "biomed",
+          "name": "Biomedical methods",
+          "aria": "Biomedical methods",
+          "box": [
+            803.49,
+            394.33,
+            987.48,
+            417.33
+          ]
+        },
+        {
+          "id": "medicine",
+          "name": "Clinical medicine",
+          "aria": "Clinical medicine",
+          "box": [
+            1147.04,
+            394.33,
+            1322.9,
+            417.33
+          ]
+        },
+        {
+          "id": "publichealth",
+          "name": "Public health & safety",
+          "aria": "Public health & safety",
+          "box": [
+            95.29,
+            519,
+            311.84,
+            542
+          ]
+        },
+        {
+          "id": "behavioral",
+          "name": "Mental health & addiction",
+          "aria": "Mental health & addiction",
+          "box": [
+            422.57,
+            519,
+            663.52,
+            542
+          ]
+        },
+        {
+          "id": "civic",
+          "name": "Civic & community services",
+          "aria": "Civic & community services",
+          "box": [
+            757.98,
+            519,
+            1007.08,
+            542
+          ]
+        },
+        {
+          "id": "defense",
+          "name": "Defense & security",
+          "aria": "Defense & security",
+          "box": [
+            1130.01,
+            519,
+            1313.99,
+            542
+          ]
+        },
+        {
+          "id": "agriculture",
+          "name": "Agriculture & food",
+          "aria": "Agriculture & food",
+          "box": [
+            124.54,
+            643.66,
+            308.52,
+            666.66
+          ]
+        },
+        {
+          "id": "heritage",
+          "name": "Arts & heritage",
+          "aria": "Arts & heritage",
+          "box": [
+            476.21,
+            643.66,
+            635.79,
+            666.66
+          ]
+        },
+        {
+          "id": "society",
+          "name": "Social sciences",
+          "aria": "Social sciences",
+          "box": [
+            815.7,
+            643.66,
+            975.27,
+            666.66
+          ]
+        },
+        {
+          "id": "capacity",
+          "name": "Research infrastructure",
+          "aria": "Research infrastructure",
+          "box": [
+            1122.63,
+            643.66,
+            1347.3,
+            666.66
+          ]
+        },
+        {
+          "id": "diplomacy",
+          "name": "Diplomacy & exchange",
+          "aria": "Diplomacy & exchange",
+          "box": [
+            442.91,
+            768.33,
+            643.18,
+            791.33
+          ]
+        },
+        {
+          "id": "other",
+          "name": "Other opportunities",
+          "aria": "Other opportunities",
+          "box": [
+            786.47,
+            768.33,
+            978.59,
+            791.33
+          ]
+        }
+      ]
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "scene": [
+        0,
+        0,
+        1024,
+        768
+      ],
+      "labelPairs": [],
+      "textPairs": [],
+      "overflowingLabels": [],
+      "wrongClickTargets": [],
+      "plantIntersections": [],
+      "labels": [
+        {
+          "id": "rare",
+          "name": "Rare disease",
+          "aria": "Rare disease",
+          "box": [
+            96.48,
+            129,
+            211.45,
+            152
+          ]
+        },
+        {
+          "id": "neuro",
+          "name": "Neuroscience",
+          "aria": "Neuroscience",
+          "box": [
+            337.89,
+            129,
+            452.86,
+            152
+          ]
+        },
+        {
+          "id": "cancer",
+          "name": "Cancer",
+          "aria": "Cancer",
+          "box": [
+            598.66,
+            129,
+            674.91,
+            152
+          ]
+        },
+        {
+          "id": "climate",
+          "name": "Climate",
+          "aria": "Climate & energy",
+          "box": [
+            836.84,
+            129,
+            919.54,
+            152
+          ]
+        },
+        {
+          "id": "ai",
+          "name": "AI & data",
+          "aria": "AI & data science",
+          "box": [
+            96.95,
+            234.77,
+            192.55,
+            257.77
+          ]
+        },
+        {
+          "id": "infectious",
+          "name": "Infections",
+          "aria": "Infectious disease",
+          "box": [
+            335.13,
+            234.77,
+            437.19,
+            257.77
+          ]
+        },
+        {
+          "id": "earth",
+          "name": "Environment",
+          "aria": "Earth & environment",
+          "box": [
+            573.3,
+            234.77,
+            681.82,
+            257.77
+          ]
+        },
+        {
+          "id": "engineering",
+          "name": "Engineering",
+          "aria": "Science & engineering",
+          "box": [
+            814.73,
+            234.77,
+            923.24,
+            257.77
+          ]
+        },
+        {
+          "id": "education",
+          "name": "Education",
+          "aria": "Education & workforce",
+          "box": [
+            106.16,
+            340.53,
+            201.77,
+            363.53
+          ]
+        },
+        {
+          "id": "careers",
+          "name": "Careers",
+          "aria": "Research careers",
+          "box": [
+            354.02,
+            340.53,
+            436.73,
+            363.53
+          ]
+        },
+        {
+          "id": "biomed",
+          "name": "Biomedical",
+          "aria": "Biomedical methods",
+          "box": [
+            585.75,
+            340.53,
+            687.81,
+            363.53
+          ]
+        },
+        {
+          "id": "medicine",
+          "name": "Medicine",
+          "aria": "Clinical medicine",
+          "box": [
+            833.61,
+            340.53,
+            922.77,
+            363.53
+          ]
+        },
+        {
+          "id": "publichealth",
+          "name": "Public health",
+          "aria": "Public health & safety",
+          "box": [
+            84.04,
+            446.31,
+            205.46,
+            469.31
+          ]
+        },
+        {
+          "id": "behavioral",
+          "name": "Mental health",
+          "aria": "Mental health & addiction",
+          "box": [
+            325.45,
+            446.31,
+            446.87,
+            469.31
+          ]
+        },
+        {
+          "id": "civic",
+          "name": "Civic services",
+          "aria": "Civic & community services",
+          "box": [
+            563.63,
+            446.31,
+            691.5,
+            469.31
+          ]
+        },
+        {
+          "id": "defense",
+          "name": "Defense",
+          "aria": "Defense & security",
+          "box": [
+            827.63,
+            446.31,
+            910.34,
+            469.31
+          ]
+        },
+        {
+          "id": "agriculture",
+          "name": "Agriculture",
+          "aria": "Agriculture & food",
+          "box": [
+            99.71,
+            552.08,
+            208.23,
+            575.08
+          ]
+        },
+        {
+          "id": "heritage",
+          "name": "Arts & heritage",
+          "aria": "Arts & heritage",
+          "box": [
+            328.21,
+            552.08,
+            462.54,
+            575.08
+          ]
+        },
+        {
+          "id": "society",
+          "name": "Social science",
+          "aria": "Social sciences",
+          "box": [
+            572.84,
+            552.08,
+            700.72,
+            575.08
+          ]
+        },
+        {
+          "id": "capacity",
+          "name": "Research hubs",
+          "aria": "Research infrastructure",
+          "box": [
+            817.48,
+            552.08,
+            938.9,
+            575.08
+          ]
+        },
+        {
+          "id": "diplomacy",
+          "name": "Diplomacy",
+          "aria": "Diplomacy & exchange",
+          "box": [
+            338.35,
+            657.86,
+            433.96,
+            680.86
+          ]
+        },
+        {
+          "id": "other",
+          "name": "Other grants",
+          "aria": "Other opportunities",
+          "box": [
+            570.08,
+            657.86,
+            685.05,
+            680.86
+          ]
+        }
+      ]
+    },
+    {
+      "viewport": [
+        768,
+        900
+      ],
+      "scene": [
+        0,
+        0,
+        768,
+        900
+      ],
+      "labelPairs": [],
+      "textPairs": [],
+      "overflowingLabels": [],
+      "wrongClickTargets": [],
+      "plantIntersections": [],
+      "labels": [
+        {
+          "id": "rare",
+          "name": "Rare disease",
+          "aria": "Rare disease",
+          "box": [
+            57.98,
+            121,
+            172.95,
+            144
+          ]
+        },
+        {
+          "id": "neuro",
+          "name": "Neuroscience",
+          "aria": "Neuroscience",
+          "box": [
+            239.05,
+            121,
+            354.02,
+            144
+          ]
+        },
+        {
+          "id": "cancer",
+          "name": "Cancer",
+          "aria": "Cancer",
+          "box": [
+            439.45,
+            121,
+            515.7,
+            144
+          ]
+        },
+        {
+          "id": "climate",
+          "name": "Climate",
+          "aria": "Climate & energy",
+          "box": [
+            617.29,
+            121,
+            699.99,
+            144
+          ]
+        },
+        {
+          "id": "ai",
+          "name": "AI & data",
+          "aria": "AI & data science",
+          "box": [
+            60.76,
+            249.66,
+            156.37,
+            272.66
+          ]
+        },
+        {
+          "id": "infectious",
+          "name": "Infections",
+          "aria": "Infectious disease",
+          "box": [
+            238.58,
+            249.66,
+            340.64,
+            272.66
+          ]
+        },
+        {
+          "id": "earth",
+          "name": "Environment",
+          "aria": "Earth & environment",
+          "box": [
+            416.41,
+            249.66,
+            524.93,
+            272.66
+          ]
+        },
+        {
+          "id": "engineering",
+          "name": "Engineering",
+          "aria": "Science & engineering",
+          "box": [
+            597.48,
+            249.66,
+            705.99,
+            272.66
+          ]
+        },
+        {
+          "id": "education",
+          "name": "Education",
+          "aria": "Education & workforce",
+          "box": [
+            67.66,
+            378.33,
+            163.27,
+            401.33
+          ]
+        },
+        {
+          "id": "careers",
+          "name": "Careers",
+          "aria": "Research careers",
+          "box": [
+            255.18,
+            378.33,
+            337.88,
+            401.33
+          ]
+        },
+        {
+          "id": "biomed",
+          "name": "Biomedical",
+          "aria": "Biomedical methods",
+          "box": [
+            426.55,
+            378.33,
+            528.61,
+            401.33
+          ]
+        },
+        {
+          "id": "medicine",
+          "name": "Medicine",
+          "aria": "Clinical medicine",
+          "box": [
+            614.06,
+            378.33,
+            703.22,
+            401.33
+          ]
+        },
+        {
+          "id": "publichealth",
+          "name": "Public health",
+          "aria": "Public health & safety",
+          "box": [
+            47.85,
+            507,
+            169.27,
+            530
+          ]
+        },
+        {
+          "id": "behavioral",
+          "name": "Mental health",
+          "aria": "Mental health & addiction",
+          "box": [
+            228.9,
+            507,
+            350.32,
+            530
+          ]
+        },
+        {
+          "id": "civic",
+          "name": "Civic services",
+          "aria": "Civic & community services",
+          "box": [
+            406.73,
+            507,
+            534.61,
+            530
+          ]
+        },
+        {
+          "id": "defense",
+          "name": "Defense",
+          "aria": "Defense & security",
+          "box": [
+            610.38,
+            507,
+            693.09,
+            530
+          ]
+        },
+        {
+          "id": "agriculture",
+          "name": "Agriculture",
+          "aria": "Agriculture & food",
+          "box": [
+            61.21,
+            635.66,
+            169.73,
+            658.66
+          ]
+        },
+        {
+          "id": "heritage",
+          "name": "Arts & heritage",
+          "aria": "Arts & heritage",
+          "box": [
+            229.37,
+            635.66,
+            363.7,
+            658.66
+          ]
+        },
+        {
+          "id": "society",
+          "name": "Social science",
+          "aria": "Social sciences",
+          "box": [
+            413.64,
+            635.66,
+            541.52,
+            658.66
+          ]
+        },
+        {
+          "id": "capacity",
+          "name": "Research hubs",
+          "aria": "Research infrastructure",
+          "box": [
+            597.93,
+            635.66,
+            719.35,
+            658.66
+          ]
+        },
+        {
+          "id": "diplomacy",
+          "name": "Diplomacy",
+          "aria": "Diplomacy & exchange",
+          "box": [
+            241.8,
+            764.33,
+            337.41,
+            787.33
+          ]
+        },
+        {
+          "id": "other",
+          "name": "Other grants",
+          "aria": "Other opportunities",
+          "box": [
+            413.19,
+            764.33,
+            528.16,
+            787.33
+          ]
+        }
+      ]
+    },
+    {
+      "viewport": [
+        430,
+        932
+      ],
+      "scene": [
+        0,
+        0,
+        430,
+        932
+      ],
+      "labelPairs": [],
+      "textPairs": [],
+      "overflowingLabels": [],
+      "wrongClickTargets": [],
+      "plantIntersections": [],
+      "labels": [
+        {
+          "id": "rare",
+          "name": "Rare disease",
+          "aria": "Rare disease",
+          "box": [
+            26.08,
+            139,
+            128.7,
+            158
+          ]
+        },
+        {
+          "id": "neuro",
+          "name": "Neuroscience",
+          "aria": "Neuroscience",
+          "box": [
+            165.41,
+            139,
+            268.03,
+            158
+          ]
+        },
+        {
+          "id": "cancer",
+          "name": "Cancer",
+          "aria": "Cancer",
+          "box": [
+            324.08,
+            139,
+            387.98,
+            158
+          ]
+        },
+        {
+          "id": "climate",
+          "name": "Climate",
+          "aria": "Climate & energy",
+          "box": [
+            38.34,
+            236.66,
+            108.7,
+            255.66
+          ]
+        },
+        {
+          "id": "ai",
+          "name": "AI & data",
+          "aria": "AI & data science",
+          "box": [
+            171.21,
+            236.66,
+            254.48,
+            255.66
+          ]
+        },
+        {
+          "id": "infectious",
+          "name": "Infections",
+          "aria": "Infectious disease",
+          "box": [
+            307.3,
+            236.66,
+            397.02,
+            255.66
+          ]
+        },
+        {
+          "id": "earth",
+          "name": "Environment",
+          "aria": "Earth & environment",
+          "box": [
+            29.3,
+            334.33,
+            125.48,
+            353.33
+          ]
+        },
+        {
+          "id": "engineering",
+          "name": "Engineering",
+          "aria": "Science & engineering",
+          "box": [
+            168.63,
+            334.33,
+            264.8,
+            353.33
+          ]
+        },
+        {
+          "id": "education",
+          "name": "Education",
+          "aria": "Education & workforce",
+          "box": [
+            314.4,
+            334.33,
+            397.66,
+            353.33
+          ]
+        },
+        {
+          "id": "careers",
+          "name": "Careers",
+          "aria": "Research careers",
+          "box": [
+            38.34,
+            432,
+            108.7,
+            451
+          ]
+        },
+        {
+          "id": "biomed",
+          "name": "Biomedical",
+          "aria": "Biomedical methods",
+          "box": [
+            167.98,
+            432,
+            257.7,
+            451
+          ]
+        },
+        {
+          "id": "medicine",
+          "name": "Medicine",
+          "aria": "Clinical medicine",
+          "box": [
+            313.75,
+            432,
+            390.56,
+            451
+          ]
+        },
+        {
+          "id": "publichealth",
+          "name": "Public health",
+          "aria": "Public health & safety",
+          "box": [
+            22.85,
+            529.67,
+            131.93,
+            548.67
+          ]
+        },
+        {
+          "id": "behavioral",
+          "name": "Mental health",
+          "aria": "Mental health & addiction",
+          "box": [
+            162.18,
+            529.67,
+            271.26,
+            548.67
+          ]
+        },
+        {
+          "id": "civic",
+          "name": "Civic services",
+          "aria": "Civic & community services",
+          "box": [
+            298.27,
+            529.67,
+            413.8,
+            548.67
+          ]
+        },
+        {
+          "id": "defense",
+          "name": "Defense",
+          "aria": "Defense & security",
+          "box": [
+            38.34,
+            627.34,
+            108.7,
+            646.34
+          ]
+        },
+        {
+          "id": "agriculture",
+          "name": "Agriculture",
+          "aria": "Agriculture & food",
+          "box": [
+            164.76,
+            627.34,
+            260.93,
+            646.34
+          ]
+        },
+        {
+          "id": "heritage",
+          "name": "Arts & heritage",
+          "aria": "Arts & heritage",
+          "box": [
+            291.16,
+            627.34,
+            413.15,
+            646.34
+          ]
+        },
+        {
+          "id": "society",
+          "name": "Social science",
+          "aria": "Social sciences",
+          "box": [
+            19.63,
+            725.02,
+            135.16,
+            744.02
+          ]
+        },
+        {
+          "id": "capacity",
+          "name": "Research hubs",
+          "aria": "Research infrastructure",
+          "box": [
+            162.18,
+            725.02,
+            271.26,
+            744.02
+          ]
+        },
+        {
+          "id": "diplomacy",
+          "name": "Diplomacy",
+          "aria": "Diplomacy & exchange",
+          "box": [
+            314.4,
+            725.02,
+            397.66,
+            744.02
+          ]
+        },
+        {
+          "id": "other",
+          "name": "Other grants",
+          "aria": "Other opportunities",
+          "box": [
+            161.53,
+            822.69,
+            264.16,
+            841.69
+          ]
+        }
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "scene": [
+        0,
+        0,
+        390,
+        844
+      ],
+      "labelPairs": [],
+      "textPairs": [],
+      "overflowingLabels": [],
+      "wrongClickTargets": [],
+      "plantIntersections": [],
+      "labels": [
+        {
+          "id": "rare",
+          "name": "Rare disease",
+          "aria": "Rare disease",
+          "box": [
+            18.86,
+            139,
+            121.48,
+            158
+          ]
+        },
+        {
+          "id": "neuro",
+          "name": "Neuroscience",
+          "aria": "Neuroscience",
+          "box": [
+            145.23,
+            139,
+            247.86,
+            158
+          ]
+        },
+        {
+          "id": "cancer",
+          "name": "Cancer",
+          "aria": "Cancer",
+          "box": [
+            290.95,
+            139,
+            354.86,
+            158
+          ]
+        },
+        {
+          "id": "climate",
+          "name": "Climate",
+          "aria": "Climate & energy",
+          "box": [
+            31.49,
+            225.88,
+            101.85,
+            244.88
+          ]
+        },
+        {
+          "id": "ai",
+          "name": "AI & data",
+          "aria": "AI & data science",
+          "box": [
+            151.4,
+            225.88,
+            234.66,
+            244.88
+          ]
+        },
+        {
+          "id": "infectious",
+          "name": "Infections",
+          "aria": "Infectious disease",
+          "box": [
+            274.53,
+            225.88,
+            364.25,
+            244.88
+          ]
+        },
+        {
+          "id": "earth",
+          "name": "Environment",
+          "aria": "Earth & environment",
+          "box": [
+            22.09,
+            312.77,
+            118.26,
+            331.77
+          ]
+        },
+        {
+          "id": "engineering",
+          "name": "Engineering",
+          "aria": "Science & engineering",
+          "box": [
+            148.46,
+            312.77,
+            244.63,
+            331.77
+          ]
+        },
+        {
+          "id": "education",
+          "name": "Education",
+          "aria": "Education & workforce",
+          "box": [
+            281.27,
+            312.77,
+            364.54,
+            331.77
+          ]
+        },
+        {
+          "id": "careers",
+          "name": "Careers",
+          "aria": "Research careers",
+          "box": [
+            31.49,
+            399.66,
+            101.85,
+            418.66
+          ]
+        },
+        {
+          "id": "biomed",
+          "name": "Biomedical",
+          "aria": "Biomedical methods",
+          "box": [
+            148.17,
+            399.66,
+            237.89,
+            418.66
+          ]
+        },
+        {
+          "id": "medicine",
+          "name": "Medicine",
+          "aria": "Clinical medicine",
+          "box": [
+            280.98,
+            399.66,
+            357.8,
+            418.66
+          ]
+        },
+        {
+          "id": "publichealth",
+          "name": "Public health",
+          "aria": "Public health & safety",
+          "box": [
+            15.63,
+            486.55,
+            124.71,
+            505.55
+          ]
+        },
+        {
+          "id": "behavioral",
+          "name": "Mental health",
+          "aria": "Mental health & addiction",
+          "box": [
+            142.01,
+            486.55,
+            251.09,
+            505.55
+          ]
+        },
+        {
+          "id": "civic",
+          "name": "Civic services",
+          "aria": "Civic & community services",
+          "box": [
+            265.14,
+            486.55,
+            380.67,
+            505.55
+          ]
+        },
+        {
+          "id": "defense",
+          "name": "Defense",
+          "aria": "Defense & security",
+          "box": [
+            31.49,
+            573.44,
+            101.85,
+            592.44
+          ]
+        },
+        {
+          "id": "agriculture",
+          "name": "Agriculture",
+          "aria": "Agriculture & food",
+          "box": [
+            144.95,
+            573.44,
+            241.12,
+            592.44
+          ]
+        },
+        {
+          "id": "heritage",
+          "name": "Arts & heritage",
+          "aria": "Arts & heritage",
+          "box": [
+            259.34,
+            573.44,
+            379.45,
+            592.44
+          ]
+        },
+        {
+          "id": "society",
+          "name": "Social science",
+          "aria": "Social sciences",
+          "box": [
+            12.41,
+            660.33,
+            127.94,
+            679.33
+          ]
+        },
+        {
+          "id": "capacity",
+          "name": "Research hubs",
+          "aria": "Research infrastructure",
+          "box": [
+            142.01,
+            660.33,
+            251.09,
+            679.33
+          ]
+        },
+        {
+          "id": "diplomacy",
+          "name": "Diplomacy",
+          "aria": "Diplomacy & exchange",
+          "box": [
+            281.27,
+            660.33,
+            364.54,
+            679.33
+          ]
+        },
+        {
+          "id": "other",
+          "name": "Other grants",
+          "aria": "Other opportunities",
+          "box": [
+            141.72,
+            747.22,
+            244.34,
+            766.22
+          ]
+        }
+      ]
+    },
+    {
+      "viewport": [
+        360,
+        800
+      ],
+      "scene": [
+        0,
+        0,
+        360,
+        800
+      ],
+      "labelPairs": [],
+      "textPairs": [],
+      "overflowingLabels": [],
+      "wrongClickTargets": [],
+      "plantIntersections": [],
+      "labels": [
+        {
+          "id": "rare",
+          "name": "Rare disease",
+          "aria": "Rare disease",
+          "box": [
+            23.16,
+            188,
+            106.43,
+            207
+          ]
+        },
+        {
+          "id": "neuro",
+          "name": "Neuroscience",
+          "aria": "Neuroscience",
+          "box": [
+            139.8,
+            188,
+            223.07,
+            207
+          ]
+        },
+        {
+          "id": "cancer",
+          "name": "Cancer",
+          "aria": "Cancer",
+          "box": [
+            275.79,
+            188,
+            320.34,
+            207
+          ]
+        },
+        {
+          "id": "climate",
+          "name": "Climate",
+          "aria": "Climate & energy",
+          "box": [
+            36.05,
+            263.38,
+            87.05,
+            282.38
+          ]
+        },
+        {
+          "id": "ai",
+          "name": "AI & data",
+          "aria": "AI & data science",
+          "box": [
+            146.23,
+            263.38,
+            210.14,
+            282.38
+          ]
+        },
+        {
+          "id": "infectious",
+          "name": "Infections",
+          "aria": "Infectious disease",
+          "box": [
+            259.65,
+            263.38,
+            330.01,
+            282.38
+          ]
+        },
+        {
+          "id": "earth",
+          "name": "Environment",
+          "aria": "Earth & environment",
+          "box": [
+            26.39,
+            338.75,
+            103.2,
+            357.75
+          ]
+        },
+        {
+          "id": "engineering",
+          "name": "Engineering",
+          "aria": "Science & engineering",
+          "box": [
+            143.03,
+            338.75,
+            219.84,
+            357.75
+          ]
+        },
+        {
+          "id": "education",
+          "name": "Education",
+          "aria": "Education & workforce",
+          "box": [
+            266.11,
+            338.75,
+            330.02,
+            357.75
+          ]
+        },
+        {
+          "id": "careers",
+          "name": "Careers",
+          "aria": "Research careers",
+          "box": [
+            36.05,
+            414.13,
+            87.05,
+            433.13
+          ]
+        },
+        {
+          "id": "biomed",
+          "name": "Biomedical",
+          "aria": "Biomedical methods",
+          "box": [
+            143.01,
+            414.13,
+            213.37,
+            433.13
+          ]
+        },
+        {
+          "id": "medicine",
+          "name": "Medicine",
+          "aria": "Clinical medicine",
+          "box": [
+            266.1,
+            414.13,
+            323.55,
+            433.13
+          ]
+        },
+        {
+          "id": "publichealth",
+          "name": "Public health",
+          "aria": "Public health & safety",
+          "box": [
+            19.94,
+            489.5,
+            109.66,
+            508.5
+          ]
+        },
+        {
+          "id": "behavioral",
+          "name": "Mental health",
+          "aria": "Mental health & addiction",
+          "box": [
+            136.58,
+            489.5,
+            226.3,
+            508.5
+          ]
+        },
+        {
+          "id": "civic",
+          "name": "Civic services",
+          "aria": "Civic & community services",
+          "box": [
+            249.98,
+            489.5,
+            346.15,
+            508.5
+          ]
+        },
+        {
+          "id": "defense",
+          "name": "Defense",
+          "aria": "Defense & security",
+          "box": [
+            36.05,
+            564.88,
+            87.05,
+            583.88
+          ]
+        },
+        {
+          "id": "agriculture",
+          "name": "Agriculture",
+          "aria": "Agriculture & food",
+          "box": [
+            139.78,
+            564.88,
+            216.59,
+            583.88
+          ]
+        },
+        {
+          "id": "heritage",
+          "name": "Arts & heritage",
+          "aria": "Arts & heritage",
+          "box": [
+            243.52,
+            564.88,
+            346.14,
+            583.88
+          ]
+        },
+        {
+          "id": "society",
+          "name": "Social science",
+          "aria": "Social sciences",
+          "box": [
+            16.71,
+            640.25,
+            112.88,
+            659.25
+          ]
+        },
+        {
+          "id": "capacity",
+          "name": "Research hubs",
+          "aria": "Research infrastructure",
+          "box": [
+            136.58,
+            640.25,
+            226.3,
+            659.25
+          ]
+        },
+        {
+          "id": "diplomacy",
+          "name": "Diplomacy",
+          "aria": "Diplomacy & exchange",
+          "box": [
+            266.11,
+            640.25,
+            330.02,
+            659.25
+          ]
+        },
+        {
+          "id": "other",
+          "name": "Other grants",
+          "aria": "Other opportunities",
+          "box": [
+            136.55,
+            715.63,
+            219.82,
+            734.63
+          ]
+        }
+      ]
+    },
+    {
+      "viewport": [
+        320,
+        700
+      ],
+      "scene": [
+        0,
+        0,
+        320,
+        700
+      ],
+      "labelPairs": [],
+      "textPairs": [],
+      "overflowingLabels": [],
+      "wrongClickTargets": [],
+      "plantIntersections": [],
+      "labels": [
+        {
+          "id": "rare",
+          "name": "Rare disease",
+          "aria": "Rare disease",
+          "box": [
+            15.95,
+            209,
+            99.21,
+            228
+          ]
+        },
+        {
+          "id": "neuro",
+          "name": "Neuroscience",
+          "aria": "Neuroscience",
+          "box": [
+            119.63,
+            209,
+            202.9,
+            228
+          ]
+        },
+        {
+          "id": "cancer",
+          "name": "Cancer",
+          "aria": "Cancer",
+          "box": [
+            242.66,
+            209,
+            287.21,
+            228
+          ]
+        },
+        {
+          "id": "climate",
+          "name": "Climate",
+          "aria": "Climate & energy",
+          "box": [
+            29.2,
+            269.5,
+            80.2,
+            288.5
+          ]
+        },
+        {
+          "id": "ai",
+          "name": "AI & data",
+          "aria": "AI & data science",
+          "box": [
+            126.42,
+            269.5,
+            190.33,
+            288.5
+          ]
+        },
+        {
+          "id": "infectious",
+          "name": "Infections",
+          "aria": "Infectious disease",
+          "box": [
+            226.88,
+            269.5,
+            297.24,
+            288.5
+          ]
+        },
+        {
+          "id": "earth",
+          "name": "Environment",
+          "aria": "Earth & environment",
+          "box": [
+            19.17,
+            330,
+            95.98,
+            349
+          ]
+        },
+        {
+          "id": "engineering",
+          "name": "Engineering",
+          "aria": "Science & engineering",
+          "box": [
+            122.86,
+            330,
+            199.67,
+            349
+          ]
+        },
+        {
+          "id": "education",
+          "name": "Education",
+          "aria": "Education & workforce",
+          "box": [
+            232.98,
+            330,
+            296.89,
+            349
+          ]
+        },
+        {
+          "id": "careers",
+          "name": "Careers",
+          "aria": "Research careers",
+          "box": [
+            29.2,
+            390.5,
+            80.2,
+            409.5
+          ]
+        },
+        {
+          "id": "biomed",
+          "name": "Biomedical",
+          "aria": "Biomedical methods",
+          "box": [
+            123.2,
+            390.5,
+            193.55,
+            409.5
+          ]
+        },
+        {
+          "id": "medicine",
+          "name": "Medicine",
+          "aria": "Clinical medicine",
+          "box": [
+            233.34,
+            390.5,
+            290.79,
+            409.5
+          ]
+        },
+        {
+          "id": "publichealth",
+          "name": "Public health",
+          "aria": "Public health & safety",
+          "box": [
+            12.72,
+            451,
+            102.44,
+            470
+          ]
+        },
+        {
+          "id": "behavioral",
+          "name": "Mental health",
+          "aria": "Mental health & addiction",
+          "box": [
+            116.41,
+            451,
+            206.13,
+            470
+          ]
+        },
+        {
+          "id": "civic",
+          "name": "Civic services",
+          "aria": "Civic & community services",
+          "box": [
+            216.85,
+            451,
+            313.02,
+            470
+          ]
+        },
+        {
+          "id": "defense",
+          "name": "Defense",
+          "aria": "Defense & security",
+          "box": [
+            29.2,
+            511.5,
+            80.2,
+            530.5
+          ]
+        },
+        {
+          "id": "agriculture",
+          "name": "Agriculture",
+          "aria": "Agriculture & food",
+          "box": [
+            119.97,
+            511.5,
+            196.78,
+            530.5
+          ]
+        },
+        {
+          "id": "heritage",
+          "name": "Arts & heritage",
+          "aria": "Arts & heritage",
+          "box": [
+            210.79,
+            511.5,
+            313.34,
+            530.5
+          ]
+        },
+        {
+          "id": "society",
+          "name": "Social science",
+          "aria": "Social sciences",
+          "box": [
+            9.49,
+            572,
+            105.66,
+            591
+          ]
+        },
+        {
+          "id": "capacity",
+          "name": "Research hubs",
+          "aria": "Research infrastructure",
+          "box": [
+            116.41,
+            572,
+            206.13,
+            591
+          ]
+        },
+        {
+          "id": "diplomacy",
+          "name": "Diplomacy",
+          "aria": "Diplomacy & exchange",
+          "box": [
+            232.98,
+            572,
+            296.89,
+            591
+          ]
+        },
+        {
+          "id": "other",
+          "name": "Other grants",
+          "aria": "Other opportunities",
+          "box": [
+            116.74,
+            632.48,
+            200.01,
+            651.48
+          ]
+        }
+      ]
+    }
+  ],
+  "bedChecks": [
+    {
+      "id": "rare",
+      "topic": "Rare disease",
+      "count": 6,
+      "winner": "gg-357570",
+      "models": [
+        "elephant-toothpaste",
+        "rare"
+      ]
+    },
+    {
+      "id": "neuro",
+      "topic": "Neuroscience",
+      "count": 42,
+      "winner": "gg-356870",
+      "models": [
+        "elephant-toothpaste",
+        "mind"
+      ]
+    },
+    {
+      "id": "cancer",
+      "topic": "Cancer",
+      "count": 36,
+      "winner": "gg-357075",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "climate",
+      "topic": "Climate & energy",
+      "count": 10,
+      "winner": "gg-363815",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "ai",
+      "topic": "AI & data science",
+      "count": 17,
+      "winner": "gg-361526",
+      "models": [
+        "elephant-toothpaste",
+        "data"
+      ]
+    },
+    {
+      "id": "infectious",
+      "topic": "Infectious disease",
+      "count": 25,
+      "winner": "gg-364214",
+      "models": [
+        "elephant-toothpaste",
+        "germ"
+      ]
+    },
+    {
+      "id": "earth",
+      "topic": "Earth & environment",
+      "count": 77,
+      "winner": "gg-363992",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "engineering",
+      "topic": "Science & engineering",
+      "count": 44,
+      "winner": "gg-278447",
+      "models": [
+        "elephant-toothpaste",
+        "science"
+      ]
+    },
+    {
+      "id": "education",
+      "topic": "Education & workforce",
+      "count": 32,
+      "winner": "gg-357458",
+      "models": [
+        "healthy",
+        "elephant-toothpaste"
+      ]
+    },
+    {
+      "id": "careers",
+      "topic": "Research careers",
+      "count": 74,
+      "winner": "gg-357140",
+      "models": [
+        "elephant-toothpaste",
+        "healthy",
+        "orchard",
+        "corn"
+      ]
+    },
+    {
+      "id": "biomed",
+      "topic": "Biomedical methods",
+      "count": 55,
+      "winner": "gg-359168",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "medicine",
+      "topic": "Clinical medicine",
+      "count": 36,
+      "winner": "gg-357004",
+      "models": [
+        "elephant-toothpaste",
+        "medicine"
+      ]
+    },
+    {
+      "id": "publichealth",
+      "topic": "Public health & safety",
+      "count": 34,
+      "winner": "gg-356893",
+      "models": [
+        "health",
+        "elephant-toothpaste"
+      ]
+    },
+    {
+      "id": "behavioral",
+      "topic": "Mental health & addiction",
+      "count": 30,
+      "winner": "gg-357376",
+      "models": [
+        "elephant-toothpaste",
+        "mind"
+      ]
+    },
+    {
+      "id": "civic",
+      "topic": "Civic & community services",
+      "count": 56,
+      "winner": "gg-364048",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "defense",
+      "topic": "Defense & security",
+      "count": 33,
+      "winner": "gg-362871",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "agriculture",
+      "topic": "Agriculture & food",
+      "count": 13,
+      "winner": "gg-361876",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "heritage",
+      "topic": "Arts & heritage",
+      "count": 12,
+      "winner": "gg-362982",
+      "models": [
+        "elephant-toothpaste",
+        "art"
+      ]
+    },
+    {
+      "id": "society",
+      "topic": "Social sciences",
+      "count": 20,
+      "winner": "gg-347331",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "capacity",
+      "topic": "Research infrastructure",
+      "count": 27,
+      "winner": "gg-358934",
+      "models": [
+        "elephant-toothpaste",
+        "healthy",
+        "orchard"
+      ]
+    },
+    {
+      "id": "diplomacy",
+      "topic": "Diplomacy & exchange",
+      "count": 13,
+      "winner": "gg-364154",
+      "models": [
+        "elephant-toothpaste",
+        "healthy"
+      ]
+    },
+    {
+      "id": "other",
+      "topic": "Other opportunities",
+      "count": 77,
+      "winner": "gg-360368",
+      "models": [
+        "elephant-toothpaste",
+        "healthy",
+        "corn",
+        "orchard"
+      ]
+    }
+  ],
+  "touch": {
+    "id": "gg-353055",
+    "previewDismissed": true,
+    "detailSource": "https://www.grants.gov/search-results-detail/353055",
+    "focusRestored": true
+  },
+  "layoutFailures": [],
+  "guideChecks": [
+    {
+      "id": "gg-357817",
+      "model": "rare",
+      "name": "Rare Plant",
+      "neutral": true,
+      "originalTitle": "Translational Efforts to Advance Gene-based Therapies for Ultra-Rare Neurological and Neuromuscular Disorders (U01 - Clinical Trial Optional)"
+    },
+    {
+      "id": "gg-357570",
+      "model": "elephant-toothpaste",
+      "name": "Rare Plant",
+      "neutral": true,
+      "originalTitle": "Preclinical Proof of Concept Studies for Rare Diseases (R21 Clinical Trial Not Allowed)"
+    },
+    {
+      "id": "gg-353055",
+      "model": "mind",
+      "name": "Mind Plant",
+      "neutral": true,
+      "originalTitle": "BRAIN Initiative: Preclinical Proof of Concept for Novel Recording and Modulation Technologies in the Human CNS (R18 - Clinical Trial Not Allowed)"
+    },
+    {
+      "id": "gg-356870",
+      "model": "elephant-toothpaste",
+      "name": "Mind Plant",
+      "neutral": false,
+      "originalTitle": "Limited Competition: Renewal of Existing NINDS-Supported Clinical Trial Cooperative Agreement Awards (U01 - Clinical Trials Required)",
+      "links": {
+        "awards": 6,
+        "papers": 50
+      }
+    },
+    {
+      "id": "gg-357273",
+      "model": "data",
+      "name": "Data Plant",
+      "neutral": true,
+      "originalTitle": "Personal Health Informatics for Delivering Actionable Insights to Individuals (R01 Clinical Trial Optional)"
+    },
+    {
+      "id": "gg-364215",
+      "model": "germ",
+      "name": "Germ Plant",
+      "neutral": true,
+      "originalTitle": "National Animal Disease Preparedness and Response Program (NADPRP) FY 2027 State Preparedness Funding Opportunity"
+    },
+    {
+      "id": "gg-348375",
+      "model": "science",
+      "name": "Science Plant",
+      "neutral": true,
+      "originalTitle": "Centers of Research Excellence in Science and Technology (CREST)"
+    },
+    {
+      "id": "gg-358090",
+      "model": "medicine",
+      "name": "Medicine Plant",
+      "neutral": true,
+      "originalTitle": "HEAL Initiative: Pain Research Enhancement Program (PREP) (R15 Clinical Trial Optional)"
+    },
+    {
+      "id": "gg-345738",
+      "model": "health",
+      "name": "Health Plant",
+      "neutral": true,
+      "originalTitle": "National Center for Construction Safety and Health Research and Translation (U54)"
+    },
+    {
+      "id": "gg-364253",
+      "model": "art",
+      "name": "Art Plant",
+      "neutral": true,
+      "originalTitle": "US-Greece & US-UK Artist Exchange, FY 2027"
+    }
+  ]
+}
