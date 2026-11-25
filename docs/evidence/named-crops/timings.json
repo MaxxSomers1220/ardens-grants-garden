@@ -1,0 +1,1668 @@
+{
+  "main": {
+    "url": "http://127.0.0.1:18459/",
+    "time": "2026-11-25T15:03:08.606Z",
+    "chromium": "156.0.8078.79",
+    "data": "Real served data, no record overrides.",
+    "cases": {
+      "performance-desktop": {
+        "result": "below-target",
+        "assumption": "A 0.05 FPS tolerance covers normal floating-point and display cadence rounding.",
+        "diagnosticCss": null,
+        "profile": "desktop",
+        "cpuThrottle": 1,
+        "servedHtmlSHA256": "972c055abce47e15047ed84855272724fb11f882c42a28d98adf36b68a70020c",
+        "baseHtmlSHA256": null,
+        "fixtureShape": null,
+        "servedDataSHA256": {
+          "bed-assignments": "0864bc76b2894313f20e3ac31a8812b6de383f861ede67a77abf2392e5ce5abb",
+          "feed-index": "1eee9f138610177bfe933d52e396635a4340b355c603168196c99c1683e404af"
+        },
+        "mountBefore": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 900,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 1,
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 1440,
+              "height": 900,
+              "cssWidth": 1440,
+              "cssHeight": 900
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "mountAfter": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 900,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 1,
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 1440,
+              "height": 900,
+              "cssWidth": 1440,
+              "cssHeight": 900
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "fps": 57.01,
+        "frames": 457,
+        "durationMs": 8016.4,
+        "p50Ms": 16.7,
+        "p95Ms": 16.8,
+        "p99Ms": 33.3,
+        "maximumIntervalMs": 116.7,
+        "over22MsPercent": 1.97,
+        "quality": [
+          {
+            "ms": 0,
+            "value": "reduced-particles"
+          }
+        ],
+        "cdpPerformance": {
+          "durations": {
+            "ScriptDuration": {
+              "ms": 60.87,
+              "percentOfWall": 0.76
+            },
+            "LayoutDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            },
+            "RecalcStyleDuration": {
+              "ms": 169.61,
+              "percentOfWall": 2.12
+            },
+            "TaskDuration": {
+              "ms": 1124.19,
+              "percentOfWall": 14.02
+            },
+            "V8CompileDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            }
+          },
+          "counters": {
+            "LayoutCount": {
+              "before": 0,
+              "after": 0
+            },
+            "RecalcStyleCount": {
+              "before": 0,
+              "after": 413
+            },
+            "Nodes": {
+              "before": 4036,
+              "after": 4036
+            },
+            "JSHeapUsedSize": {
+              "before": 4726096,
+              "after": 4280484
+            },
+            "Documents": {
+              "before": 4,
+              "after": 4
+            },
+            "Frames": {
+              "before": 4,
+              "after": 4
+            }
+          },
+          "note": "CDP cumulative counters; task time can include overlapping script and rendering timers."
+        },
+        "errors": []
+      },
+      "performance-mobile": {
+        "result": "below-target",
+        "assumption": "A 0.05 FPS tolerance covers normal floating-point and display cadence rounding.",
+        "diagnosticCss": null,
+        "profile": "mobile",
+        "cpuThrottle": 4,
+        "servedHtmlSHA256": "972c055abce47e15047ed84855272724fb11f882c42a28d98adf36b68a70020c",
+        "baseHtmlSHA256": null,
+        "fixtureShape": null,
+        "servedDataSHA256": {
+          "feed-index": "1eee9f138610177bfe933d52e396635a4340b355c603168196c99c1683e404af",
+          "bed-assignments": "0864bc76b2894313f20e3ac31a8812b6de383f861ede67a77abf2392e5ce5abb"
+        },
+        "mountBefore": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 1040,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 2.25,
+          "viewport": {
+            "width": 480,
+            "height": 1040
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 480,
+              "height": 1040,
+              "cssWidth": 480,
+              "cssHeight": 1040
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "mountAfter": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 1040,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 2.25,
+          "viewport": {
+            "width": 480,
+            "height": 1040
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 480,
+              "height": 1040,
+              "cssWidth": 480,
+              "cssHeight": 1040
+            }
+          ],
+          "quality": "reduced-parallax",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "fps": 52.89,
+        "frames": 424,
+        "durationMs": 8016.4,
+        "p50Ms": 16.7,
+        "p95Ms": 33.3,
+        "p99Ms": 83.2,
+        "maximumIntervalMs": 116.7,
+        "over22MsPercent": 7.55,
+        "quality": [
+          {
+            "ms": 0,
+            "value": "reduced-particles"
+          },
+          {
+            "ms": 716.6000000000004,
+            "value": "reduced-parallax"
+          }
+        ],
+        "cdpPerformance": {
+          "durations": {
+            "ScriptDuration": {
+              "ms": 246.84,
+              "percentOfWall": 3.08
+            },
+            "LayoutDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            },
+            "RecalcStyleDuration": {
+              "ms": 485.06,
+              "percentOfWall": 6.05
+            },
+            "TaskDuration": {
+              "ms": 3766.48,
+              "percentOfWall": 46.98
+            },
+            "V8CompileDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            }
+          },
+          "counters": {
+            "LayoutCount": {
+              "before": 0,
+              "after": 0
+            },
+            "RecalcStyleCount": {
+              "before": 1,
+              "after": 366
+            },
+            "Nodes": {
+              "before": 4029,
+              "after": 4029
+            },
+            "JSHeapUsedSize": {
+              "before": 4585432,
+              "after": 3968168
+            },
+            "Documents": {
+              "before": 4,
+              "after": 4
+            },
+            "Frames": {
+              "before": 4,
+              "after": 4
+            }
+          },
+          "note": "CDP cumulative counters; task time can include overlapping script and rendering timers."
+        },
+        "errors": []
+      }
+    }
+  },
+  "namedCrops": {
+    "url": "http://127.0.0.1:18462/",
+    "time": "2026-11-25T15:08:38.947Z",
+    "chromium": "156.0.8078.79",
+    "data": "Real served data, no record overrides.",
+    "cases": {
+      "performance-desktop": {
+        "result": "below-target",
+        "assumption": "A 0.05 FPS tolerance covers normal floating-point and display cadence rounding.",
+        "diagnosticCss": null,
+        "profile": "desktop",
+        "cpuThrottle": 1,
+        "servedHtmlSHA256": "cf31c791f78846e532dd0d016b50e578b232f04afe47e37472eafe316a173b08",
+        "baseHtmlSHA256": null,
+        "fixtureShape": null,
+        "servedDataSHA256": {
+          "bed-assignments": "0864bc76b2894313f20e3ac31a8812b6de383f861ede67a77abf2392e5ce5abb",
+          "feed-index": "1eee9f138610177bfe933d52e396635a4340b355c603168196c99c1683e404af"
+        },
+        "mountBefore": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 900,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 1,
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 1440,
+              "height": 900,
+              "cssWidth": 1440,
+              "cssHeight": 900
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "mountAfter": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 900,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 1,
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 1440,
+              "height": 900,
+              "cssWidth": 1440,
+              "cssHeight": 900
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "fps": 56.38,
+        "frames": 452,
+        "durationMs": 8016.4,
+        "p50Ms": 16.7,
+        "p95Ms": 16.8,
+        "p99Ms": 50,
+        "maximumIntervalMs": 116.6,
+        "over22MsPercent": 3.54,
+        "quality": [
+          {
+            "ms": 0,
+            "value": "reduced-particles"
+          }
+        ],
+        "cdpPerformance": {
+          "durations": {
+            "ScriptDuration": {
+              "ms": 76.31,
+              "percentOfWall": 0.95
+            },
+            "LayoutDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            },
+            "RecalcStyleDuration": {
+              "ms": 102.73,
+              "percentOfWall": 1.28
+            },
+            "TaskDuration": {
+              "ms": 1024.36,
+              "percentOfWall": 12.78
+            },
+            "V8CompileDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            }
+          },
+          "counters": {
+            "LayoutCount": {
+              "before": 0,
+              "after": 0
+            },
+            "RecalcStyleCount": {
+              "before": 0,
+              "after": 407
+            },
+            "Nodes": {
+              "before": 11546,
+              "after": 11546
+            },
+            "JSHeapUsedSize": {
+              "before": 5003696,
+              "after": 5349968
+            },
+            "Documents": {
+              "before": 4,
+              "after": 4
+            },
+            "Frames": {
+              "before": 4,
+              "after": 4
+            }
+          },
+          "note": "CDP cumulative counters; task time can include overlapping script and rendering timers."
+        },
+        "errors": []
+      },
+      "performance-mobile": {
+        "result": "below-target",
+        "assumption": "A 0.05 FPS tolerance covers normal floating-point and display cadence rounding.",
+        "diagnosticCss": null,
+        "profile": "mobile",
+        "cpuThrottle": 4,
+        "servedHtmlSHA256": "cf31c791f78846e532dd0d016b50e578b232f04afe47e37472eafe316a173b08",
+        "baseHtmlSHA256": null,
+        "fixtureShape": null,
+        "servedDataSHA256": {
+          "bed-assignments": "0864bc76b2894313f20e3ac31a8812b6de383f861ede67a77abf2392e5ce5abb",
+          "feed-index": "1eee9f138610177bfe933d52e396635a4340b355c603168196c99c1683e404af"
+        },
+        "mountBefore": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 1040,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 2.25,
+          "viewport": {
+            "width": 480,
+            "height": 1040
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 480,
+              "height": 1040,
+              "cssWidth": 480,
+              "cssHeight": 1040
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "mountAfter": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 1040,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 2.25,
+          "viewport": {
+            "width": 480,
+            "height": 1040
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 480,
+              "height": 1040,
+              "cssWidth": 480,
+              "cssHeight": 1040
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "fps": 57.14,
+        "frames": 459,
+        "durationMs": 8033,
+        "p50Ms": 16.7,
+        "p95Ms": 16.8,
+        "p99Ms": 33.4,
+        "maximumIntervalMs": 133.3,
+        "over22MsPercent": 2.83,
+        "quality": [
+          {
+            "ms": 0,
+            "value": "reduced-particles"
+          }
+        ],
+        "cdpPerformance": {
+          "durations": {
+            "ScriptDuration": {
+              "ms": 228.66,
+              "percentOfWall": 2.85
+            },
+            "LayoutDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            },
+            "RecalcStyleDuration": {
+              "ms": 484.62,
+              "percentOfWall": 6.03
+            },
+            "TaskDuration": {
+              "ms": 3107.47,
+              "percentOfWall": 38.68
+            },
+            "V8CompileDuration": {
+              "ms": 0,
+              "percentOfWall": 0
+            }
+          },
+          "counters": {
+            "LayoutCount": {
+              "before": 0,
+              "after": 0
+            },
+            "RecalcStyleCount": {
+              "before": 0,
+              "after": 404
+            },
+            "Nodes": {
+              "before": 11538,
+              "after": 11538
+            },
+            "JSHeapUsedSize": {
+              "before": 5016528,
+              "after": 4460352
+            },
+            "Documents": {
+              "before": 4,
+              "after": 4
+            },
+            "Frames": {
+              "before": 4,
+              "after": 4
+            }
+          },
+          "note": "CDP cumulative counters; task time can include overlapping script and rendering timers."
+        },
+        "errors": []
+      }
+    }
+  },
+  "trace": {
+    "url": "http://127.0.0.1:18462/",
+    "time": "2026-11-25T15:10:20.592Z",
+    "chromium": "156.0.8078.79",
+    "data": "Real served data, no record overrides.",
+    "cases": {
+      "diagnostic-desktop": {
+        "profile": "desktop",
+        "durationMs": 3000,
+        "before": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 900,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 1,
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 1440,
+              "height": 900,
+              "cssWidth": 1440,
+              "cssHeight": 900
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "observedEventCount": 71112,
+        "observedThreadCount": 24,
+        "scopes": {
+          "other": {
+            "RunTask": {
+              "count": 332,
+              "ms": 41.77,
+              "maxMs": 7.03
+            },
+            "RasterTask": {
+              "count": 817,
+              "ms": 661.13,
+              "maxMs": 5.05
+            },
+            "UpdateLayer": {
+              "count": 9,
+              "ms": 0.01,
+              "maxMs": 0
+            }
+          },
+          "renderer-main": {
+            "RunTask": {
+              "count": 912,
+              "ms": 409.59,
+              "maxMs": 23.87
+            },
+            "FireAnimationFrame": {
+              "count": 179,
+              "ms": 32.38,
+              "maxMs": 2.27
+            },
+            "FunctionCall": {
+              "count": 179,
+              "ms": 27.31,
+              "maxMs": 2.09
+            },
+            "PrePaint": {
+              "count": 179,
+              "ms": 26.69,
+              "maxMs": 2.1
+            },
+            "UpdateLayer": {
+              "count": 455,
+              "ms": 1.77,
+              "maxMs": 0.66
+            },
+            "UpdateLayoutTree": {
+              "count": 158,
+              "ms": 35.73,
+              "maxMs": 3.09
+            },
+            "EventDispatch": {
+              "count": 46,
+              "ms": 0.49,
+              "maxMs": 0.15
+            },
+            "Paint": {
+              "count": 24,
+              "ms": 13.8,
+              "maxMs": 1.92
+            }
+          },
+          "compositor-raster": {
+            "RunTask": {
+              "count": 2775,
+              "ms": 1967.59,
+              "maxMs": 44.38
+            }
+          }
+        },
+        "note": "Inclusive trace event durations in separate sample. Nested and cross-thread events can overlap. Unobserved events are omitted.",
+        "dataLossOccurred": false,
+        "servedHtmlSHA256": "cf31c791f78846e532dd0d016b50e578b232f04afe47e37472eafe316a173b08",
+        "baseHtmlSHA256": null,
+        "servedDataSHA256": {
+          "bed-assignments": "0864bc76b2894313f20e3ac31a8812b6de383f861ede67a77abf2392e5ce5abb",
+          "feed-index": "1eee9f138610177bfe933d52e396635a4340b355c603168196c99c1683e404af"
+        },
+        "fixtureShape": null,
+        "errors": []
+      },
+      "diagnostic-mobile": {
+        "profile": "mobile",
+        "durationMs": 3000,
+        "before": {
+          "mounted": 769,
+          "marksInViewport": 769,
+          "sceneCssHeight": 1040,
+          "distinct": 769,
+          "missingIds": 0,
+          "invalidTransformCount": 0,
+          "collapsedTransformCount": 0,
+          "fieldBedTabStops": 22,
+          "browserDpr": 2.25,
+          "viewport": {
+            "width": 480,
+            "height": 1040
+          },
+          "sceneHidden": false,
+          "backingCanvases": [
+            {
+              "width": 480,
+              "height": 1040,
+              "cssWidth": 480,
+              "cssHeight": 1040
+            }
+          ],
+          "quality": "reduced-particles",
+          "beds": [
+            {
+              "id": "rare",
+              "records": 6
+            },
+            {
+              "id": "neuro",
+              "records": 42
+            },
+            {
+              "id": "cancer",
+              "records": 36
+            },
+            {
+              "id": "climate",
+              "records": 10
+            },
+            {
+              "id": "ai",
+              "records": 17
+            },
+            {
+              "id": "infectious",
+              "records": 25
+            },
+            {
+              "id": "earth",
+              "records": 77
+            },
+            {
+              "id": "engineering",
+              "records": 44
+            },
+            {
+              "id": "education",
+              "records": 32
+            },
+            {
+              "id": "careers",
+              "records": 74
+            },
+            {
+              "id": "biomed",
+              "records": 55
+            },
+            {
+              "id": "medicine",
+              "records": 36
+            },
+            {
+              "id": "publichealth",
+              "records": 34
+            },
+            {
+              "id": "behavioral",
+              "records": 30
+            },
+            {
+              "id": "civic",
+              "records": 56
+            },
+            {
+              "id": "defense",
+              "records": 33
+            },
+            {
+              "id": "agriculture",
+              "records": 13
+            },
+            {
+              "id": "heritage",
+              "records": 12
+            },
+            {
+              "id": "society",
+              "records": 20
+            },
+            {
+              "id": "capacity",
+              "records": 27
+            },
+            {
+              "id": "diplomacy",
+              "records": 13
+            },
+            {
+              "id": "other",
+              "records": 77
+            }
+          ]
+        },
+        "observedEventCount": 63589,
+        "observedThreadCount": 19,
+        "scopes": {
+          "other": {
+            "RunTask": {
+              "count": 162,
+              "ms": 17.19,
+              "maxMs": 3.69
+            },
+            "RasterTask": {
+              "count": 325,
+              "ms": 231.39,
+              "maxMs": 2.57
+            },
+            "UpdateLayer": {
+              "count": 10,
+              "ms": 0.01,
+              "maxMs": 0
+            }
+          },
+          "renderer-main": {
+            "PrePaint": {
+              "count": 180,
+              "ms": 103.28,
+              "maxMs": 6.07
+            },
+            "Paint": {
+              "count": 26,
+              "ms": 54.24,
+              "maxMs": 5.88
+            },
+            "UpdateLayer": {
+              "count": 518,
+              "ms": 14.58,
+              "maxMs": 3.07
+            },
+            "RunTask": {
+              "count": 912,
+              "ms": 1227.74,
+              "maxMs": 32.98
+            },
+            "FireAnimationFrame": {
+              "count": 179,
+              "ms": 109.75,
+              "maxMs": 2.39
+            },
+            "FunctionCall": {
+              "count": 179,
+              "ms": 90.27,
+              "maxMs": 2.36
+            },
+            "UpdateLayoutTree": {
+              "count": 155,
+              "ms": 190.11,
+              "maxMs": 5.57
+            },
+            "EventDispatch": {
+              "count": 45,
+              "ms": 0.78,
+              "maxMs": 0.28
+            }
+          },
+          "compositor-raster": {
+            "RunTask": {
+              "count": 2717,
+              "ms": 733.55,
+              "maxMs": 9.33
+            }
+          }
+        },
+        "note": "Inclusive trace event durations in separate sample. Nested and cross-thread events can overlap. Unobserved events are omitted.",
+        "dataLossOccurred": false,
+        "servedHtmlSHA256": "cf31c791f78846e532dd0d016b50e578b232f04afe47e37472eafe316a173b08",
+        "baseHtmlSHA256": null,
+        "servedDataSHA256": {
+          "feed-index": "1eee9f138610177bfe933d52e396635a4340b355c603168196c99c1683e404af",
+          "bed-assignments": "0864bc76b2894313f20e3ac31a8812b6de383f861ede67a77abf2392e5ce5abb"
+        },
+        "fixtureShape": null,
+        "errors": []
+      }
+    }
+  }
+}

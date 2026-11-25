@@ -167,6 +167,8 @@
       }
       #garden a { color: var(--garden-deep); text-underline-offset: .2em; }
       .garden-landing { position: relative; isolation: isolate; min-height: 100svh; }
+      .garden-crop-definitions { position: absolute; pointer-events: none; }
+      .garden-crop-guide strong { display: block; color: var(--garden-deep); }
       .garden-header {
         position: absolute;
         z-index: 4;
@@ -477,6 +479,10 @@
       @media (max-width: 500px) {
         .garden-bed-target .garden-choice-label { gap: .22rem; padding-inline: .24rem; }
         .garden-choice-label .arden-keeper-icon { width: 12px; height: 10px; }
+      }
+      @media (max-width: 375px) {
+        .garden-bed-target .garden-choice-label { max-width: calc(100% + 4px); padding-inline: .12rem; }
+        .garden-bed-target .arden-keeper-icon { display: none; }
       }
       .garden-choice-count {
         border: 1px solid var(--garden-line);
@@ -845,6 +851,9 @@
     <!-- ================= INTERACTIVE GARDEN ================= -->
     <section id="garden" aria-labelledby="garden-title">
       <div class="garden-landing" id="garden-landing" data-funding="true" data-research="true">
+        <svg class="garden-crop-definitions" width="0" height="0" aria-hidden="true" focusable="false">
+          <defs id="garden-named-crop-definitions"></defs>
+        </svg>
         <header class="garden-header">
           <div class="garden-heading garden-landscape-title">
             <h2 id="garden-title">Arden's Grants Garden</h2>
@@ -1595,9 +1604,22 @@ function gardenPicked() {
   };
 }
 
-function gardenCrop({ crop, score, neutral = false, bloom = false, papers = 0, elephant = false, id }) {
+const gardenCropHeight = { seedling: .78, pumpkin: .73, corn: 1, orchard: 1, healthy: .92 };
+const gardenCropScore = score => (Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 50) / 100;
+const gardenCropSize = (crop, score, neutral) => (gardenCropHeight[crop] || 1) * (neutral ? .79 : .65 + .35 * score);
+const gardenCropWash = (score, neutral) => neutral ? .69 : .13 + .27 * score;
+const gardenCropModel = slot => slot.elephant ? "elephant-toothpaste" : slot.namedCrop?.id ?? slot.crop;
+
+function gardenNamedCropUse(namedCrop, score, neutral, attributes) {
+  const wash = (100 * gardenCropWash(score, neutral)).toFixed(2);
+  return '<use href="#garden-named-crop-' + namedCrop.id + '" ' + attributes +
+    ' style="--named-crop-wash:' + wash + '%;--named-crop-line:' + (neutral ? '.35' : '.57') + '"/>';
+}
+
+function gardenCrop({ crop, score, neutral = false, bloom = false, papers = 0, elephant = false, namedCrop, id }) {
   const p = gardenPaint;
-  const rating = Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 50;
+  const normalizedScore = gardenCropScore(score);
+  const rating = normalizedScore * 100;
   const random = gardenSeed(id ?? crop);
   const open = '<svg class="garden-crop" viewBox="0 0 110 120" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">';
   if (crop === "gap") {
@@ -1614,9 +1636,22 @@ function gardenCrop({ crop, score, neutral = false, bloom = false, papers = 0, e
   if (elephant) {
     plant = {
       ...plant,
-      art: `<g transform="translate(55 103) scale(.84)">${gardenElephantToothpasteArt(p)}</g>
+      art: `<g transform="translate(55 103) scale(.84)">${gardenElephantToothpasteArt(p, neutral)}</g>
         <g transform="translate(22 50) scale(.51)">${plant.art}</g>`,
       bloomX: 84, bloomY: 18,
+    };
+  } else if (namedCrop) {
+    const unit = 76 * gardenCropSize(crop, normalizedScore, neutral) * namedCrop.scale / 20;
+    const left = 55 - 10 * unit;
+    const top = 103 - 20 * unit;
+    // The small crop at the stem preserves the existing growth-state silhouette.
+    const growth = crop === "healthy" ? "" : `<g transform="translate(53 61) scale(.4)">${plant.art}</g>`;
+    plant = {
+      ...plant,
+      art: gardenNamedCropUse(namedCrop, normalizedScore, neutral,
+        `transform="translate(${left} ${top}) scale(${unit})"`) + growth,
+      bloomX: left + namedCrop.bloomX * unit,
+      bloomY: top + namedCrop.bloomY * unit,
     };
   }
   return open + `<ellipse class="garden-shadow" cx="55" cy="104" rx="${plant.shadow}" ry="5.5" fill="${p.ink}" opacity=".25"/>
@@ -2040,12 +2075,11 @@ function renderGardenField({ beds, layout, aspect }) {
   };
   const p = gardenPaint;
   const cropColors = { corn: p.corn, pumpkin: p.pumpkin, orchard: p.evergreen };
-  const heightByCrop = { seedling: .78, pumpkin: .73, corn: 1, orchard: 1, healthy: .92 };
   const number = value => Math.round(value * 1000) / 1000;
 
   function colorFor(slot, score) {
     const shade = cropColors[slot.crop] ?? p.leaf;
-    return gardenMix(shade, p.cream, slot.neutral ? .69 : .13 + .27 * score);
+    return gardenMix(shade, p.cream, gardenCropWash(score, slot.neutral));
   }
 
   const field = beds.map((bed, index) => {
@@ -2069,16 +2103,20 @@ function renderGardenField({ beds, layout, aspect }) {
       const row = Math.floor(rank / columns);
       const column = rank % columns;
       const center = (columns - Math.min(columns, count - row * columns)) / 2;
-      const score = Math.max(0, Math.min(100, slot.score)) / 100;
-      const shapeHeight = (heightByCrop[slot.crop] || 1) * (slot.neutral ? .79 : .65 + .35 * score);
-      const markHeight = size * (slot.elephant ? 1.06 : shapeHeight);
+      const score = gardenCropScore(slot.score);
+      const namedCrop = slot.elephant ? null : slot.namedCrop;
+      const shapeHeight = gardenCropSize(slot.crop, score, slot.neutral) * (namedCrop?.scale ?? 1);
+      const heroHeight = slot.namedCrop ? 1.18 : 1.06;
+      const markHeight = size * (slot.elephant ? heroHeight : shapeHeight);
       const markWidth = markHeight / aspect;
       const left = number(x + side + (column + center + .5) * dx - markWidth / 2 +
         ((rank * 37 % 17) - 8) / 160 * dx);
       const upper = number(y + top + (row + 1) * dy - markHeight + ((rank * 53 % 19) - 9) / 190 * dy);
       if (slot.bloom) {
-        const cx = number(left + markWidth * (slot.elephant ? .91 : .50));
-        const cy = number(upper + markHeight * (slot.crop === "pumpkin" ? .32 : .10));
+        const bloomX = namedCrop ? namedCrop.bloomX / 20 : slot.elephant ? .91 : .50;
+        const bloomY = namedCrop ? namedCrop.bloomY / 20 : slot.crop === "pumpkin" ? .32 : .10;
+        const cx = number(left + markWidth * bloomX);
+        const cy = number(upper + markHeight * bloomY);
         const ry = number(Math.max(1, markHeight * .14));
         const rx = number(ry / aspect);
         flowerPaths.push("M" + number(cx - rx) + " " + cy + "a" + rx + " " + ry +
@@ -2087,15 +2125,21 @@ function renderGardenField({ beds, layout, aspect }) {
       const silhouette = slot.crop === "healthy" && slot.neutral ? paths.pale : paths[slot.crop] || paths.healthy;
       const data = ' data-opportunity-id="' + escape(slot.record.opportunity_id) +
         '" data-neutral="' + Boolean(slot.neutral) + '" data-urgent="' + Boolean(slot.bloom) +
-        '" data-crop="' + slot.crop + '"';
+        '" data-crop="' + slot.crop + '" data-crop-model="' + gardenCropModel(slot) + '"';
       const transform = 'transform="translate(' + left + ' ' + upper + ') scale(' +
         number(markWidth / 20) + ' ' + number(markHeight / 20) + ')"';
       const shape = '<path d="' + silhouette + '" fill="' + colorFor(slot, score) +
         '" stroke-width="' + (slot.neutral ? ".48" : ".8") + '"';
       if (slot.elephant) {
+        const elephantId = slot.neutral ? "garden-field-elephant-neutral" : "garden-field-elephant";
         return '<g ' + transform + data + ' data-elephant-toothpaste="true">' +
-          '<use href="#garden-field-elephant" stroke="none"/>' + shape +
+          '<use href="#' + elephantId + '" stroke="none"/>' + shape +
           ' transform="translate(4 8) scale(.62)"/></g>';
+      }
+      if (namedCrop) {
+        if (slot.crop === "healthy") return gardenNamedCropUse(namedCrop, score, slot.neutral, transform + data);
+        return '<g ' + transform + data + '>' + gardenNamedCropUse(namedCrop, score, slot.neutral, '') +
+          shape + ' transform="translate(11 11) scale(.45)"/></g>';
       }
       return shape + ' ' + transform + data + '/>';
     }).join("");
@@ -2105,12 +2149,15 @@ function renderGardenField({ beds, layout, aspect }) {
       '<path class="garden-field-blooms" d="' + flowerPaths.join("") + '" fill="' + p.bloom + '"/></g>';
   }).join("");
   return '<defs><g id="garden-field-elephant" transform="translate(10 20) scale(.18)">' +
-    gardenElephantToothpasteArt(p) + '</g></defs>' +
+    gardenElephantToothpasteArt(p) + '</g><g id="garden-field-elephant-neutral" transform="translate(10 20) scale(.18)">' +
+    gardenElephantToothpasteArt(p, true) + '</g></defs>' +
     '<g class="garden-field" aria-hidden="true" pointer-events="none">' + field + '</g>';
 }
 
         async function startGarden() {
-          const { openGardenFeed } = await import("./garden-data.js");
+          const [{ openGardenFeed }, { namedGardenCrops, namedCropDefinitions }] = await Promise.all([
+            import("./garden-data.js"), import("./garden-named-crops.js")
+          ]);
           const snapshot = await openGardenFeed();
           const motion = {
             arrival: { stagger: 500 },
@@ -2123,6 +2170,7 @@ function renderGardenField({ beds, layout, aspect }) {
           };
 
           const byId = id => document.getElementById(id);
+          byId("garden-named-crop-definitions").innerHTML = namedCropDefinitions(gardenPaint);
           const scene = byId("garden-scene");
           const landing = byId("garden-landing");
           const back = byId("garden-backdrop-host");
@@ -2178,11 +2226,16 @@ function renderGardenField({ beds, layout, aspect }) {
           const beds = snapshot.beds.map((bed, index) => ({
             ...bed,
             index,
-            slots: bed.slots.filter(Boolean).map(record => ({ record, bedIndex: index, ...classify(record) }))
+            slots: bed.slots.filter(Boolean).map(record => ({
+              record, bedIndex: index, namedCrop: namedGardenCrops[bed.id], ...classify(record)
+            }))
           }));
           for (const bed of beds) {
-            // Source order breaks ties. An evidence-neutral score cannot establish a strongest fit.
-            const strongest = bed.slots.find(slot => !slot.neutral);
+            // Neutral-only beds use their first plant as the artistic landmark.
+            let strongest = bed.slots[0];
+            for (const slot of bed.slots) {
+              if (!slot.neutral && (strongest.neutral || slot.score > strongest.score)) strongest = slot;
+            }
             if (strongest) strongest.elephant = true;
           }
           const slots = beds.flatMap(bed => bed.slots);
@@ -2322,7 +2375,8 @@ function renderGardenField({ beds, layout, aspect }) {
               ? "--plant-sway-period:var(--sway-rut-period);--plant-sway-amplitude:var(--sway-rut-amplitude);"
               : "--plant-sway-period:" + (3.2 + random() * 1.6).toFixed(2) + "s;--plant-sway-amplitude:" +
                 (1.5 + random()).toFixed(2) + "deg;";
-            return '<li class="garden-plant-card" data-record-row="' + escape(id) + '"><button class="garden-bed-plant" data-crop="' + slot.crop + '" ' +
+            return '<li class="garden-plant-card" data-record-row="' + escape(id) + '"><button class="garden-bed-plant" data-crop="' + slot.crop +
+              '" data-crop-model="' + gardenCropModel(slot) + '" ' +
               'type="button" data-record="' + escape(id) + '" style="' + sway + "--plant-sway-phase:-" +
               (random() * 5).toFixed(2) + 's" aria-label="' + escape(previewText(slot)) + '">' +
               '<span class="garden-plant-art" data-plant-art="' + escape(id) + '" aria-hidden="true"></span>' +
@@ -2650,6 +2704,8 @@ function renderGardenField({ beds, layout, aspect }) {
             const charts = slot.neutral ? "" : "<dt>Growth</dt><dd>" + sourceLink(methodology, p.growth_score) +
               "</dd><dt>Momentum</dt><dd>" + sourceLink(methodology, p.momentum_score) +
               "</dd><dt>Novelty</dt><dd>" + sourceLink(methodology, p.novelty_score) + "</dd>";
+            const guide = slot.namedCrop ? '<p class="garden-crop-guide"><strong>' + escape(slot.namedCrop.name) +
+              '</strong> <span>' + escape(slot.namedCrop.description) + '</span></p>' : "";
             const description = p.summary_short ? '<p>' + escape(p.summary_short) + '</p>' : "";
             const requirements = p.extracted_requirements?.length
               ? '<details class="garden-proof"><summary>Requirements</summary><ul>' +
@@ -2674,7 +2730,7 @@ function renderGardenField({ beds, layout, aspect }) {
                 (slot.neutral ? 'Thin research evidence holds this gap score neutral.'
                   : 'This gap score reflects the balance between linked papers and awards.') +
                 ' ' + sourceLink(methodology, "Scoring methodology") + '</p></details>';
-            byId("garden-detail-body").innerHTML = description + '<dl><dt>Deadline</dt><dd>' +
+            byId("garden-detail-body").innerHTML = guide + description + '<dl><dt>Deadline</dt><dd>' +
               sourceLink(sourceUrl(p, "deadline_parsed"), deadlineText(p)) +
               '</dd><dt>Amount</dt><dd>' + sourceLink(sourceUrl(p, "award_amount_parsed"), amountText(p.award_amount_parsed)) +
               '</dd><dt>Gap score</dt><dd>' + score + '</dd>' + charts + '</dl>' + neutral +
