@@ -622,6 +622,44 @@
       }
       .garden-bed-heading h3 { font-size: clamp(1.55rem, 3.2vw, 2.4rem); font-family: var(--font-heading); }
       .garden-bed-heading span { font-size: .9rem; }
+      .garden-bed-scene {
+        overflow: hidden;
+        border: 1px solid var(--garden-line);
+        border-radius: 1.15rem .95rem 1.3rem .85rem;
+        background: var(--garden-cream);
+      }
+      .garden-bed-stage {
+        height: clamp(19rem, 52svh, 36rem);
+        position: relative;
+        background: url("./assets/arden-bed-meadow.svg") center / cover no-repeat
+          color-mix(in srgb, var(--garden-healthy) 62%, var(--garden-cream));
+      }
+      .garden-bed-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        touch-action: pinch-zoom;
+        cursor: grab;
+      }
+      .garden-bed-canvas:active { cursor: grabbing; }
+      .garden-bed-canvas[data-plant-hover]:not(:active) { cursor: pointer; }
+      .garden-bed-canvas:focus-visible { outline: 2px solid var(--garden-ink); outline-offset: -4px; }
+      .garden-bed-scene-controls { display: grid; gap: .55rem; padding: .6rem .7rem .75rem; }
+      .garden-bed-preview {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: .86rem;
+        font-weight: 650;
+      }
+      .garden-bed-scene-actions, .garden-bed-turns, .garden-bed-grant-chooser { display: flex; gap: .3rem; }
+      .garden-bed-scene-actions { align-items: stretch; flex-wrap: wrap; gap: .48rem .75rem; }
+      .garden-bed-turns .garden-switch { min-width: 44px; padding-inline: .4rem; font-size: 1rem !important; }
+      .garden-bed-grant-chooser { flex: 1 1 14rem; min-width: 0; }
+      .garden-bed-grant-chooser select { flex: 1; width: 0; min-width: 0; font-family: var(--font-body); }
+      .garden-bed-grant-chooser select:focus-visible { outline: 2px solid var(--garden-ink); outline-offset: 2px; }
+      .garden-bed-grant-chooser button { flex: none; }
+      #garden .garden-bed-grant-chooser button:disabled { opacity: .62; cursor: default; }
       .garden-bed-plants {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
@@ -1021,6 +1059,28 @@
             <span id="garden-selected-count"></span>
           </div>
           <p id="garden-empty-bed" hidden>No open opportunities in this bed.</p>
+          <div class="garden-bed-scene" id="garden-bed-scene" hidden>
+            <div class="garden-bed-stage">
+              <canvas class="garden-bed-canvas" id="garden-bed-canvas" tabindex="0"
+                aria-label="3D topic bed" aria-describedby="garden-bed-preview"></canvas>
+            </div>
+            <div class="garden-bed-scene-controls">
+              <p class="garden-bed-preview" id="garden-bed-preview" aria-live="polite"></p>
+              <div class="garden-bed-scene-actions">
+                <div class="garden-bed-turns" role="group" aria-label="Move around the bed">
+                  <button class="garden-switch" type="button" data-bed-turn="left" aria-label="Turn bed left">←</button>
+                  <button class="garden-switch" type="button" data-bed-turn="right" aria-label="Turn bed right">→</button>
+                  <button class="garden-switch" type="button" data-bed-turn="farther" aria-label="Zoom bed out">−</button>
+                  <button class="garden-switch" type="button" data-bed-turn="closer" aria-label="Zoom bed in">+</button>
+                  <button class="garden-switch" type="button" data-bed-turn="reset" aria-label="Reset bed view">↺</button>
+                </div>
+                <div class="garden-bed-grant-chooser">
+                  <select class="garden-switch" id="garden-bed-grant-select" aria-label="Choose a grant"></select>
+                  <button class="garden-switch" type="button" id="garden-bed-open-grant" aria-haspopup="dialog" disabled>Open grant</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <ul class="garden-bed-plants" id="garden-bed-plants"></ul>
           <ol class="garden-topic-list" id="garden-topic-list" hidden></ol>
         </section>
@@ -2395,6 +2455,11 @@ function renderGardenField({ beds, layout, aspect }) {
           const bedHeading = byId("garden-bed-heading");
           const plantGrid = byId("garden-bed-plants");
           const topicList = byId("garden-topic-list");
+          const bedScene = byId("garden-bed-scene");
+          const bedCanvas = byId("garden-bed-canvas");
+          const bedPreview = byId("garden-bed-preview");
+          const bedGrantSelect = byId("garden-bed-grant-select");
+          const bedGrantOpen = byId("garden-bed-open-grant");
           const emptyBed = byId("garden-empty-bed");
           const previousButton = byId("garden-bed-previous");
           const nextButton = byId("garden-bed-next");
@@ -2460,6 +2525,9 @@ function renderGardenField({ beds, layout, aspect }) {
           let fieldEntryBed = null;
           let globe = null;
           let globeEntryControl = null;
+          let bed3d = null;
+          let bed3dRequested = false;
+          let bed3dTopic = null;
           let transitionRunning = false;
           let trigger = null;
           let detailRequest = null;
@@ -2676,6 +2744,10 @@ function renderGardenField({ beds, layout, aspect }) {
             applyVisibility();
           }
 
+          function gardenWeatherLayers() {
+            return { funding: landing.dataset.funding === "true", research: landing.dataset.research === "true" };
+          }
+
           async function loadGlobe() {
             try {
               const { createGardenGlobe } = await import("./garden-globe.js");
@@ -2685,7 +2757,7 @@ function renderGardenField({ beds, layout, aspect }) {
                 onSelect: id => openGlobeBed(id, globeCanvas), onUnavailable: flatGarden
               });
               scene.dataset.globe = "";
-              globe.setWeather({ funding: landing.dataset.funding === "true", research: landing.dataset.research === "true" });
+              globe.setWeather(gardenWeatherLayers());
               globe.setMinimumScore(minimumGap);
               applyVisibility();
             } catch {
@@ -2717,16 +2789,93 @@ function renderGardenField({ beds, layout, aspect }) {
               row.classList.toggle("is-dim", !matches(slotById.get(row.dataset.recordRow)));
             }
             globe?.setMinimumScore(minimumGap);
+            bed3d?.setMinimumScore(minimumGap);
+          }
+
+          function preview3dGrant(id) {
+            const slot = slotById.get(id);
+            bedPreview.textContent = slot ? previewText(slot) : "Drag or use arrow keys. Select a plant.";
+            bedPreview.title = slot ? bedPreview.textContent : "";
+            bed3d?.setSelection?.(slot ? id : null);
+          }
+
+          function select3dGrant(id) {
+            bedGrantSelect.value = id || "";
+            bedGrantOpen.disabled = !bedGrantSelect.value;
+            preview3dGrant(bedGrantSelect.value);
+          }
+
+          function pick3dGrant(id, pointerType) {
+            if (bedScene.hidden || detail.open || savedDialog.open) return;
+            const previous = bedGrantSelect.value;
+            select3dGrant(id);
+            if (id && (pointerType !== "touch" || previous === id)) {
+              openDetail(slotById.get(id), bedCanvas);
+            }
+          }
+
+          function discardBedScene() {
+            const previous = bed3d;
+            bed3d = null;
+            bed3dTopic = null;
+            previous?.dispose();
+            bedCanvas.removeAttribute("data-plant-hover");
+          }
+
+          async function loadBedScene() {
+            bed3dRequested = true;
+            try {
+              const { createGardenBed3D } = await import("./garden-3d-bed.js");
+              bed3d = createGardenBed3D({
+                canvas: bedCanvas, paint: gardenPaint,
+                onHover: id => {
+                  bedCanvas.toggleAttribute("data-plant-hover", Boolean(id));
+                  preview3dGrant(id || bedGrantSelect.value);
+                },
+                onSelect: pick3dGrant,
+                onUnavailable: () => {
+                  discardBedScene();
+                  updateView();
+                  if (detail.open && (trigger === bedCanvas || trigger === bedGrantOpen)) {
+                    trigger = Array.from(plantGrid.querySelectorAll("[data-record]")).find(button => button.dataset.record === detailId);
+                  }
+                }
+              });
+              bed3d.setWeather(gardenWeatherLayers());
+            } catch {
+              discardBedScene();
+              return;
+            }
+            updateView();
           }
 
           function updateView() {
             const field = currentBed === null;
+            const bedGarden = !field && currentView === "garden";
+            const focusedFlatPlant = plantGrid.contains(document.activeElement);
+            if (bedGarden && bed3d && bed3dTopic !== currentBed) {
+              try {
+                bed3d.setBed(currentBed);
+                bed3dTopic = currentBed;
+                bedCanvas.setAttribute("aria-label", currentBed.topic + " 3D bed");
+                bedCanvas.removeAttribute("data-plant-hover");
+                bedGrantSelect.replaceChildren(new Option("Choose a grant", ""), ...currentBed.slots.map(slot =>
+                  new Option(titleText(slot), slot.record.opportunity_id)));
+                select3dGrant(null);
+              } catch {
+                discardBedScene();
+              }
+            }
+            const renderedBed = bedGarden && Boolean(bed3d);
             scene.hidden = !field || currentView !== "garden";
             list.hidden = !field || currentView !== "list";
             bedView.hidden = field;
-            plantGrid.hidden = currentView !== "garden";
+            bedScene.hidden = !renderedBed;
+            bedScene.toggleAttribute("data-bed-3d", renderedBed);
+            plantGrid.hidden = !bedGarden || renderedBed;
             topicList.hidden = currentView !== "list";
-            byId("garden").querySelector('[data-view="garden"]').setAttribute("aria-controls", field ? scene.id : plantGrid.id);
+            byId("garden").querySelector('[data-view="garden"]').setAttribute("aria-controls",
+              field ? scene.id : renderedBed ? bedScene.id : plantGrid.id);
             byId("garden").querySelector('[data-view="list"]').setAttribute("aria-controls", field ? list.id : topicList.id);
             artObserver?.disconnect();
             previewPlant = null;
@@ -2740,7 +2889,8 @@ function renderGardenField({ beds, layout, aspect }) {
               byId("garden-selected-count").textContent = currentBed.slots.length + " open opportunities";
               previousButton.setAttribute("aria-label", "Previous bed, " + previous.topic);
               nextButton.setAttribute("aria-label", "Next bed, " + next.topic);
-              plantGrid.innerHTML = currentView === "garden" ? currentBed.slots.map(plantCard).join("") : "";
+              if (renderedBed && detail.open && trigger?.classList.contains("garden-bed-plant")) trigger = bedCanvas;
+              plantGrid.innerHTML = bedGarden && !renderedBed ? currentBed.slots.map(plantCard).join("") : "";
               topicList.innerHTML = currentView === "list" ? currentBed.slots.map(detailRow).join("") : "";
               for (const art of plantGrid.querySelectorAll("[data-plant-art]")) {
                 if (artObserver) artObserver.observe(art);
@@ -2757,6 +2907,8 @@ function renderGardenField({ beds, layout, aspect }) {
             }
             applyFilters();
             applyVisibility();
+            if (renderedBed && focusedFlatPlant) bedCanvas.focus({ preventScroll: true });
+            if (bedGarden && !bed3dRequested) loadBedScene();
           }
 
           function cameraTransform(bed) {
@@ -2898,6 +3050,29 @@ function renderGardenField({ beds, layout, aspect }) {
             if (!direction) return;
             event.preventDefault();
             turnGlobe(direction);
+          });
+          bedGrantSelect.addEventListener("change", () => select3dGrant(bedGrantSelect.value));
+          bedGrantOpen.addEventListener("click", () => openDetail(slotById.get(bedGrantSelect.value), bedGrantOpen));
+          const bedTurns = { left: { yaw: -.30 }, right: { yaw: .30 }, up: { pitch: -.21 }, down: { pitch: .21 } };
+          function moveAroundBed(direction) {
+            if (!bed3d || bedScene.hidden || detail.open || savedDialog.open) return;
+            if (direction === "closer") bed3d.zoom(1.22);
+            else if (direction === "farther") bed3d.zoom(1 / 1.22);
+            else if (direction === "reset") bed3d.reset();
+            else bed3d.rotate(bedTurns[direction]);
+          }
+          bedScene.querySelectorAll("[data-bed-turn]").forEach(button => button.addEventListener("click", () => {
+            moveAroundBed(button.dataset.bedTurn);
+          }));
+          bedCanvas.addEventListener("keydown", event => {
+            const direction = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down",
+              "+": "closer", "=": "closer", "-": "farther", Home: "reset" }[event.key];
+            if (direction) {
+              event.preventDefault();
+              moveAroundBed(direction);
+            } else if (event.key === "Escape") {
+              select3dGrant(null);
+            }
           });
           byId("garden-bed-back").addEventListener("click", leaveBed);
           previousButton.addEventListener("click", () => enterBed(beds[(currentBed.index + beds.length - 1) % beds.length]));
@@ -3177,7 +3352,9 @@ function renderGardenField({ beds, layout, aspect }) {
 
           function applyVisibility() {
             const visible = currentView === "garden" && currentBed === null && !transitionRunning && isOnScreen;
-            globe?.setVisible(visible && !document.hidden && !detail.open && !savedDialog.open);
+            const clear = !document.hidden && !detail.open && !savedDialog.open;
+            globe?.setVisible(visible && clear);
+            bed3d?.setVisible(!bedScene.hidden && seenBed && clear);
             weather.setVisible(visible && !globe);
             if (visible && !globe) weather.arrive();
           }
@@ -3195,7 +3372,8 @@ function renderGardenField({ beds, layout, aspect }) {
             scene.dataset[button.dataset.layer] = String(on);
             landing.dataset[button.dataset.layer] = String(on);
             weather.setLayer(button.dataset.layer, on);
-            globe?.setWeather({ funding: landing.dataset.funding === "true", research: landing.dataset.research === "true" });
+            globe?.setWeather(gardenWeatherLayers());
+            bed3d?.setWeather(gardenWeatherLayers());
           }));
 
           if (typeof IntersectionObserver === "function") {
