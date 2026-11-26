@@ -2,29 +2,33 @@ import * as THREE from "./vendor/three-0.180.0/three.module.min.js";
 import { addGlobeCrops } from "./garden-globe-crops.js";
 
 const up = new THREE.Vector3(0, 1, 0);
-const defaultPose = { yaw: -.28, pitch: .79, zoom: 1 };
+const defaultPose = { yaw: -.33, pitch: .73, zoom: 1 };
 const { clamp, lerp } = THREE.MathUtils;
 const gestureThreshold = 6;
 
-function loop(width, depth, radius, elevation, waviness = 0) {
-  const x = width / 2 - radius;
-  const z = depth / 2 - radius;
-  const corners = [[x, z], [-x, z], [-x, -z], [x, -z]];
-  return corners.flatMap(([cx, cz], quadrant) => Array.from({ length: 10 }, (_, step) => {
-    const angle = (quadrant + step / 9) * Math.PI / 2;
-    const edge = radius + waviness * Math.sin(angle * 5 + .3) + .45 * waviness * Math.cos(angle * 9);
-    const x = cx + Math.cos(angle) * edge;
-    const z = cz + Math.sin(angle) * edge;
+function loop(width, depth, roundness, elevation, waviness, phase) {
+  return Array.from({ length: 64 }, (_, index) => {
+    const angle = 2 * Math.PI * index / 64;
+    const cosine = Math.cos(angle);
+    const sine = Math.sin(angle);
+    const ripple = waviness * (.65 * Math.sin(3 * angle + phase) + .35 * Math.cos(7 * angle - phase));
+    const x = Math.sign(cosine) * (width / 2 + ripple) * Math.abs(cosine) ** roundness
+      + waviness * .32 * Math.sin(angle + phase);
+    const z = Math.sign(sine) * (depth / 2 + ripple) * Math.abs(sine) ** roundness
+      + waviness * .26 * Math.cos(2 * angle - phase);
     return new THREE.Vector3(x, elevation(x, z), z);
-  }));
+  });
 }
 
 function createSurface() {
   const vertices = [];
   const colors = [];
   function triangle(a, b, c, color) {
-    vertices.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
-    for (let index = 0; index < 3; index++) colors.push(color.r, color.g, color.b);
+    for (const point of [a, b, c]) {
+      const tint = typeof color === "function" ? color(point) : color;
+      vertices.push(point.x, point.y, point.z);
+      colors.push(tint.r, tint.g, tint.b);
+    }
   }
   function quad(a, b, c, d, color) {
     triangle(a, b, c, color);
@@ -42,13 +46,20 @@ function createSurface() {
       quad(lower[index], upper[index], upper[next], lower[next], tint(index));
     }
   }
-  function cover(rings, center, tint) {
-    for (let index = 0; index < rings[0].length; index++) {
-      const next = (index + 1) % rings[0].length;
-      triangle(center, rings[0][next], rings[0][index], tint(index, 0));
+  function cover(edge, elevation, tint) {
+    const center = new THREE.Vector3(0, elevation(0, 0), 0);
+    const rings = [.19, .38, .56, .74, .89].map(fraction => edge.map(point => {
+      const x = point.x * fraction;
+      const z = point.z * fraction;
+      return new THREE.Vector3(x, elevation(x, z), z);
+    }));
+    rings.push(edge);
+    for (let index = 0; index < edge.length; index++) {
+      const next = (index + 1) % edge.length;
+      triangle(center, rings[0][next], rings[0][index], tint);
     }
     for (let index = 1; index < rings.length; index++) {
-      band(rings[index - 1], rings[index], point => tint(point, index));
+      band(rings[index - 1], rings[index], () => tint);
     }
   }
   function ribbon(start, end, steps, point, width, tint) {
@@ -73,18 +84,59 @@ function createSurface() {
   return { triangle, band, wall, cover, ribbon, mesh };
 }
 
+function addTrail(surface, coordinates, elevation, color, edge) {
+  const route = new THREE.CatmullRomCurve3(
+    coordinates.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, "chordal");
+  function point(t, offset, lift) {
+    const position = route.getPoint(t);
+    const direction = route.getTangent(t);
+    position.x += direction.z * offset;
+    position.z -= direction.x * offset;
+    position.y = elevation(position.x, position.z) + lift;
+    return position;
+  }
+  const halfWidth = t => .078 + .155 * Math.sin(Math.PI * t) ** .64 + .016 * Math.sin(t * 16);
+  surface.ribbon(0, 1, 44, (t, width) => point(t, width, .027), halfWidth, () => edge);
+  surface.ribbon(.014, .986, 43, (t, width) => point(t, width, .032),
+    t => halfWidth(t) * .77, index => color.clone().multiplyScalar(.98 + .029 * Math.cos(index * 1.9)));
+}
+
+function groundShadow(edge, tint) {
+  const level = Math.min(...edge.map(point => point.y)) - .013;
+  const rings = [[.54, .19], [.83, .15], [1.02, .083], [1.19, 0]];
+  const positions = [.21, level, .04];
+  const colors = [tint.r, tint.g, tint.b, .20];
+  const indices = [];
+  for (const [ring, [extent, opacity]] of rings.entries()) {
+    for (const [index, point] of edge.entries()) {
+      positions.push(point.x * extent + .21, level, point.z * extent + .04);
+      colors.push(tint.r, tint.g, tint.b, opacity);
+      const current = 1 + ring * edge.length + index;
+      const next = 1 + ring * edge.length + (index + 1) % edge.length;
+      if (ring === 0) indices.push(0, next, current);
+      else indices.push(current - edge.length, next - edge.length, next, current - edge.length, next, current);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 4));
+  geometry.setIndex(indices);
+  return new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false }));
+}
+
 function bedLayout(bed, plotGroup, paint) {
   const width = 10.8;
   const depth = 7.8;
-  const soilTop = (x, z) => .48 + .045 * Math.sin(x * .54 + z * .59) - .017 * z;
-  const lawnTop = (x, z) => .036 + .056 * Math.sin(x * .8 - z * .56);
+  const phase = bed.id.charCodeAt(0) * .16 + bed.id.length * .27;
+  const soilTop = (x, z) => .32 + .038 * Math.sin(x * .61 + z * .50) - .016 * z;
+  const lawnTop = (x, z) => -.031 + .078 * Math.sin(x * .61 - z * .47) + .031 * Math.cos(z * .88);
   const plot = {
     bed, width, depth,
     normalAt: () => up,
     point: (x, z, rise = 0) => new THREE.Vector3(x, soilTop(x, z) + rise, z),
   };
   const color = (token, fallback) => new THREE.Color(paint[token] || fallback);
-  const earth = color("soil", "#6B4A2F");
+  const earth = color("soil", "#6B4A2F").lerp(color("ink", "#2E3A45"), .24);
   const loam = color("dry", "#8A6B45");
   const green = color("leaf", "#5B8C4A");
   const sap = color("hillGreen", "#69A84F");
@@ -96,52 +148,51 @@ function bedLayout(bed, plotGroup, paint) {
     base.clone().multiplyScalar(1 + weight * (.68 * Math.sin(index * 1.61) + .32 * Math.cos(index * 2.3)));
 
   const solid = createSurface();
-  const surfaceWidth = width + 2.96;
-  const surfaceDepth = depth + 2.62;
+  const surfaceWidth = width + 3.02;
+  const surfaceDepth = depth + 2.45;
   const strata = [
-    loop(surfaceWidth - 1.02, surfaceDepth - .92, 1.31, () => -1.02, .045),
-    loop(surfaceWidth - .43, surfaceDepth - .40, 1.54, (x, z) => -.63 + .043 * Math.sin(x * 1.2 - z * .67), .071),
-    loop(surfaceWidth - .17, surfaceDepth - .17, 1.52, (x, z) => -.37 + .032 * Math.cos(x * .67 + z * 1.2), .058),
-    loop(surfaceWidth, surfaceDepth, 1.43, (x, z) => lawnTop(x, z) - .14, .051),
-    loop(surfaceWidth + .04, surfaceDepth + .04, 1.40, lawnTop, .037),
+    loop(surfaceWidth - 1.03, surfaceDepth - .98, .63, (x, z) =>
+      -.54 + .079 * Math.sin(x * .76 + z * .45), .30, phase + .25),
+    loop(surfaceWidth - .53, surfaceDepth - .49, .61, (x, z) =>
+      -.38 + .055 * Math.sin(x * 1.32 + z * 1.1), .33, phase + .16),
+    loop(surfaceWidth - .14, surfaceDepth - .10, .62, (x, z) =>
+      lawnTop(x, z) - .22 + .032 * Math.sin(x * .89 + z * .69), .35, phase),
+    loop(surfaceWidth, surfaceDepth, .58, (x, z) =>
+      lawnTop(x, z) - .075 + .025 * Math.cos(x * 1.25 - z * 2.01), .36, phase),
+    loop(surfaceWidth + .02, surfaceDepth + .04, .58, lawnTop, .36, phase),
   ];
-  const shale = [earth.clone().multiplyScalar(.79), earth.clone().lerp(loam, .46),
-    earth.clone().lerp(loam, .16), deep.clone().lerp(green, .24)];
+  const shale = [earth.clone().multiplyScalar(.80), earth.clone().lerp(loam, .32),
+    earth.clone().lerp(loam, .20), earth.clone().lerp(deep, .55)];
   for (let index = 0; index < strata.length - 1; index++) {
-    solid.wall(strata[index], strata[index + 1], segment => wavyColor(shale[index], .065, segment + 4 * index));
+    solid.wall(strata[index], strata[index + 1], segment =>
+      wavyColor(shale[index], .125, segment * .71 + 4 * index));
   }
-  const lawn = green.clone().lerp(sap, .64).lerp(sunlit, .20);
-  solid.cover([loop(width, depth, .77, lawnTop), strata[4]], new THREE.Vector3(0, lawnTop(0, 0), 0),
-    (index, ring) => wavyColor(lawn, ring ? .10 : .03, index));
+  const lawn = green.clone().lerp(sap, .49).lerp(sunlit, .11);
+  const meadow = lawn.clone().lerp(sunlit, .21);
+  solid.cover(strata[4], lawnTop, ({ x, z }) =>
+    lawn.clone().lerp(meadow, .30 + .25 * Math.cos(x * .62 + z * .78) + .15 * Math.sin(z * 1.51 - x * 1.1)));
 
-  // The golden footpath is a single continuous loop around the cutaway bed.
-  const trim = loam.clone().lerp(sunlit, .53);
-  const walk = sunlit.clone().lerp(loam, .19).lerp(cream, .25);
-  const trail = [
-    loop(width + .87, depth + .73, .78, (x, z) => lawnTop(x, z) + .029, .044),
-    loop(width + 1.06, depth + .96, .82, (x, z) => lawnTop(x, z) + .049, .044),
-    loop(width + 2.21, depth + 1.99, 1.13, (x, z) => lawnTop(x, z) + .047, .046),
-    loop(width + 2.44, depth + 2.14, 1.19, (x, z) => lawnTop(x, z) + .031, .048),
-  ];
-  for (let index = 0; index < trail.length - 1; index++) {
-    solid.band(trail[index], trail[index + 1], segment =>
-      wavyColor(index === 1 ? walk : trim, index === 1 ? .058 : .044, segment));
-  }
+  const trim = loam.clone().lerp(earth, .21);
+  const walk = loam.clone().lerp(sunlit, .46).lerp(cream, .14);
+  addTrail(solid, [[-4.35, 4.64], [-5.38, 4.2], [-6.12, 2.70], [-6.19, .72],
+    [-6.06, -1.31], [-5.83, -3.02], [-4.55, -4.10], [-2.92, -4.67]], lawnTop, walk, trim);
+  addTrail(solid, [[3.72, 4.57], [4.68, 4.34], [5.65, 3.68], [6.14, 2.34],
+    [6.47, 1.02]], lawnTop, walk, trim);
 
-  const pad = loam.clone().lerp(green, .59).lerp(sap, .13);
-  const foot = loop(width + .8, depth + .69, .78, lawnTop, .035);
-  const upperRim = loop(width + .44, depth + .43, .63, (x, z) => soilTop(x, z) - .069, .032);
-  const soilEdge = loop(width + .14, depth + .14, .57, soilTop, .03);
-  solid.wall(foot, upperRim, segment => wavyColor(earth, .12, segment));
-  solid.band(soilEdge, upperRim, segment => wavyColor(loam.clone().lerp(sunlit, .32), .061, segment));
-  solid.cover([
-    loop(width * .46, depth * .46, .37, soilTop),
-    loop(width * .77, depth * .77, .48, soilTop),
-    soilEdge,
-  ], plot.point(0, 0), (index, ring) => wavyColor(pad, .034 + ring * .015, index + ring * 3));
+  const pad = loam.clone().lerp(earth, .20).lerp(green, .46).lerp(deep, .08);
+  const soilShadow = earth.clone().lerp(deep, .23);
+  const soilHighlight = pad.clone().lerp(sunlit, .14).lerp(green, .15);
+  const foot = loop(width + .80, depth + .78, .42, lawnTop, .14, phase + .2);
+  const bank = loop(width + .56, depth + .57, .38, (x, z) =>
+    lerp(lawnTop(x, z), soilTop(x, z), .58), .15, phase + .1);
+  const soilEdge = loop(width + .31, depth + .30, .36, soilTop, .122, phase - .15);
+  solid.wall(foot, bank, segment => wavyColor(soilShadow, .145, segment * .78));
+  solid.wall(bank, soilEdge, segment => wavyColor(pad.clone().lerp(earth, .31), .112, segment));
+  solid.cover(soilEdge, soilTop, ({ x, z }) => pad.clone().lerp(soilHighlight,
+    .41 + .16 * Math.sin(z * 3.8 + x * .26) + .19 * Math.cos(x * 1.6 - z * .79)));
 
   const groundMesh = solid.mesh();
-  plotGroup.add(groundMesh);
+  plotGroup.add(groundShadow(strata[0], color("ink", "#2E3A45").lerp(earth, .35)), groundMesh);
   const cropGroup = new THREE.Group();
   plotGroup.add(cropGroup);
   const crop = addGlobeCrops(THREE, cropGroup, [plot], paint);
@@ -149,17 +200,17 @@ function bedLayout(bed, plotGroup, paint) {
 
   const strokes = createSurface();
   const water = createSurface();
-  const crease = earth.clone().lerp(deep, .35);
-  const edgeLight = pad.clone().lerp(cream, .25);
+  const crease = earth.clone().lerp(deep, .42);
+  const edgeLight = soilHighlight.clone().lerp(green, .28).lerp(cream, .08);
   const layout = layouts[0];
   for (const [index, row] of (layout?.rows ?? []).entries()) {
-    const z = row.z + layout.strideZ * .30;
+    const z = row.z + layout.strideZ * .32;
     const half = Math.min(width * .5 - .38, row.width * .5 + layout.strideX * .19);
-    const rowPoint = (x, across) => plot.point(x, z - across + .038 * Math.sin(x * 1.4 + index * .75), .024);
-    const widthAt = x => .026 + .068 * (1 - Math.abs(x / half) ** 5);
-    strokes.ribbon(-half, half, 24, rowPoint, widthAt, segment => wavyColor(crease, .16, segment));
-    strokes.ribbon(-half * .92, half * .92, 23, (x, across) => rowPoint(x, across + .11),
-      () => .022, segment => wavyColor(edgeLight, .075, segment));
+    const rowPoint = (x, across) => plot.point(x, z - across + .067 * Math.sin(x * .81 + index * .65), .022);
+    const widthAt = x => .022 + .091 * (1 - Math.abs(x / half) ** 3) + .012 * Math.cos(x * 2.2 + index);
+    strokes.ribbon(-half, half, 30, rowPoint, widthAt, segment => wavyColor(crease, .12, segment));
+    strokes.ribbon(-half * .86, half * .91, 25, (x, across) => rowPoint(x, across + .12),
+      x => .021 + .018 * Math.sin(x * 1.55 + index) ** 2, segment => wavyColor(edgeLight, .15, segment));
   }
 
   const funded = bed.slots.some(slot => {
@@ -182,19 +233,39 @@ function bedLayout(bed, plotGroup, paint) {
     }
   }
 
-  const grassTone = lawn.clone().lerp(deep, .28);
-  const tips = lawn.clone().lerp(cream, .34);
-  for (const side of [-1, 1]) {
-    for (let index = 0; index < 26; index++) {
-      const along = (index + .5) / 26;
-      const x = lerp(-width / 2 + .7, width / 2 - .8, along);
-      const z = side * (depth / 2 + 1.19) + .079 * Math.sin(index * 4.24);
+  const grassTone = lawn.clone().lerp(deep, .29);
+  const tips = lawn.clone().lerp(cream, .29);
+  const tussocks = [[-2.8, 4.78], [-1.36, 4.64], [-.74, -4.64], [1.48, -4.48], [-5.7, -.13],
+    [-6.48, 1.65], [6.07, -1.4], [6.18, -.62], [5.36, -3.65], [2.15, 4.92], [3.23, -4.57]];
+  for (const [patch, [cx, cz]] of tussocks.entries()) {
+    for (let index = 0; index < 6; index++) {
+      const turn = index * 2.4 + patch * .31;
+      const x = cx + Math.cos(turn) * (.09 + index * .034);
+      const z = cz + Math.sin(turn) * (.07 + index * .027);
       const base = new THREE.Vector3(x, lawnTop(x, z) + .014, z);
-      const end = base.clone().add(new THREE.Vector3(.075 * Math.cos(index * 3.18), .16 + .06 * Math.sin(index * 1.5), .037));
-      const foot = base.clone().add(new THREE.Vector3(.065, .018, .008));
-      strokes.triangle(base, foot, end, index % 4 === 0 ? tips : grassTone);
-      strokes.triangle(foot, base, end, index % 4 === 0 ? tips : grassTone);
+      const end = base.clone().add(new THREE.Vector3(.12 * Math.cos(turn), .16 + .12 * Math.sin(turn) ** 2, .13 * Math.sin(turn)));
+      const foot = base.clone().add(new THREE.Vector3(.066, .01, .017));
+      const tint = index % 3 === 0 ? tips : grassTone;
+      strokes.triangle(base, foot, end, tint);
+      strokes.triangle(foot, base, end, tint);
     }
+  }
+
+  const slate = color("ink", "#2E3A45").lerp(loam, .39).lerp(cream, .35);
+  const stones = [[-.25, 4.55, .21], [.08, 4.62, .11], [1.73, 4.52, .13],
+    [-5.63, 3.49, .14], [-6.32, -.57, .19], [-6.43, -.37, .09], [-4.39, -4.38, .17],
+    [1.90, -4.63, .24], [2.25, -4.42, .11], [5.78, -2.72, .17], [6.03, 3.17, .20]];
+  for (const [index, [x, z, size]] of stones.entries()) {
+    const sides = Array.from({ length: 6 }, (_, corner) => {
+      const angle = (corner + index * .28) * Math.PI / 3;
+      const scale = size * (1 + .18 * Math.sin(corner * 4.2 + index));
+      const vx = x + Math.cos(angle) * scale;
+      const vz = z + Math.sin(angle) * scale * .72;
+      return new THREE.Vector3(vx, lawnTop(vx, vz) + .018, vz);
+    });
+    const crest = new THREE.Vector3(x - size * .14, lawnTop(x, z) + size * .48, z - size * .11);
+    sides.forEach((point, corner) => strokes.triangle(point, crest, sides[(corner + 1) % sides.length],
+      wavyColor(slate, .25, corner + index)));
   }
   plotGroup.add(strokes.mesh());
   const wet = water.mesh();
@@ -240,6 +311,7 @@ function disposeGroup(group) {
 export function createGardenBed3D({
   canvas,
   paint = {},
+  onAnchor = () => {},
   onHover = () => {},
   onSelect = () => {},
   onUnavailable = () => {},
@@ -256,12 +328,12 @@ export function createGardenBed3D({
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 95);
-  const ambient = new THREE.HemisphereLight(0xffefd8, 0xc0a599, 1.71);
-  const sun = new THREE.DirectionalLight(paint.light || "#F2C14E", 1.51);
-  const fill = new THREE.DirectionalLight(0xdae7f1, .47);
-  const rim = new THREE.DirectionalLight(paint.crayonPink || "#D7B1BA", .45);
-  sun.position.set(-8, 15, 8);
-  fill.position.set(8, 5, 7);
+  const ambient = new THREE.HemisphereLight(0xfff1e1, 0xc4aaa0, 1.80);
+  const sun = new THREE.DirectionalLight(paint.light || "#F2C14E", 1.44);
+  const fill = new THREE.DirectionalLight(0xe5eff1, .53);
+  const rim = new THREE.DirectionalLight(paint.crayonPink || "#D7B1BA", .37);
+  sun.position.set(-9, 12, 9);
+  fill.position.set(8, 6, 8);
   rim.position.set(4, 7, -10);
   scene.add(ambient, sun, fill, rim);
   const warm = new THREE.Color(paint.light || "#F2C14E").lerp(new THREE.Color("#FFF0D8"), .75);
@@ -283,6 +355,7 @@ export function createGardenBed3D({
   let bed;
   let group;
   let layout;
+  let selectedPlant = null;
   let weather = { funding: true, research: true };
   let minimum = 0;
   let width = 0;
@@ -314,7 +387,7 @@ export function createGardenBed3D({
     const distance = 38;
     const horizontal = distance * Math.cos(pose.pitch);
     camera.position.set(horizontal * Math.sin(pose.yaw), distance * Math.sin(pose.pitch), horizontal * Math.cos(pose.yaw));
-    camera.lookAt(0, .3, 0);
+    camera.lookAt(0, .24, 0);
     camera.updateMatrixWorld();
     let minX = Infinity;
     let maxX = -Infinity;
@@ -328,7 +401,7 @@ export function createGardenBed3D({
       maxY = Math.max(maxY, view.y);
     }
     const aspect = width / height;
-    const halfHeight = Math.max((maxY - minY) / 2, (maxX - minX) / (2 * aspect)) * 1.10 / pose.zoom;
+    const halfHeight = Math.max((maxY - minY) / 2, (maxX - minX) / (2 * aspect)) * 1.075 / pose.zoom;
     const middleX = (minX + maxX) / 2;
     const middleY = (minY + maxY) / 2;
     const halfWidth = halfHeight * aspect;
@@ -412,6 +485,9 @@ export function createGardenBed3D({
         yaw: pose.yaw.toFixed(4), pitch: pose.pitch.toFixed(4), zoom: pose.zoom.toFixed(4),
         triangles: String(renderer.info.render.triangles), drawCalls: String(renderer.info.render.calls),
       });
+      const tip = selectedPlant && project(view.copy(selectedPlant.position).addScaledVector(up, selectedPlant.height));
+      onAnchor(tip && tip.x >= 0 && tip.x <= width && tip.y >= 0 && tip.y <= height
+        ? { ...tip, id: selectedPlant.id } : null);
     }
     if (pendingHover) {
       const event = pendingHover;
@@ -430,8 +506,8 @@ export function createGardenBed3D({
     weather = next;
     if (layout) layout.wet.visible = Boolean(weather.funding);
     sun.color.copy(weather.research ? warm : cool);
-    sun.intensity = weather.research ? 1.62 : 1.08;
-    rim.intensity = weather.research ? .51 : .31;
+    sun.intensity = weather.research ? 1.47 : 1.03;
+    rim.intensity = weather.research ? .45 : .30;
     requestFrame();
   }
 
@@ -457,6 +533,8 @@ export function createGardenBed3D({
     pendingHover = undefined;
     gesture = undefined;
     hover(null);
+    selectedPlant = null;
+    onAnchor(null);
     ring.visible = false;
     Object.assign(pose, defaultPose);
     layout.crop.setMinimumScore(minimum);
@@ -536,11 +614,15 @@ export function createGardenBed3D({
       requestFrame();
     },
     setSelection(id) {
-      const selected = layout?.byId.get(id);
-      ring.visible = Boolean(selected);
-      if (selected) {
-        ring.position.copy(selected.position).y += .047;
-        ring.scale.setScalar(clamp(selected.width * .56, .19, .74));
+      const selected = layout?.byId.get(id) ?? null;
+      if (selectedPlant === selected) return;
+      selectedPlant = selected;
+      ring.visible = Boolean(selectedPlant);
+      if (selectedPlant) {
+        ring.position.copy(selectedPlant.position).y += .047;
+        ring.scale.setScalar(clamp(selectedPlant.width * .56, .19, .74));
+      } else {
+        onAnchor(null);
       }
       requestFrame();
     },
