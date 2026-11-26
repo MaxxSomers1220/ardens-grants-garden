@@ -354,10 +354,33 @@ function cropArtwork(THREE, paint) {
   return { bake, releaseSources: () => sources.forEach(geometry => geometry.dispose()) };
 }
 
-/** Plant each source slot exactly once in the local radial frame of its topic plot. */
+function footprintWidth(geometry, angle) {
+  const vertices = geometry.attributes.position;
+  const sine = Math.sin(angle);
+  const cosine = Math.cos(angle);
+  let left = Infinity;
+  let right = -Infinity;
+  let near = Infinity;
+  let far = -Infinity;
+  for (let index = 0; index < vertices.count; index++) {
+    const x = vertices.getX(index);
+    const z = vertices.getZ(index);
+    const across = cosine * x + sine * z;
+    const along = cosine * z - sine * x;
+    left = Math.min(left, across);
+    right = Math.max(right, across);
+    near = Math.min(near, along);
+    far = Math.max(far, along);
+  }
+  return Math.max(right - left, far - near);
+}
+
+/** Plant each source slot once in its plot's tangent frame. */
 export function addGlobeCrops(THREE, world, plots, paint = {}) {
   const artwork = cropArtwork(THREE, paint);
   const batches = new Map();
+  const picks = [];
+  const layouts = [];
   const material = new THREE.MeshStandardMaterial({
     vertexColors: true, roughness: .93, metalness: 0, side: THREE.DoubleSide,
   });
@@ -386,10 +409,10 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
   let count = 0;
   let bloomCount = 0;
 
-  function batch(geometry, label, position, direction, size, score, neutral) {
+  function batch(geometry, label, position, direction, size, score, neutral, recordId) {
     if (!batches.has(geometry)) batches.set(geometry, { label, entries: [] });
     batches.get(geometry).entries.push({
-      matrix: matrix.compose(position, direction, scale.setScalar(size)).clone(), score, neutral,
+      matrix: matrix.compose(position, direction, scale.setScalar(size)).clone(), score, neutral, recordId,
     });
   }
 
@@ -405,6 +428,12 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
     const strideZ = depth / rows;
     const baseSize = Math.min(strideX, strideZ) * .84;
     const named = namedGardenCrops[bed.id];
+    const surfaceNormal = typeof plot.normalAt === "function";
+    const rowLayout = Array.from({ length: rows }, (_, row) => ({
+      z: (row + .5 - rows / 2) * strideZ,
+      width: Math.min(columns, slots.length - row * columns) * strideX,
+    }));
+    layouts.push({ id: bed.id, columns, strideX, strideZ, rows: rowLayout });
     for (const [rank, slot] of slots.entries()) {
       const row = Math.floor(rank / columns);
       const rowCount = Math.min(columns, slots.length - row * columns);
@@ -412,7 +441,7 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
       const x = (rank % columns + .5 - rowCount / 2 + (seededOffset(key + "x") - .5) * .10) * strideX;
       const z = (row + .5 - rows / 2 + (seededOffset(key + "z") - .5) * .10) * strideZ;
       const at = plot.point(x, z, .016);
-      outward.copy(at).normalize();
+      outward.copy(surfaceNormal ? plot.normalAt(x, z) : at).normalize();
       east.subVectors(plot.point(x + .032, z, .016), at);
       east.addScaledVector(outward, -east.dot(outward)).normalize();
       forward.crossVectors(east, outward).normalize();
@@ -430,11 +459,16 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
       const relativeHeight = slot.elephant ? 1.46 + (neutral ? 0 : .14 * score / 100)
         : (named?.scale ?? originalHeights[slot.crop] ?? 1) * (neutral ? .77 : .67 + .41 * score / 100);
       const size = baseSize * relativeHeight;
-      batch(model, kind, at, rotation, size, score, neutral);
+      batch(model, kind, at, rotation, size, score, neutral, key);
+      picks.push({
+        id: key, position: plot.point(x, z),
+        height: model.boundingBox.max.y * size + .016,
+        width: footprintWidth(model, heading) * size,
+      });
       count++;
       if (slot.bloom) {
         const offset = new THREE.Vector3(size * .26, size * .72, size * .12).applyQuaternion(rotation);
-        batch(artwork.bake("bloom", false, 0), "deadline-bloom", at.clone().add(offset), rotation, size * .37, score, neutral);
+        batch(artwork.bake("bloom", false, 0), "deadline-bloom", at.clone().add(offset), rotation, size * .37, score, neutral, key);
         bloomCount++;
       }
     }
@@ -449,6 +483,7 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
     geometry.setAttribute("cropPresence", presence);
     const mesh = new THREE.InstancedMesh(geometry, material, entries.length);
     mesh.name = `garden-crops-${label}`;
+    mesh.userData.recordIds = entries.map(entry => entry.recordId);
     entries.forEach((entry, i) => {
       mesh.setMatrixAt(i, entry.matrix);
       mesh.setColorAt(i, tint.setScalar(entry.neutral || label === "deadline-bloom" ? 1 : .83 + entry.score * .0017));
@@ -464,6 +499,8 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
   world.userData.globeCropBatchCount = installed.length;
 
   return {
+    picks,
+    layouts,
     setMinimumScore(value) {
       const minimum = Math.max(0, Number(value) || 0);
       for (const { entries, presence } of installed) {
