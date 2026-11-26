@@ -634,6 +634,9 @@
         background: url("./assets/arden-bed-meadow.svg") center / cover no-repeat
           color-mix(in srgb, var(--garden-healthy) 62%, var(--garden-cream));
       }
+      @media (max-width: 500px) and (orientation: portrait) {
+        .garden-bed-stage { height: clamp(17.5rem, 43svh, 31rem); }
+      }
       .garden-bed-canvas {
         display: block;
         width: 100%;
@@ -645,18 +648,21 @@
       .garden-bed-canvas[data-plant-hover]:not(:active) { cursor: pointer; }
       .garden-bed-canvas:focus-visible { outline: 2px solid var(--garden-ink); outline-offset: -4px; }
       .garden-bed-scene-controls { display: grid; gap: .55rem; padding: .6rem .7rem .75rem; }
-      .garden-bed-preview {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        font-size: .86rem;
-        font-weight: 650;
+      .garden-bed-preview-help { font-size: .9rem; font-weight: 650; }
+      .garden-bed-preview-grant {
+        padding: .55rem .68rem;
+        border-inline-start: 3px solid var(--garden-deep);
+        border-radius: .35rem;
+        background: color-mix(in srgb, var(--garden-cream) 94%, var(--garden-dry));
+        color: var(--garden-ink);
       }
+      .garden-bed-preview-title { font-size: clamp(1rem, 2.2vw, 1.125rem); font-weight: 700; line-height: 1.32; overflow-wrap: anywhere; }
+      .garden-bed-preview-facts { margin-top: .24rem; font-size: .9rem; line-height: 1.4; color: var(--garden-deep); }
       .garden-bed-scene-actions, .garden-bed-turns, .garden-bed-grant-chooser { display: flex; gap: .3rem; }
       .garden-bed-scene-actions { align-items: stretch; flex-wrap: wrap; gap: .48rem .75rem; }
       .garden-bed-turns .garden-switch { min-width: 44px; padding-inline: .4rem; font-size: 1rem !important; }
       .garden-bed-grant-chooser { flex: 1 1 14rem; min-width: 0; }
-      .garden-bed-grant-chooser select { flex: 1; width: 0; min-width: 0; font-family: var(--font-body); }
+      .garden-bed-grant-chooser select { flex: 1; width: 0; min-width: 0; font-family: var(--font-body); font-size: 1rem !important; }
       .garden-bed-grant-chooser select:focus-visible { outline: 2px solid var(--garden-ink); outline-offset: 2px; }
       .garden-bed-grant-chooser button { flex: none; }
       #garden .garden-bed-grant-chooser button:disabled { opacity: .62; cursor: default; }
@@ -1062,10 +1068,16 @@
           <div class="garden-bed-scene" id="garden-bed-scene" hidden>
             <div class="garden-bed-stage">
               <canvas class="garden-bed-canvas" id="garden-bed-canvas" tabindex="0"
-                aria-label="3D topic bed" aria-describedby="garden-bed-preview"></canvas>
+                aria-label="3D topic bed" aria-describedby="garden-bed-preview-help"></canvas>
             </div>
             <div class="garden-bed-scene-controls">
-              <p class="garden-bed-preview" id="garden-bed-preview" aria-live="polite"></p>
+              <div id="garden-bed-preview" aria-live="polite" aria-atomic="true">
+                <p class="garden-bed-preview-help" id="garden-bed-preview-help">Drag or use arrow keys. Select a plant.</p>
+                <div class="garden-bed-preview-grant" id="garden-bed-preview-grant" hidden>
+                  <p class="garden-bed-preview-title" id="garden-bed-preview-title"></p>
+                  <p class="garden-bed-preview-facts" id="garden-bed-preview-facts"></p>
+                </div>
+              </div>
               <div class="garden-bed-scene-actions">
                 <div class="garden-bed-turns" role="group" aria-label="Move around the bed">
                   <button class="garden-switch" type="button" data-bed-turn="left" aria-label="Turn bed left">←</button>
@@ -2457,7 +2469,10 @@ function renderGardenField({ beds, layout, aspect }) {
           const topicList = byId("garden-topic-list");
           const bedScene = byId("garden-bed-scene");
           const bedCanvas = byId("garden-bed-canvas");
-          const bedPreview = byId("garden-bed-preview");
+          const bedPreviewHelp = byId("garden-bed-preview-help");
+          const bedPreviewGrant = byId("garden-bed-preview-grant");
+          const bedPreviewTitle = byId("garden-bed-preview-title");
+          const bedPreviewFacts = byId("garden-bed-preview-facts");
           const bedGrantSelect = byId("garden-bed-grant-select");
           const bedGrantOpen = byId("garden-bed-open-grant");
           const emptyBed = byId("garden-empty-bed");
@@ -2794,8 +2809,12 @@ function renderGardenField({ beds, layout, aspect }) {
 
           function preview3dGrant(id) {
             const slot = slotById.get(id);
-            bedPreview.textContent = slot ? previewText(slot) : "Drag or use arrow keys. Select a plant.";
-            bedPreview.title = slot ? bedPreview.textContent : "";
+            if (slot) {
+              bedPreviewTitle.textContent = titleText(slot);
+              bedPreviewFacts.textContent = previewDeadline(slot) + (slot.neutral ? " · Neutral score" : "");
+            }
+            bedPreviewHelp.hidden = Boolean(slot);
+            bedPreviewGrant.hidden = !slot;
             bed3d?.setSelection?.(slot ? id : null);
           }
 
