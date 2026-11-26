@@ -264,7 +264,7 @@
         position: absolute;
         top: calc(9.677% + var(--garden-header-height, 6rem) + 3px);
       }
-      .arden-lookout-art { left: clamp(1rem, 7vw, 7rem); width: 68px; height: 44px; }
+      .arden-lookout-art { left: clamp(.8rem, 6vw, 6rem); width: clamp(78px, 9vw, 120px); height: 45px; }
       .arden-sky-heart { right: 8%; width: 24px; height: 24px; }
       .garden-camera { transform-origin: 50% 50%; }
       .garden-camera {
@@ -453,11 +453,11 @@
         transform: translateX(-50%);
         max-width: 100%;
         height: var(--bed-label-height);
-        border-radius: 9px 11px 9px 8px;
+        border-radius: 7px 10px 8px 6px;
         padding-inline: .46rem;
-        background: var(--garden-cream);
+        background: linear-gradient(177deg, var(--garden-cream) 62%, color-mix(in srgb, var(--garden-cream) 87%, var(--garden-dry)));
         border: 1px solid var(--garden-line);
-        box-shadow: 0 1px var(--garden-line);
+        box-shadow: 0 1px var(--garden-line), 0 2px 3px #6b4a2f1c;
       }
       .garden-bed-target:is(:hover, :focus-visible) .garden-choice-label {
         border-color: var(--garden-deep);
@@ -638,50 +638,24 @@
         .garden-bed-plant[data-attention] .garden-crop { transform: none; }
       }
 
-      /* Neuroscience art preview */
+      /* The Neuroscience bed uses the larger close-up framing. */
       .garden-bed-view[data-bed="neuro"] {
         --arden-plant-height: clamp(7rem, 32vw, 8.6rem);
         --arden-soil-depth: 2.6rem;
-        --arden-bed-backdrop: url("./assets/arden-neuroscience-backdrop.svg");
-        --arden-bed-furrow: url("./assets/arden-neuroscience-furrow.svg");
       }
 
       .garden-bed-view[data-bed="neuro"] .garden-bed-plants {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: clamp(.5rem, 2vw, 1.25rem) 0;
-        isolation: isolate;
         padding: .7rem clamp(.4rem, 3vw, 2rem) 1.55rem;
-        border-color: color-mix(in srgb, var(--garden-deep) 60%, transparent);
-        border-radius: 1.45rem .95rem 1.3rem .85rem;
-        background: var(--arden-bed-backdrop) center top / 100% 40rem repeat-y var(--arden-hill-green);
       }
 
       .garden-bed-view[data-bed="neuro"] .garden-plant-card {
-        position: relative;
-        min-inline-size: 0;
         contain-intrinsic-block-size: auto calc(var(--arden-plant-height) + 5.1rem);
       }
 
-      /* The two vertical edges of the tile share the same curves and elevation. */
-      .garden-bed-view[data-bed="neuro"] .garden-plant-card::before {
-        content: "";
-        position: absolute;
-        inset-inline: 0;
-        inset-block-start: calc(var(--arden-plant-height) * .79 + .25rem);
-        block-size: var(--arden-soil-depth);
-        background: var(--arden-bed-furrow) center center / 100% 100% no-repeat;
-        pointer-events: none;
-      }
-
-      .garden-bed-view[data-bed="neuro"] .garden-plant-card:nth-child(even)::before {
-        transform: scaleX(-1);
-      }
-
       .garden-bed-view[data-bed="neuro"] .garden-bed-plant {
-        position: relative;
-        z-index: 1;
         width: calc(100% - .9rem);
-        min-inline-size: 0;
         margin-inline: .45rem;
         padding: .25rem .14rem .5rem;
         gap: .28rem;
@@ -701,15 +675,6 @@
       .garden-bed-view[data-bed="neuro"] .garden-bed-plant .garden-crop {
         width: min(100%, calc(var(--arden-plant-height) * .95));
         height: var(--arden-plant-height);
-      }
-
-      .garden-bed-view[data-bed="neuro"] .garden-plant-name,
-      .garden-bed-view[data-bed="neuro"] .garden-plant-fact {
-        max-inline-size: 100%;
-        padding: .13rem .22rem;
-        background: color-mix(in srgb, var(--garden-cream) 88%, transparent);
-        border-radius: .24rem;
-        color: var(--garden-ink);
       }
 
       .garden-bed-view[data-bed="neuro"] .garden-plant-name {
@@ -738,6 +703,64 @@
         .garden-bed-view[data-bed="neuro"] .garden-bed-plants {
           grid-template-columns: repeat(4, minmax(0, 1fr));
         }
+      }
+
+      /* Bed close-up scenery */
+      .garden-bed-view:is([data-bed="rare"], [data-bed="neuro"], [data-bed="ai"],
+        [data-bed="infectious"], [data-bed="engineering"], [data-bed="medicine"],
+        [data-bed="publichealth"], [data-bed="behavioral"], [data-bed="heritage"]) {
+        --arden-close-up-ground: #6f9355;
+        --arden-close-up-backdrop: url("./assets/arden-bed-meadow.svg");
+        --arden-close-up-furrow: url("./assets/arden-bed-furrow.svg");
+        --arden-caption-paper: color-mix(in srgb, var(--garden-cream) 94%, transparent);
+
+        & .garden-bed-plants {
+          isolation: isolate;
+          border-color: color-mix(in srgb, var(--garden-deep) 63%, var(--garden-cream));
+          border-radius: 1.45rem .95rem 1.3rem .85rem;
+          background:
+            repeating-linear-gradient(151deg, transparent 0 7px, #3427220c 7px 8px, transparent 8px 14px),
+            var(--arden-close-up-backdrop) center top / 100% min(54rem, 100%) no-repeat,
+            var(--arden-close-up-ground);
+        }
+
+        & .garden-plant-card {
+          position: relative;
+          min-inline-size: 0;
+        }
+
+        & .garden-plant-card::before {
+          content: "";
+          position: absolute;
+          inset-inline: -.32rem;
+          inset-block-start: calc(var(--arden-plant-height, 87px) * .79 + .25rem);
+          block-size: var(--arden-soil-depth, 2.1rem);
+          background: var(--arden-close-up-furrow) center / 100% 100% no-repeat;
+          pointer-events: none;
+        }
+
+        & .garden-plant-card:nth-child(even)::before { transform: scaleX(-1); }
+
+        & .garden-bed-plant {
+          position: relative;
+          z-index: 1;
+          min-inline-size: 0;
+        }
+
+        & :is(.garden-plant-name, .garden-plant-fact) {
+          max-inline-size: 100%;
+          padding-block: .13rem;
+          border-radius: .28rem;
+          background: var(--arden-caption-paper);
+          box-shadow: 0 0 0 .15rem var(--arden-caption-paper);
+          color: var(--garden-ink);
+        }
+
+        @media (max-width: 500px) {
+          & .garden-plant-card::before { inset-inline: -.25rem; }
+        }
+
+        &[data-bed="neuro"] .garden-plant-card::before { inset-inline: 0; }
       }
 
       /* ---------- Ask demo ---------- */
@@ -1341,68 +1364,87 @@ function gardenLandscape() {
   const pink = p.crayonPink;
   const purple = p.podPurple;
   const green = p.hillGreen;
-  const lawn = p.sunshineGround;
-  const cloudOutline = gardenMix(blue, purple, .52);
-  const farSlope = gardenMix(green, p.cream, .28);
-  const slopeShade = gardenMix(green, p.evergreen, .33);
-  const grassInk = gardenMix(green, lawn, .38);
+  const lawn = gardenMix(p.sunshineGround, p.cream, .48);
+  const cloudOutline = gardenMix(blue, purple, .66);
+  const grassInk = gardenMix(green, p.soil, .25);
   const random = gardenSeed("arden-crayon-lawn");
 
-  const grass = Array.from({ length: 36 }, () => {
+  const grass = Array.from({ length: 50 }, () => {
     const x = Math.round(5 + random() * 990);
-    const y = Math.round(328 + random() * 365);
-    const span = Math.round(5 + random() * 16);
-    return `M${x} ${y}q${Math.round(span * .42)} -2 ${span} -.7`;
+    const y = Math.round(304 + random() * 396);
+    const stem = Math.round(2 + random() * 3);
+    return `M${x} ${y}q-1 -${stem} -4 -${stem + 1}M${x} ${y}q2 -${stem + 1} 6 -${stem + 2}`;
   }).join(" ");
+  const pencil = (count, span) => Array.from({ length: count }, () => {
+    const x = Math.round(random() * 1000);
+    const y = Math.round(random() * 700);
+    const length = Math.round(4 + random() * span);
+    return `M${x} ${y}l${length} -${Math.round(length * (.14 + .18 * random()))}`;
+  }).join("");
 
   return `<svg viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="arden-crayon-sky" x1="0%" y1="17%" x2="100%" y2="39%">
-        <stop offset="0%" stop-color="${blue}"/>
-        <stop offset="42%" stop-color="${blue}"/>
-        <stop offset="51%" stop-color="${purple}"/>
-        <stop offset="62%" stop-color="${pink}"/>
-        <stop offset="100%" stop-color="${pink}"/>
+      <linearGradient id="arden-crayon-sky" x1="0%" y1="8%" x2="100%" y2="48%">
+        <stop offset="0%" stop-color="${gardenMix(blue, p.cream, .25)}"/>
+        <stop offset="41%" stop-color="${gardenMix(blue, p.cream, .46)}"/>
+        <stop offset="56%" stop-color="${gardenMix(purple, p.cream, .53)}"/>
+        <stop offset="77%" stop-color="${gardenMix(pink, p.cream, .44)}"/>
+        <stop offset="100%" stop-color="${gardenMix(pink, p.cream, .20)}"/>
+      </linearGradient>
+      <linearGradient id="arden-sky-horizon" x2="0" y2="1" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stop-color="${p.cream}" stop-opacity="0"/>
+        <stop offset="100%" stop-color="${p.cream}" stop-opacity=".55"/>
+      </linearGradient>
+      <linearGradient id="arden-far-slope" x2="0" y2="1" gradientUnits="objectBoundingBox">
+        <stop stop-color="${gardenMix(green, p.cream, .36)}"/>
+        <stop offset="100%" stop-color="${gardenMix(green, p.evergreen, .38)}"/>
+      </linearGradient>
+      <linearGradient id="arden-field-lawn" x2="0" y2="1" gradientUnits="objectBoundingBox">
+        <stop stop-color="${gardenMix(lawn, green, .36)}"/>
+        <stop offset="58%" stop-color="${lawn}"/>
+        <stop offset="100%" stop-color="${gardenMix(lawn, p.dry, .16)}"/>
       </linearGradient>
     </defs>
-    <path d="M0 0H1000V700H0Z" fill="url(#arden-crayon-sky)"/>
+    <path d="M0 0H1000V280H0Z" fill="url(#arden-crayon-sky)"/>
+    <path d="M0 0H1000V235H0Z" fill="url(#arden-sky-horizon)"/>
 
-    <g fill="none" stroke="${p.cream}" stroke-linecap="round" opacity=".17">
-      <path d="M-48 113C91 45 195 45 341 31M2 144C136 79 241 70 412 51M-29 167C143 105 269 111 462 64"
-        stroke-width="2.8"/>
-      <path d="M551 120C701 58 788 102 1017 46M573 138C744 83 847 110 1033 76M655 155C807 124 908 134 1042 98"
-        stroke-width="2.6"/>
+    <g fill="none" stroke="${p.cream}" stroke-linecap="round" opacity=".34">
+      <path d="M-36 118Q153 44 326 48M-27 124Q146 63 289 61M20 131Q181 77 295 75M-28 154Q53 118 145 106
+        M637 82Q794 45 1046 70M724 84Q858 60 1008 82M737 98Q878 76 1029 96M806 107Q909 95 1000 108"
+        stroke-width="1.15"/>
     </g>
 
-    <g fill="${p.cream}" stroke="${cloudOutline}" stroke-opacity=".36" stroke-width="1.25" stroke-linejoin="round">
-      <path d="M217 109C210 103 216 93 226 92C226 81 239 76 249 83C254 69 275 68 282 82C293 76 303 83 305 92C322 88 331 98 327 108C315 116 232 119 217 109Z"/>
-      <path d="M385 144C380 137 386 129 396 128C398 118 410 115 419 120C424 111 438 112 444 120C456 116 467 124 465 131C478 128 488 135 485 143C467 148 404 151 385 144Z" opacity=".94"/>
-      <path d="M670 112C664 105 671 96 681 96C682 85 700 82 710 89C718 75 737 78 744 89C756 83 773 90 775 99C790 96 800 104 796 113C770 122 691 123 670 112Z" opacity=".95"/>
+    <g fill="${p.cream}" stroke="${cloudOutline}" stroke-opacity=".47" stroke-width="1.2" stroke-linejoin="round">
+      <path d="M168 118C158 114 160 106 172 104Q172 91 191 95Q201 79 218 93Q237 85 246 98Q268 96 269 111Q262 124 168 118Z"/>
+      <path d="M389 129C379 122 389 114 405 114Q414 99 435 106Q453 91 473 106Q495 100 505 114Q529 111 529 125Q508 138 389 129Z"/>
+      <path d="M664 108C654 101 663 93 678 93Q679 82 699 85Q708 73 726 86Q745 80 756 93Q778 91 780 104Q767 118 664 108Z"/>
     </g>
-    <g fill="none" stroke="${cloudOutline}" stroke-opacity=".37" stroke-linecap="round">
-      <path d="M222 107Q267 114 321 105M391 142Q435 146 479 140M677 110Q730 117 789 109"/>
+    <g fill="none" stroke="${cloudOutline}" stroke-opacity=".49" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M171 114Q207 119 250 114M395 127Q451 134 515 124M671 106Q714 114 766 104"/>
+      <path d="m190 107 5-5 4 5Zm32 3 6-7 4 6Zm193 12 6-6 4 5Zm28-1 9-9 7 9Zm37 3 4-5 5 4Zm214-23 5-6 6 6Zm38 3 6-7 6 6Z"/>
     </g>
-    <path d="M0 162C110 152 159 209 262 193S423 155 515 194 651 206 747 168 917 143 1000 173V383H0Z"
-      fill="${farSlope}"/>
-    <path d="M0 239C130 220 154 245 278 211S466 229 546 219 706 182 805 190 919 244 1000 210V450H0Z"
-      fill="${green}"/>
-    <path d="M0 264C139 235 213 269 313 239S470 250 601 252 749 218 843 228 925 256 1000 247V471H0Z"
-      fill="${slopeShade}" opacity=".42"/>
-    <path d="M-1 285C118 257 236 298 359 272S557 250 684 282 862 256 1001 250V700H-1Z"
-      fill="${green}"/>
-
-    <path d="M-4 351C103 338 155 302 274 318S411 339 514 315 682 304 778 318 927 335 1004 311V703H-4Z"
-      fill="${lawn}"/>
-    <g fill="none" stroke-linecap="round">
-      <path d="M-32 392C111 332 239 366 383 353S646 320 805 362 960 364 1027 349M-31 530C183 468 336 524 517 496S842 490 1029 507M-35 648C183 595 346 625 535 601S837 592 1030 614"
-        stroke="${p.cream}" stroke-width="13" opacity=".29"/>
-      <path d="M-32 392C111 332 239 366 383 353S646 320 805 362 960 364 1027 349M-31 530C183 468 336 524 517 496S842 490 1029 507M-35 648C183 595 346 625 535 601S837 592 1030 614"
-        stroke="${grassInk}" stroke-width="1.35" opacity=".42"/>
-      <path d="${grass}" stroke="${green}" stroke-width="1.1" opacity=".47"/>
+    <path d="M0 161C120 148 185 195 276 191S430 178 512 162 622 183 699 170 887 130 1000 163V370H0Z"
+      fill="url(#arden-far-slope)"/>
+    <path d="M0 215C98 207 163 184 247 199S406 235 537 212 750 158 831 197 946 202 1000 191V394H0Z"
+      fill="${gardenMix(green, p.cream, .14)}"/>
+    <path d="M0 244C119 211 203 238 308 238S498 202 585 229 749 249 834 228 962 232 1000 225V398H0Z"
+      fill="${gardenMix(green, p.evergreen, .24)}" opacity=".64"/>
+    <path d="M0 255C114 222 168 251 293 260S474 236 570 246 780 275 877 247Q938 234 1000 251V700H0Z"
+      fill="url(#arden-field-lawn)"/>
+    <g fill="none" stroke-linecap="round" stroke-width="1.23">
+      <path d="M-14 228Q111 191 218 214M44 236Q112 219 181 229M381 225Q455 229 538 212M673 213Q759 179 825 208M832 232Q915 247 1007 211"
+        stroke="${p.cream}" opacity=".34"/>
+      <path d="M-18 284Q128 239 277 275M38 288Q103 268 172 267M332 274Q465 249 559 260M724 284Q830 288 936 263M887 277Q940 263 1013 275"
+        stroke="${grassInk}" opacity=".32"/>
+      <path d="${grass}" stroke="${grassInk}" opacity=".35"/>
+    </g>
+    <g fill="none" stroke-linecap="round" stroke-width=".8">
+      <path d="${pencil(150, 29)}" stroke="${p.cream}" opacity=".24"/>
+      <path d="${pencil(91, 21)}" stroke="${grassInk}" opacity=".15"/>
     </g>
   </svg>
   <svg class="arden-lookout-art" viewBox="-16 51 260 177" aria-hidden="true" focusable="false">
-    ${gardenMountainLookout({ ...p, water: gardenMix(blue, p.cream, .45) })}
+    ${gardenMountainLookout({ ...p, water: gardenMix(blue, p.cream, .26) })}
   </svg>
   <svg class="arden-sky-heart" viewBox="856 64 74 62" aria-hidden="true" focusable="false">
     <path d="M892 123C882 115 859 101 858 85C857 69 876 64 889 80C901 63 923 70 925 86C927 101 903 118 892 123Z"
@@ -1410,6 +1452,55 @@ function gardenLandscape() {
     <path d="M866 86Q872 76 880 82M898 78Q910 70 918 84"
       fill="none" stroke="${p.cream}" stroke-opacity=".57" stroke-width="3" stroke-linecap="round"/>
   </svg>`;
+}
+
+function gardenPlotPaint() {
+  const p = gardenPaint;
+  const turf = (kind, tone) => `<linearGradient id="garden-plot-${kind}" x1="0" y1="0" x2=".24" y2="1" gradientUnits="objectBoundingBox">
+    <stop stop-color="${gardenMix(tone, p.cream, .21)}"/>
+    <stop offset="52%" stop-color="${tone}"/>
+    <stop offset="100%" stop-color="${gardenMix(tone, p.ink, .27)}"/>
+  </linearGradient>`;
+  return `<defs>
+    <linearGradient id="garden-plot-earth" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="54%" stop-color="${p.dry}"/>
+      <stop offset="100%" stop-color="${gardenMix(p.soil, p.ink, .13)}"/>
+    </linearGradient>
+    ${turf("healthy", gardenMix(p.evergreen, p.hillGreen, .17))}
+    ${turf("healthy-light", gardenMix(p.evergreen, p.hillGreen, .28))}
+    ${turf("dry", gardenMix(p.evergreen, p.dry, .33))}
+  </defs>`;
+}
+
+function gardenWalks(layout, columns) {
+  const p = gardenPaint;
+  const gapRows = Array.from({ length: Math.ceil(layout.length / columns) }, (_, row) => {
+    const beds = layout.slice(row * columns, (row + 1) * columns);
+    return beds.slice(1).map((right, index) => ({
+      x: (beds[index].x + beds[index].w + right.x) / 2,
+      y: (right.labelY + right.y + right.h) / 2,
+    }));
+  });
+  const walks = gapRows[0].map((first, column) => {
+    const bend = column % 2 === 0 ? -1 : 1;
+    let previous = { x: first.x + 21 * bend, y: layout[0].labelY - 13 };
+    let path = `M${previous.x} ${previous.y}`;
+    for (const row of gapRows) {
+      // An incomplete final row can join a lane only when the gap lines up with it.
+      const point = row.find(gap => Math.abs(gap.x - first.x) < layout[0].w * .35);
+      if (!point) continue;
+      const turn = (previous.y + point.y) / 2;
+      path += `C${previous.x} ${turn} ${point.x} ${turn} ${point.x} ${point.y}`;
+      previous = point;
+    }
+    const end = previous.y + (previous.y - first.y) / Math.max(1, gapRows.length - 1) * .44;
+    return path + `Q${previous.x} ${end - 13} ${previous.x + 14 * bend} ${end}`;
+  }).join("");
+  return `<g fill="none" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="${walks}" stroke="${p.dry}" stroke-width="13" opacity=".32"/>
+    <path d="${walks}" stroke="${gardenMix(p.dry, p.cream, .68)}" stroke-width="10"/>
+    <path d="${walks}" stroke="${p.soil}" stroke-width="1" stroke-dasharray="1 4 3 8 1 7" opacity=".24"/>
+  </g>`;
 }
 
 function gardenBed({ x, y, w, h, index, hasDry }) {
@@ -1424,16 +1515,25 @@ function gardenBed({ x, y, w, h, index, hasDry }) {
     Q${right - 2} ${low + 1} ${right} ${low + 6}L${w - 4} ${h - 12}
     Q${w} ${h - 3} ${w - 10} ${h - 3}C${w * .66} ${h + 1} ${w * .31} ${h - bow} 10 ${h - 3}
     Q0 ${h - 3} 4 ${h - 12}L${left} ${high + 8}Q${left + 1} ${high + 1} ${left + 5} ${high}Z`;
-  const tone = hasDry ? gardenMix(p.evergreen, p.dry, .31) : gardenMix(p.evergreen, p.hillGreen, .14 + random() * .14);
+  const variation = random();
+  const turf = hasDry ? "dry" : variation < .5 ? "healthy" : "healthy-light";
+  const depth = Math.min(h * .11, 4.8);
+  const upperRim = `M${left + 5} ${high}C${w * .31} 1 ${w * .65} ${bow + 2} ${right - 8} ${low}`;
+  const face = `M8 ${h - 2}Q${w * .55} ${h + 3} ${w - 12} ${h - 2}`;
   const grain = Array.from({ length: 18 }, () => {
     const startX = Math.round(17 + (w - 36) * random());
     const startY = Math.round(7 + (h - 15) * random());
     return `M${startX} ${startY}q2 -1 5 -.6`;
   }).join("");
   return `<g class="garden-bed-graphic" transform="translate(${x} ${y})" aria-hidden="true">
-    <path d="${border}" fill="${p.soil}" opacity=".64" transform="translate(0 2.5)"/>
-    <path class="garden-bed-soil" d="${border}" fill="${tone}" stroke="${p.cream}" stroke-width="1.85"/>
-    <path d="${grain}" fill="none" stroke="${p.cream}" stroke-linecap="round" opacity=".21"/>
+    <path d="${border}" fill="${p.soil}" opacity=".23" transform="translate(2 ${depth + 1.4})"/>
+    <path d="${border}" fill="url(#garden-plot-earth)" transform="translate(0 ${depth})"/>
+    <path class="garden-bed-soil" d="${border}" fill="url(#garden-plot-${turf})" stroke="${p.evergreen}" stroke-width=".9"/>
+    <g fill="none" stroke-linecap="round">
+      <path d="${upperRim}" stroke="${p.cream}" opacity=".46" stroke-width=".9"/>
+      <path d="${face}" stroke="${p.cream}" opacity=".34" stroke-width=".65" stroke-dasharray="2 1.5 5 3"/>
+      <path d="${grain}" stroke="${p.cream}" opacity=".22" stroke-width=".72"/>
+    </g>
   </g>`;
 }
 
@@ -2144,7 +2244,8 @@ function renderGardenField({ beds, layout, aspect }) {
       return shape + ' ' + transform + data + '/>';
     }).join("");
     return '<g class="garden-field-bed" data-field-bed="' + bed.id + '" data-field-count="' + count + '">' +
-      '<path d="' + furrows + '" fill="none" stroke="' + p.cream + '" stroke-opacity=".24" stroke-width=".7"/>' +
+      '<path d="' + furrows + '" fill="none" stroke="' + p.ink + '" stroke-opacity=".32" stroke-width="1.65"/>' +
+      '<path d="' + furrows + '" fill="none" stroke="' + p.cream + '" stroke-opacity=".27" stroke-width=".65" transform="translate(0 -.65)"/>' +
       '<g stroke="' + p.ink + '" stroke-opacity=".7" stroke-linejoin="round">' + plants + '</g>' +
       '<path class="garden-field-blooms" d="' + flowerPaths.join("") + '" fill="' + p.bloom + '"/></g>';
   }).join("");
@@ -2340,7 +2441,7 @@ function renderGardenField({ beds, layout, aspect }) {
             const arrival = index => scene.dataset.gardenArrived === "true"
               ? "animation:none;" : "--arrival-delay:" +
                 (index * motion.arrival.stagger / Math.max(1, beds.length - 1)) + "ms";
-            map.innerHTML = layout.map(bed => {
+            map.innerHTML = gardenPlotPaint() + gardenWalks(layout, columns) + layout.map(bed => {
               const channelY = bed.y + bed.h - 12;
               return '<g class="garden-map-bed" style="' + arrival(bed.index) + '">' + gardenBed(bed) +
                 '<path d="M' + (bed.x + 13) + ' ' + channelY + 'H' + (bed.x + bed.w - 13) +
