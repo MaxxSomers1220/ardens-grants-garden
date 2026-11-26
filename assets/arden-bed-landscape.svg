@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2=".40">
+      <stop stop-color="#d9e5ec"/>
+      <stop offset=".52" stop-color="#f7f1e3"/>
+      <stop offset="1" stop-color="#ecdde3"/>
+    </linearGradient>
+    <linearGradient id="far-hill" x2="0" y2="1">
+      <stop stop-color="#cad2c0"/>
+      <stop offset="1" stop-color="#b6c5ad"/>
+    </linearGradient>
+    <linearGradient id="middle-hill" x2="0" y2="1">
+      <stop stop-color="#aebb9a"/>
+      <stop offset="1" stop-color="#96ab87"/>
+    </linearGradient>
+    <linearGradient id="clearing" x2=".35" y2="1">
+      <stop stop-color="#a8b588"/>
+      <stop offset=".57" stop-color="#c8c38c"/>
+      <stop offset="1" stop-color="#c4bb80"/>
+    </linearGradient>
+    <linearGradient id="front-grass" x2=".06" y2="1">
+      <stop stop-color="#a5b075"/>
+      <stop offset="1" stop-color="#b4b780"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Broad shapes continue through the edges so a centered crop still reads as a landscape. -->
+  <path fill="url(#sky)" d="M0 0h1200v800H0z"/>
+  <path fill="#e5e8e1" fill-opacity=".53" d="M0 141c130-12 225 32 312 31 127-1 278-51 428-31 161 21 291 74 460 41v100H0Z"/>
+  <path fill="#f7f1e3" fill-opacity=".64" d="M0 234c170-46 300-20 438-19 160 1 303-27 452-9 104 13 214 49 310 21v113H0Z"/>
+
+  <path fill="#fbf4e5" fill-opacity=".87" d="M242 132c4-11 19-17 34-16 8-15 30-21 50-17 13 2 23 8 28 17 17-1 33 7 35 17 2 11-13 15-30 15H270c-17 0-30-6-28-16Zm145 32c11-7 24-9 35-8 4-16 21-25 44-22 13 2 24 9 27 19 14-4 31 1 38 10 6 8-1 16-18 17l-111 1c-18 0-26-8-15-17Zm306-33c3-10 16-16 31-15 5-13 20-21 39-19 18 1 31 9 35 22 17-1 33 5 37 13 5 9-6 17-27 17H719c-20 0-30-8-26-18Zm241 31c14-10 32-11 45-6 9-12 31-17 47-10 10 4 16 9 19 15 16-1 29 6 28 14-1 7-17 11-30 11h-90c-16 0-28-12-19-24Z"/>
+  <path d="M250 135q37 11 88 4m57 33q38 7 65 2m13 0 28-1m200-40q28 9 65 7m184 35q27 6 48 2"
+    fill="none" stroke="#baaeb7" stroke-opacity=".23" stroke-width="1.9" stroke-linecap="round"/>
+  <path d="M34 94c65-15 115-12 151-5m353 20c38-8 75-9 116-5m289-47c52 5 96 17 143 16M83 177q45-11 73-8m430 23q38-7 69-4"
+    fill="none" stroke="#fffbef" stroke-opacity=".48" stroke-width="2" stroke-linecap="round"/>
+
+  <path fill="url(#far-hill)" d="M0 260c104-49 169-70 251-63 90 8 148 54 233 60 111 8 198-84 317-71 104 11 167 68 259 66 53-1 99-12 140-26v181H0Z"/>
+  <path fill="#e5e5cd" fill-opacity=".69" d="M0 308c124-58 244-50 372-27 108 19 180 12 281-18 113-34 222-25 321 14 66 26 137 43 226 20v139H0Z"/>
+  <path fill="url(#middle-hill)" d="M0 344c105-55 160-75 229-68 121 11 164 80 283 76 115-4 177-55 282-66 151-17 262 58 406 30v228H0Z"/>
+  <path fill="#dde0b5" fill-opacity=".35" d="M0 373c115-14 197-53 301-43 89 9 121 48 203 61 139 22 229-54 373-42 116 9 199 57 323 19v118H0Z"/>
+  <path d="M0 346q132-71 218-64m9 0q59 7 105 31m364 16q92-42 158-36m52 2q71 6 129 28"
+    fill="none" stroke="#e9ead0" stroke-opacity=".47" stroke-width="2.1" stroke-linecap="round"/>
+
+  <path fill="url(#clearing)" d="M0 407c174-41 271-22 417-2 82 11 156 11 236-2 201-32 345-49 547 22v375H0Z"/>
+  <path fill="#ded3a0" fill-opacity=".47" d="M0 511c226 46 362-29 559-33 154-3 238 41 380 30 81-6 167-34 261-29v228H0Z"/>
+  <path fill="#a3ad7a" fill-opacity=".40" d="M0 582c144 8 224 3 342 24 128 22 207 36 346 8 186-38 312-56 512-18v204H0Z"/>
+  <path fill="url(#front-grass)" d="M0 697c132-21 231 20 354 32 148 14 294-64 449-58 141 5 266 55 397 37v92H0Z"/>
+
+  <!-- Pencil accents follow the hills and gather at the outside of the clearing. -->
+  <path d="M38 438q38-10 68-7m-61 15 47-8m-9 102 39-5m19-4q27-4 48-10m-94 117 31-1m97-81 40-7m436-116q38-8 75-6m187 67q49-1 96 14m-84-3 32 8m139-47 39 8m-111 145 39 5m-71 13 51 7m-710-23 25 3m364 78 43-5"
+    fill="none" stroke="#6d875b" stroke-opacity=".30" stroke-width="2.05" stroke-linecap="round"/>
+  <path d="M107 419l26-3m51 88 28-6m-171 72 34 4m153 54 42 3m55-177 32 2m265-24 24-4m166 36 37 1m68 58q45 6 72 4m30 38 25 4m83 88 27 4m-568 26 40-2m103 49 37-5m-479 4 45 5"
+    fill="none" stroke="#f0e4b6" stroke-opacity=".52" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M97 508q-7-11-16-16m18 16q-2-16 0-22m2 22 15-12m74 122-4-12m6 12 9-9m-70 103q-10-11-18-12m20 12q-4-16-2-24m4 23 14-13m120 33 5-17m-5 17 14-8m80 26-10-13m12 14q-2-9 4-18m-2 17 15-9m568-231q5-10 11-14m-8 17 15-5m87 111q-5-12-12-18m13 18q4-10 12-14m-269 84-7-13m8 13q2-13 7-22m-4 22 15-8m-20 63q-7-15-19-20m21 19q-3-16 1-24m2 24 16-14m212-32-8-14m10 14 10-10"
+    fill="none" stroke="#638552" stroke-opacity=".39" stroke-width="2.4" stroke-linecap="round"/>
+</svg>
