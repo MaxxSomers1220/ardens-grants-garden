@@ -304,6 +304,80 @@
         background: radial-gradient(ellipse at center, transparent 22%, #F2C14E24 41%, transparent 68%);
         opacity: var(--light-warmth, 0);
       }
+      .garden-scene[data-globe] :is(.garden-camera, .garden-light) { visibility: hidden; }
+      .garden-scene[data-globe] .garden-backdrop { opacity: .74; }
+      .garden-globe {
+        position: absolute;
+        inset: calc(var(--garden-header-height, 6rem) + .5rem) 0 .75rem;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .4rem;
+      }
+      .garden-globe-stage {
+        position: relative;
+        width: min(calc(100% - 1rem), max(16rem, calc(100svh - 13rem)), 49rem);
+        aspect-ratio: 1;
+        flex: none;
+        transition: transform var(--globe-transition, 500ms) ease-in-out,
+          opacity var(--globe-transition, 500ms) ease-in-out;
+      }
+      .garden-globe[data-departing] .garden-globe-stage { transform: scale(1.16); opacity: 0; }
+      .garden-globe-stage::before {
+        content: "";
+        position: absolute;
+        inset: 85% 12% -4%;
+        background: radial-gradient(ellipse, #6b4a2f36, #6b4a2f0c 54%, transparent 73%);
+        pointer-events: none;
+      }
+      .garden-globe-canvas, .garden-globe-labels { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .garden-globe-canvas { display: block; touch-action: pinch-zoom; cursor: grab; border-radius: 50%; }
+      .garden-globe-canvas:active { cursor: grabbing; }
+      .garden-globe-labels { pointer-events: none; }
+      #garden .garden-globe-label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: grid;
+        place-content: center;
+        min-height: 44px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--garden-ink);
+        font: 700 .69rem/1.12 var(--font-data);
+        pointer-events: auto;
+      }
+      .garden-globe-label span {
+        white-space: nowrap;
+        padding: .28rem .48rem;
+        border: 1px solid var(--garden-line);
+        border-radius: .42rem .56rem .4rem .35rem;
+        box-shadow: 0 2px 2px #2e3a4530;
+        background: var(--garden-cream);
+      }
+      .garden-globe-label:hover span { border-color: var(--garden-deep); }
+      .garden-globe-controls { display: grid; justify-items: center; gap: .38rem; }
+      .garden-globe-controls p {
+        padding: .14rem .55rem;
+        border-radius: .38rem;
+        background: var(--garden-cream);
+        font-size: .82rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      .garden-globe-actions, .garden-globe-turns, .garden-globe-chooser {
+        display: flex; justify-content: center; gap: .3rem; flex-wrap: wrap;
+      }
+      .garden-globe-turns .garden-switch { min-width: 44px; padding-inline: .45rem; font-size: 1rem !important; }
+      .garden-globe-select { font-family: var(--font-body); width: min(13.5rem, calc(100vw - 7rem)); }
+      #garden .garden-globe-chooser button:disabled { opacity: .62; cursor: default; }
+      .garden-globe :is(canvas, select):focus-visible { outline: 2px solid var(--garden-ink); outline-offset: 3px; }
+      @media (max-height: 690px) and (min-width: 601px) {
+        .garden-globe { flex-direction: row; gap: clamp(.5rem, 3vw, 2rem); }
+      }
       .garden-map-bed { opacity: 1; }
       .garden-landscape-title { animation: garden-arrive 180ms 390ms ease-out both; }
       @keyframes garden-arrive { from { opacity: 0; } }
@@ -906,6 +980,31 @@
             </div>
           </div>
           <div class="garden-light" id="garden-light" aria-hidden="true"></div>
+          <div class="garden-globe" id="garden-globe" hidden>
+            <div class="garden-globe-stage">
+              <canvas class="garden-globe-canvas" id="garden-globe-canvas" tabindex="0"
+                aria-label="3D garden globe" aria-describedby="garden-globe-help"></canvas>
+              <div class="garden-globe-labels" id="garden-globe-labels" role="group" aria-label="Beds facing you"></div>
+            </div>
+            <div class="garden-globe-controls">
+              <p id="garden-globe-help">Drag or use the arrow keys. Select a bed to explore.</p>
+              <div class="garden-globe-actions">
+                <div class="garden-globe-turns" role="group" aria-label="Turn the globe">
+                  <button type="button" class="garden-switch" data-globe-turn="left" aria-label="Turn left">←</button>
+                  <button type="button" class="garden-switch" data-globe-turn="right" aria-label="Turn right">→</button>
+                  <button type="button" class="garden-switch" data-globe-turn="up" aria-label="Turn up">↑</button>
+                  <button type="button" class="garden-switch" data-globe-turn="down" aria-label="Turn down">↓</button>
+                  <button type="button" class="garden-switch" data-globe-turn="reset" aria-label="Reset globe view">↺</button>
+                </div>
+                <div class="garden-globe-chooser">
+                  <select class="garden-switch garden-globe-select" id="garden-globe-bed-select" aria-label="Choose a bed">
+                    <option value="">Choose a bed</option>
+                  </select>
+                  <button type="button" class="garden-switch" id="garden-globe-open" aria-controls="garden-bed-view" disabled>Open bed</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <p id="garden-load-status" class="garden-load-status" role="status">Loading grant records…</p>
         </div>
         <div class="garden-list" id="garden-list" aria-label="Topic beds as a list" hidden></div>
@@ -2285,6 +2384,11 @@ function renderGardenField({ beds, layout, aspect }) {
           const camera = byId("garden-camera");
           const front = byId("garden-front");
           const targets = byId("garden-hit-targets");
+          const globeView = byId("garden-globe");
+          const globeCanvas = byId("garden-globe-canvas");
+          const globeTargets = byId("garden-globe-labels");
+          const globeSelect = byId("garden-globe-bed-select");
+          const globeOpen = byId("garden-globe-open");
           const detail = byId("garden-detail");
           const list = byId("garden-list");
           const bedView = byId("garden-bed-view");
@@ -2354,6 +2458,8 @@ function renderGardenField({ beds, layout, aspect }) {
           let isOnScreen = true;
           let fieldScroll = 0;
           let fieldEntryBed = null;
+          let globe = null;
+          let globeEntryControl = null;
           let transitionRunning = false;
           let trigger = null;
           let detailRequest = null;
@@ -2422,6 +2528,7 @@ function renderGardenField({ beds, layout, aspect }) {
             const header = landing.querySelector(".garden-header");
             const headerHeight = header.offsetHeight;
             scene.style.setProperty("--garden-header-height", headerHeight + "px");
+            if (globe) return;
             const top = (headerHeight + 49) * unitsPerPx;
             const gapY = (mobile ? 7 : 11) * unitsPerPx;
             const labelHeight = (mobile ? 19 : 23) * unitsPerPx;
@@ -2515,6 +2622,77 @@ function renderGardenField({ beds, layout, aspect }) {
             society: "Social science", capacity: "Research hubs", diplomacy: "Diplomacy", other: "Other grants"
           };
 
+          const globeLabels = new Map(beds.map(bed => {
+            const label = shortBedLabels[bed.id] || bed.topic;
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "garden-globe-label";
+            button.dataset.openBed = bed.id;
+            button.setAttribute("aria-label", bed.topic);
+            button.setAttribute("aria-controls", bedView.id);
+            button.innerHTML = "<span>" + escape(label) + "</span>";
+            button.hidden = true;
+            globeTargets.append(button);
+            globeSelect.add(new Option(bed.topic, bed.id));
+            return [bed.id, { button, width: label.length * 7 + 20 }];
+          }));
+
+          function placeGlobeLabels(markers) {
+            const width = globeCanvas.clientWidth;
+            const height = globeCanvas.clientHeight;
+            const placed = [];
+            const visible = new Set();
+            // Reserve a hit area around each overlaid label, leaving the crops visible between labels.
+            for (const marker of [...markers].sort((a, b) => b.depth - a.depth)) {
+              const label = globeLabels.get(marker.id);
+              const half = label.width / 2;
+              const x = Math.round(Math.max(half, Math.min(width - half, marker.x)));
+              const y = Math.round(Math.max(22, Math.min(height - 22, marker.y + 16)));
+              if (placed.some(rect => Math.abs(y - rect.y) < 46 && Math.abs(x - rect.x) < half + rect.half + 4)) continue;
+              label.button.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+              visible.add(marker.id);
+              placed.push({ x, y, half });
+            }
+            for (const [id, label] of globeLabels) {
+              const hidden = !visible.has(id);
+              if (hidden && label.button === document.activeElement) globeCanvas.focus({ preventScroll: true });
+              label.button.hidden = hidden;
+            }
+          }
+
+          function openGlobeBed(id, control) {
+            if (!globe || transitionRunning || detail.open || savedDialog.open) return;
+            globeEntryControl = control;
+            enterBed(beds.find(bed => bed.id === id));
+          }
+
+          function flatGarden() {
+            globe?.dispose();
+            globe = null;
+            globeView.hidden = true;
+            globeView.removeAttribute("data-departing");
+            scene.removeAttribute("data-globe");
+            sceneLayout();
+            applyVisibility();
+          }
+
+          async function loadGlobe() {
+            try {
+              const { createGardenGlobe } = await import("./garden-globe.js");
+              globeView.hidden = false;
+              globe = createGardenGlobe({
+                canvas: globeCanvas, beds, paint: gardenPaint, onLayout: placeGlobeLabels,
+                onSelect: id => openGlobeBed(id, globeCanvas), onUnavailable: flatGarden
+              });
+              scene.dataset.globe = "";
+              globe.setWeather({ funding: landing.dataset.funding === "true", research: landing.dataset.research === "true" });
+              globe.setMinimumScore(minimumGap);
+              applyVisibility();
+            } catch {
+              flatGarden();
+            }
+          }
+
           function bedButton(bed, className) {
             const field = className === "garden-bed-target";
             const label = field ? gardenBedKeeperIcon() +
@@ -2538,6 +2716,7 @@ function renderGardenField({ beds, layout, aspect }) {
             for (const row of bedView.querySelectorAll("[data-record-row]")) {
               row.classList.toggle("is-dim", !matches(slotById.get(row.dataset.recordRow)));
             }
+            globe?.setMinimumScore(minimumGap);
           }
 
           function updateView() {
@@ -2603,6 +2782,20 @@ function renderGardenField({ beds, layout, aspect }) {
             }
           }
 
+          function animateGlobe(departing, duration, finish) {
+            transitionRunning = Boolean(duration);
+            globeView.style.setProperty("--globe-transition", duration + "ms");
+            globeView.toggleAttribute("data-departing", departing);
+            if (duration) {
+              setTimeout(() => {
+                transitionRunning = false;
+                finish();
+              }, duration);
+            } else {
+              finish();
+            }
+          }
+
           function enterBed(bed) {
             if (!bed || currentBed === bed || transitionRunning || detail.open) return;
             const fromField = currentBed === null;
@@ -2618,6 +2811,9 @@ function renderGardenField({ beds, layout, aspect }) {
             };
             if (!fromField || reduce.matches || scene.hidden || !isOnScreen) {
               finish();
+            } else if (globe) {
+              globe.setVisible(false);
+              animateGlobe(true, motion.zoom.detail, finish);
             } else {
               weather.setVisible(false);
               animateCamera(cameraTransform(bed), motion.zoom.detail, finish);
@@ -2631,18 +2827,34 @@ function renderGardenField({ beds, layout, aspect }) {
             transitionRunning = animated;
             currentBed = null;
             if (animated) {
-              camera.style.setProperty("--garden-zoom", "0ms");
-              camera.style.transform = cameraTransform(previous);
+              if (globe) {
+                globeView.style.setProperty("--globe-transition", "0ms");
+                globeView.setAttribute("data-departing", "");
+              } else {
+                camera.style.setProperty("--garden-zoom", "0ms");
+                camera.style.transform = cameraTransform(previous);
+              }
             }
             updateView();
             window.scrollTo({ top: fieldScroll, behavior: "instant" });
             const finish = () => {
               applyVisibility();
-              (currentView === "garden" ? targets : list).querySelector('[data-open-bed="' + fieldEntryBed.id + '"]')
-                .focus({ preventScroll: true });
+              if (globe && currentView === "garden") {
+                const button = globeEntryControl && !globeEntryControl.hidden ? globeEntryControl : globeSelect;
+                button.focus({ preventScroll: true });
+              } else {
+                (currentView === "garden" ? targets : list).querySelector('[data-open-bed="' + fieldEntryBed.id + '"]')
+                  .focus({ preventScroll: true });
+              }
+              globeEntryControl = null;
             };
-            if (animated) camera.getBoundingClientRect();
-            animateCamera("", animated ? motion.zoom.return : 0, finish);
+            if (globe && currentView === "garden") {
+              if (animated) globeView.getBoundingClientRect();
+              animateGlobe(false, animated ? motion.zoom.return : 0, finish);
+            } else {
+              if (animated) camera.getBoundingClientRect();
+              animateCamera("", animated ? motion.zoom.return : 0, finish);
+            }
           }
 
           targets.innerHTML = beds.map(bed => bedButton(bed, "garden-bed-target")).join("");
@@ -2662,6 +2874,31 @@ function renderGardenField({ beds, layout, aspect }) {
               else enterBed(beds.find(bed => bed.id === button.dataset.openBed));
             });
           }
+          globeTargets.addEventListener("click", event => {
+            const button = event.target.closest("button[data-open-bed]");
+            if (button) openGlobeBed(button.dataset.openBed, button);
+          });
+          globeSelect.addEventListener("change", () => {
+            globeOpen.disabled = !globeSelect.value;
+          });
+          globeOpen.addEventListener("click", () => {
+            if (globeSelect.value) openGlobeBed(globeSelect.value, globeOpen);
+          });
+          const globeTurns = { left: { yaw: -.45 }, right: { yaw: .45 }, up: { pitch: -.36 }, down: { pitch: .36 } };
+          function turnGlobe(direction) {
+            if (!globe || transitionRunning) return;
+            if (direction === "reset") globe.reset();
+            else globe.rotate(globeTurns[direction]);
+          }
+          globeView.querySelectorAll("[data-globe-turn]").forEach(button => button.addEventListener("click", () => {
+            turnGlobe(button.dataset.globeTurn);
+          }));
+          globeCanvas.addEventListener("keydown", event => {
+            const direction = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Home: "reset" }[event.key];
+            if (!direction) return;
+            event.preventDefault();
+            turnGlobe(direction);
+          });
           byId("garden-bed-back").addEventListener("click", leaveBed);
           previousButton.addEventListener("click", () => enterBed(beds[(currentBed.index + beds.length - 1) % beds.length]));
           nextButton.addEventListener("click", () => enterBed(beds[(currentBed.index + 1) % beds.length]));
@@ -2768,6 +3005,7 @@ function renderGardenField({ beds, layout, aspect }) {
           function syncModalMotion() {
             weather.setPanel(detail.open || savedDialog.open ? true : null);
             landing.toggleAttribute("data-ambient-paused", document.hidden || !seenBed || detail.open || savedDialog.open);
+            applyVisibility();
           }
 
           homeButton.addEventListener("click", () => {
@@ -2939,8 +3177,9 @@ function renderGardenField({ beds, layout, aspect }) {
 
           function applyVisibility() {
             const visible = currentView === "garden" && currentBed === null && !transitionRunning && isOnScreen;
-            weather.setVisible(visible);
-            if (visible) weather.arrive();
+            globe?.setVisible(visible && !document.hidden && !detail.open && !savedDialog.open);
+            weather.setVisible(visible && !globe);
+            if (visible && !globe) weather.arrive();
           }
 
           document.querySelectorAll("#garden [data-view]").forEach(button => button.addEventListener("click", () => {
@@ -2956,6 +3195,7 @@ function renderGardenField({ beds, layout, aspect }) {
             scene.dataset[button.dataset.layer] = String(on);
             landing.dataset[button.dataset.layer] = String(on);
             weather.setLayer(button.dataset.layer, on);
+            globe?.setWeather({ funding: landing.dataset.funding === "true", research: landing.dataset.research === "true" });
           }));
 
           if (typeof IntersectionObserver === "function") {
@@ -2977,6 +3217,7 @@ function renderGardenField({ beds, layout, aspect }) {
           syncModalMotion();
 
           byId("garden-load-status").hidden = true;
+          loadGlobe();
         }
 
         startGarden().catch(error => {
