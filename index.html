@@ -656,45 +656,16 @@
       .garden-bed-plant-label {
         position: absolute;
         inset: 0 auto auto 0;
-        padding: .2rem .53rem;
-        border: 1px solid var(--garden-line);
-        border-radius: .4rem .46rem .38rem .34rem;
-        background: var(--garden-cream);
-        color: var(--garden-ink);
-        box-shadow: 0 3px 9px #2e3a452d;
-        pointer-events: none;
-        white-space: nowrap;
-        font: 650 .8rem/1.4 var(--font-body);
-        transform: translate(var(--plant-tag-x), var(--plant-tag-y)) translate(-50%, -100%);
-      }
-      .garden-bed-plant-label::after {
-        content: "";
-        position: absolute;
-        left: var(--plant-tag-tip);
-        top: calc(100% - 1px);
-        border: 5px solid transparent;
-        border-top: 6px solid var(--garden-cream);
-        transform: translateX(-50%);
-      }
-      .garden-bed-plant-label[data-below] { transform: translate(var(--plant-tag-x), var(--plant-tag-y)) translateX(-50%); }
-      .garden-bed-plant-label[data-below]::after {
-        top: auto;
-        bottom: calc(100% - 1px);
-        border-top-color: transparent;
-        border-bottom-color: var(--garden-cream);
-      }
-      .garden-bed-plant-label[data-pin] {
         z-index: 1;
         width: 13px;
         height: 13px;
-        padding: 0;
         border: 2px solid var(--garden-cream);
         border-radius: 50%;
         background: var(--garden-deep);
         box-shadow: 0 0 0 1px var(--garden-deep);
+        pointer-events: none;
         transform: translate(var(--plant-tag-x), var(--plant-tag-y)) translate(-50%, -50%);
       }
-      .garden-bed-plant-label[data-pin]::after { display: none; }
       .garden-bed-deadline-signs { position: absolute; inset: 0; pointer-events: none; }
       .garden-bed-deadline-sign {
         position: absolute;
@@ -1191,7 +1162,7 @@
                 <canvas class="garden-bed-canvas" id="garden-bed-canvas" tabindex="0"
                   aria-label="3D topic bed" aria-describedby="garden-bed-turn-help garden-bed-preview-help"></canvas>
                 <div class="garden-bed-deadline-signs" id="garden-bed-deadline-signs" aria-hidden="true"></div>
-                <div class="garden-bed-plant-label" id="garden-bed-plant-label" aria-hidden="true" hidden></div>
+                <div class="garden-bed-plant-label" id="garden-bed-plant-label" data-pin aria-hidden="true" hidden></div>
               </div>
               <div class="garden-bed-tools">
                 <p id="garden-bed-turn-help">Drag to turn</p>
@@ -2653,6 +2624,7 @@ function renderGardenField({ beds, layout, aspect }) {
             }))
           }));
           const undatedDeadlines = new Map();
+          const sourceOrder = slot => snapshot.sourceOrder.get(slot.record.opportunity_id);
           for (const bed of beds) {
             // Neutral-only beds use their first plant as the artistic landmark.
             let strongest = bed.slots[0];
@@ -2660,13 +2632,12 @@ function renderGardenField({ beds, layout, aspect }) {
               if (!slot.neutral && (strongest.neutral || slot.score > strongest.score)) strongest = slot;
             }
             if (strongest) strongest.elephant = true;
-            if (bed.id === "neuro") {
-              bed.deadlinePath = makeDeadlinePath(bed.slots);
-              for (const terrace of bed.deadlinePath.terraces) {
-                const label = terrace.id === "rolling" ? "Rolling" : terrace.id === "unstated" ? "Unstated" : null;
-                if (label) {
-                  for (const slot of terrace.slots) undatedDeadlines.set(slot.record.opportunity_id, label);
-                }
+            // Bed assignments are score-ranked. Keep the published order for tied deadlines.
+            bed.deadlinePath = makeDeadlinePath(bed.slots.slice().sort((a, b) => sourceOrder(a) - sourceOrder(b)));
+            for (const terrace of bed.deadlinePath.terraces) {
+              const label = terrace.id === "rolling" ? "Rolling" : terrace.id === "unstated" ? "Unstated" : null;
+              if (label) {
+                for (const slot of terrace.slots) undatedDeadlines.set(slot.record.opportunity_id, label);
               }
             }
           }
@@ -2710,7 +2681,7 @@ function renderGardenField({ beds, layout, aspect }) {
           homeButton.innerHTML = gardenHouseIcon() + "Home";
 
           const deadlineText = record => undatedDeadlines.get(record.opportunity_id) ||
-            (record.deadline_parsed ? dateFormat.format(new Date(record.deadline_parsed)) : "Rolling");
+            (record.deadline_parsed ? dateFormat.format(new Date(record.deadline_parsed)) : "Unstated");
           const scoreText = slot => slot.neutral ? "Neutral" : String(slot.score);
           const titleText = slot => slot.record.title_normalized;
           function previewDeadline(slot) {
@@ -2954,13 +2925,10 @@ function renderGardenField({ beds, layout, aspect }) {
 
           function preview3dGrant(id) {
             const slot = slotById.get(id);
-            const pin = Boolean(currentBed?.deadlinePath?.terraces.length);
-            bedPlantLabel.toggleAttribute("data-pin", pin);
             if (slot) {
               bedPreviewTitle.textContent = titleText(slot);
               const deadline = previewDeadline(slot);
               bedPreviewFacts.textContent = deadline + (slot.neutral ? " · Neutral score" : "");
-              bedPlantLabel.textContent = pin ? "" : deadline;
             }
             bedPreviewHelp.hidden = Boolean(slot);
             bedPreviewGrant.hidden = !slot;
@@ -2974,22 +2942,11 @@ function renderGardenField({ beds, layout, aspect }) {
               bedPlantLabel.hidden = true;
               return;
             }
-            const stageWidth = bedCanvas.clientWidth;
             bedPlantLabel.hidden = false;
-            if (bedPlantLabel.hasAttribute("data-pin")) {
-              const x = Math.max(9, Math.min(stageWidth - 9, anchor.x));
-              const y = Math.max(9, Math.min(bedCanvas.clientHeight - 9, anchor.y - 7));
-              bedPlantLabel.style.setProperty("--plant-tag-x", x + "px");
-              bedPlantLabel.style.setProperty("--plant-tag-y", y + "px");
-              return;
-            }
-            const half = bedPlantLabel.offsetWidth / 2;
-            const x = Math.max(half + 8, Math.min(stageWidth - half - 8, anchor.x));
-            const below = anchor.y < bedPlantLabel.offsetHeight + 14;
-            bedPlantLabel.toggleAttribute("data-below", below);
+            const x = Math.max(9, Math.min(bedCanvas.clientWidth - 9, anchor.x));
+            const y = Math.max(9, Math.min(bedCanvas.clientHeight - 9, anchor.y - 7));
             bedPlantLabel.style.setProperty("--plant-tag-x", x + "px");
-            bedPlantLabel.style.setProperty("--plant-tag-y", (anchor.y + (below ? 9 : -9)) + "px");
-            bedPlantLabel.style.setProperty("--plant-tag-tip", Math.max(7, Math.min(2 * half - 7, half + anchor.x - x)) + "px");
+            bedPlantLabel.style.setProperty("--plant-tag-y", y + "px");
           }
 
           function prepareDeadlineSigns(path) {
@@ -3007,11 +2964,15 @@ function renderGardenField({ beds, layout, aspect }) {
             bedDeadlineSigns.replaceChildren(...Array.from(deadlineSigns.values(), entry => entry.sign));
           }
 
-          function placeDeadlineSigns(markers) {
+          const signOffsets = [0, -6, 6, -12, 12, -18, 18, -24, 24, -30, 30, -36, 36];
+          const narrowSignOffsets = [...signOffsets, -42, 42, -48, 48];
+
+          function placeDeadlineSigns(markers, crowns = []) {
             if (!deadlineSigns.size) return;
             const width = bedCanvas.clientWidth;
             const height = bedCanvas.clientHeight;
             if (!width || !height) return;
+            const narrow = width < 310;
             const placed = [];
             for (const [id, entry] of deadlineSigns) {
               const marker = markers.find(candidate => candidate.id === id);
@@ -3026,21 +2987,38 @@ function renderGardenField({ beds, layout, aspect }) {
                 entry.height = sign.offsetHeight;
               }
               const half = entry.width / 2;
-              const x = Math.max(half + 5, Math.min(width - half - 5, marker.x));
-              const gap = entry.height + 4;
-              const left = x - half;
-              const right = x + half;
-              const minY = entry.height + 5;
-              const maxY = height - 5;
-              const y = [0, -gap, gap].map(offset => marker.y + offset)
-                .find(bottom => bottom >= minY && bottom <= maxY && placed.every(box =>
-                  right + 4 <= box.left || left >= box.right + 4 ||
-                  bottom + 4 <= box.top || bottom - entry.height >= box.bottom + 4));
-              sign.hidden = y === undefined;
-              if (sign.hidden) continue;
-              sign.style.setProperty("--sign-x", x + "px");
-              sign.style.setProperty("--sign-y", y + "px");
-              placed.push({ left, right, top: y - entry.height, bottom: y });
+              const center = Math.max(half + 5, Math.min(width - half - 5, marker.x));
+              const horizontal = narrow ? [0, 6, -6, 12, -12, 18, -18, 24, -24] : [0, 12, -12];
+              const positions = horizontal.map(offset => center + offset)
+                .filter(x => x >= half + 5 && x <= width - half - 5);
+              let best;
+              let bestScore = Infinity;
+              for (const offset of narrow ? narrowSignOffsets : signOffsets) {
+                const bottom = marker.y + offset;
+                const top = bottom - entry.height;
+                if (top < 5 || bottom > height - 5) continue;
+                for (const x of positions) {
+                  const left = x - half;
+                  const right = x + half;
+                  if (placed.some(box => right + 4 > box.left && left < box.right + 4 &&
+                      bottom + 4 > box.top && top < box.bottom + 4)) continue;
+                  let covered = 0;
+                  for (const point of crowns) {
+                    if (point.x >= left - 2 && point.x <= right + 2 && point.y >= top - 2 && point.y <= bottom + 2) covered++;
+                  }
+                  const score = covered * 100 + Math.abs(offset) + Math.abs(center - x);
+                  if (score < bestScore) {
+                    best = { x, left, right, top, bottom };
+                    bestScore = score;
+                  }
+                }
+                if (Math.abs(offset) >= bestScore) break;
+              }
+              sign.hidden = !best;
+              if (!best) continue;
+              sign.style.setProperty("--sign-x", best.x + "px");
+              sign.style.setProperty("--sign-y", best.bottom + "px");
+              placed.push(best);
             }
           }
 
@@ -3099,16 +3077,18 @@ function renderGardenField({ beds, layout, aspect }) {
           function updateView() {
             const field = currentBed === null;
             const bedGarden = !field && currentView === "garden";
-            const bedSlots = currentBed?.deadlinePath?.slots || currentBed?.slots;
+            const bedSlots = currentBed?.deadlinePath.slots ?? [];
+            const plantedBed = bedGarden && bedSlots.length > 0;
             const focusedFlatPlant = plantGrid.contains(document.activeElement);
-            if (bedGarden && bed3d && bed3dTopic !== currentBed) {
+            if (plantedBed && bed3d && bed3dTopic !== currentBed) {
               try {
                 prepareDeadlineSigns(currentBed.deadlinePath);
                 bed3d.setBed(currentBed);
                 bed3dTopic = currentBed;
                 bedCanvas.setAttribute("aria-label", currentBed.topic + " 3D bed");
-                bedTurnHelp.textContent = currentBed.deadlinePath
-                  ? "Drag to turn. Earliest deadlines by the entrance." : "Drag to turn";
+                const firstTerrace = currentBed.deadlinePath.terraces[0];
+                bedTurnHelp.textContent = firstTerrace.id === "rolling" || firstTerrace.id === "unstated"
+                  ? "Drag to turn." : "Drag to turn. Earliest deadlines by the entrance.";
                 bedCanvas.removeAttribute("data-plant-hover");
                 bedGrantSelect.replaceChildren(new Option("Choose a grant", ""), ...bedSlots.map(slot =>
                   new Option(titleText(slot), slot.record.opportunity_id)));
@@ -3117,14 +3097,14 @@ function renderGardenField({ beds, layout, aspect }) {
                 discardBedScene();
               }
             }
-            const renderedBed = bedGarden && Boolean(bed3d);
+            const renderedBed = plantedBed && Boolean(bed3d);
             scene.hidden = !field || currentView !== "garden";
             list.hidden = !field || currentView !== "list";
             bedView.hidden = field;
             bedScene.hidden = !renderedBed;
             bedScene.toggleAttribute("data-bed-3d", renderedBed);
-            bedScene.toggleAttribute("data-deadline-path", renderedBed && Boolean(currentBed.deadlinePath));
-            plantGrid.hidden = !bedGarden || renderedBed;
+            bedScene.toggleAttribute("data-deadline-path", renderedBed);
+            plantGrid.hidden = !plantedBed || renderedBed;
             topicList.hidden = currentView !== "list";
             byId("garden").querySelector('[data-view="garden"]').setAttribute("aria-controls",
               field ? scene.id : renderedBed ? bedScene.id : plantGrid.id);
@@ -3142,7 +3122,7 @@ function renderGardenField({ beds, layout, aspect }) {
               previousButton.setAttribute("aria-label", "Previous bed, " + previous.topic);
               nextButton.setAttribute("aria-label", "Next bed, " + next.topic);
               if (renderedBed && detail.open && trigger?.classList.contains("garden-bed-plant")) trigger = bedCanvas;
-              plantGrid.innerHTML = bedGarden && !renderedBed ? bedSlots.map(plantCard).join("") : "";
+              plantGrid.innerHTML = plantedBed && !renderedBed ? bedSlots.map(plantCard).join("") : "";
               topicList.innerHTML = currentView === "list" ? bedSlots.map(detailRow).join("") : "";
               for (const art of plantGrid.querySelectorAll("[data-plant-art]")) {
                 if (artObserver) artObserver.observe(art);
@@ -3160,7 +3140,7 @@ function renderGardenField({ beds, layout, aspect }) {
             applyFilters();
             applyVisibility();
             if (renderedBed && focusedFlatPlant) bedCanvas.focus({ preventScroll: true });
-            if (bedGarden && !bed3dRequested) loadBedScene();
+            if (plantedBed && !bed3dRequested) loadBedScene();
           }
 
           function cameraTransform(bed) {

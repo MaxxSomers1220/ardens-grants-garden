@@ -95,6 +95,7 @@ export async function openGardenFeed() {
     feed_generated_at: index.feed_generated_at,
     record_count: index.record_count,
     source_file: index.source_file,
+    sourceOrder: new Map(index.opportunities.map((record, position) => [record.opportunity_id, position])),
     beds: verifyIndex(index, assignments),
     loadRecord: readDetails(index)
   };

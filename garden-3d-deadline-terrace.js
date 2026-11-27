@@ -4,6 +4,16 @@ import { addGlobeCrops } from "./garden-globe-crops.js";
 const up = new THREE.Vector3(0, 1, 0);
 const { lerp, smoothstep } = THREE.MathUtils;
 
+const originalDepth = 2.72;
+const shelfGap = .54;
+const originalExtent = originalDepth * 1.5 + shelfGap;
+
+function shelfDepth(count) {
+  if (count < 9) return 1.65 + count * .08;
+  if (count <= 18) return originalDepth;
+  return Math.min(5.3, .35 + Math.sqrt(count) * .58);
+}
+
 function block(surface, x, y, z, width, height, depth, turn, color) {
   const cosine = Math.cos(turn);
   const sine = Math.sin(turn);
@@ -24,17 +34,25 @@ function block(surface, x, y, z, width, height, depth, turn, color) {
 export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, loop, addTrail, groundShadow }) {
   const bands = bed.deadlinePath.terraces;
   const width = 9.20;
-  const depth = 2.72;
-  const separation = 3.26;
-  const centers = bands.map((_, index) => separation * ((bands.length - 1) / 2 - index));
-  const reach = Math.max(separation / 4, centers[0] ?? 0);
-  const extraDepth = reach - separation;
-  const stretch = reach / separation;
+  const depths = bands.map(band => shelfDepth(band.slots.length));
+  const extent = (depths.reduce((sum, depth) => sum + depth, 0) + shelfGap * Math.max(0, bands.length - 1)) / 2;
+  const originalLayout = depths.length === 3 && depths.every(depth => depth === originalDepth);
+  let front = extent;
+  const centers = originalLayout ? [3.26, 0, -3.26] : depths.map(depth => {
+    const center = front - depth / 2;
+    front -= depth + shelfGap;
+    return center;
+  });
+  const extraDepth = originalLayout ? 0 : extent - originalExtent;
+  const stretch = 1 + extraDepth / originalExtent;
   const tierRise = Math.min(.475, 1.34 / Math.max(1, bands.length - 1));
-  const approachSteps = bands.length === 3 ? [[-2.6, -.9], [.66, 2.6]]
-    : centers.slice(0, -1).map(center => [-center + .66, -center + separation - .86]);
-  const approachRise = bands.length === 3 ? .30 : tierRise * .63;
-  const resizeZ = z => Math.abs(z) > separation ? z + Math.sign(z) * extraDepth : z * stretch;
+  const approachSteps = originalLayout ? [[-2.6, -.9], [.66, 2.6]]
+    : centers.slice(0, -1).map((center, index) => [
+      -center + Math.min(.66, depths[index] / 3),
+      -centers[index + 1] - Math.min(.86, depths[index + 1] / 3),
+    ]);
+  const approachRise = originalLayout ? .30 : tierRise * .63;
+  const resizeZ = z => Math.abs(z) > originalExtent ? z + Math.sign(z) * extraDepth : z * stretch;
   const color = (token, fallback) => new THREE.Color(paint[token] || fallback);
   const cream = color("cream", "#F7F1E3");
   const ink = color("ink", "#2E3A45");
@@ -64,6 +82,7 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
 
   const markers = [];
   const terraces = bands.map((band, index) => {
+    const depth = depths[index];
     const center = centers[index];
     const elevation = .29 + index * tierRise;
     const top = (x, z) => elevation + .032 * Math.cos(x * .59 + z * .71) + .022 * Math.sin(x * 1.21 + index);
@@ -84,6 +103,7 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
         bed: { id: bed.id, slots: band.slots },
         width, depth, normalAt: () => up,
         point(x, z, lift = 0) {
+          // The shared planter advances toward positive local z. Mirror it so earlier rows face the entrance.
           const distance = center - z;
           return new THREE.Vector3(x, top(x, distance) + lift, distance);
         },
@@ -124,10 +144,10 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   });
 
   const groundMesh = floor.mesh();
-  groundMesh.name = "Neuroscience entrance and deadline terrace soil";
+  groundMesh.name = "Garden entrance and deadline terrace soil";
   const cropGroup = new THREE.Group();
-  const crops = addGlobeCrops(THREE, cropGroup, terraces.map(terrace => terrace.plot), paint);
   plotGroup.add(groundShadow(underside, ink.clone().lerp(earth, .37)), groundMesh, cropGroup);
+  const crops = addGlobeCrops(THREE, cropGroup, terraces.map(terrace => terrace.plot), paint);
 
   const detail = createSurface();
   const irrigated = createSurface();
@@ -153,7 +173,7 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
     // The two irrigation edges follow the actual cropped shelf, leaving the walk unobstructed.
     for (const side of [-1, 1]) {
       const x = side * (width / 2 - .11);
-      const span = depth / 2 - .23;
+      const span = plot.depth / 2 - .23;
       const cut = (z, across, lift) => plot.point(x + across + .025 * Math.sin(z * 2.3), -z, lift);
       detail.ribbon(-span, span, 18, (z, across) => cut(z, across, .027), () => .088, () => dryDitch);
       if (funded) {

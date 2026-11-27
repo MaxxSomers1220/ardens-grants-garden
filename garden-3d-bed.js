@@ -1,10 +1,8 @@
 import * as THREE from "./vendor/three-0.180.0/three.module.min.js";
-import { addGlobeCrops } from "./garden-globe-crops.js";
 import { createDeadlineTerrace } from "./garden-3d-deadline-terrace.js";
 
 const up = new THREE.Vector3(0, 1, 0);
-const defaultPose = { yaw: -.33, pitch: .73, zoom: 1 };
-const deadlinePose = { yaw: .22, pitch: .66, zoom: 1 };
+const defaultPose = { yaw: .22, pitch: .66, zoom: 1 };
 const { clamp, lerp } = THREE.MathUtils;
 const gestureThreshold = 6;
 
@@ -126,156 +124,6 @@ function groundShadow(edge, tint) {
   return new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false }));
 }
 
-function bedLayout(bed, plotGroup, paint) {
-  const width = 10.8;
-  const depth = 7.8;
-  const phase = bed.id.charCodeAt(0) * .16 + bed.id.length * .27;
-  const soilTop = (x, z) => .32 + .038 * Math.sin(x * .61 + z * .50) - .016 * z;
-  const lawnTop = (x, z) => -.031 + .078 * Math.sin(x * .61 - z * .47) + .031 * Math.cos(z * .88);
-  const plot = {
-    bed, width, depth,
-    normalAt: () => up,
-    point: (x, z, rise = 0) => new THREE.Vector3(x, soilTop(x, z) + rise, z),
-  };
-  const color = (token, fallback) => new THREE.Color(paint[token] || fallback);
-  const earth = color("soil", "#6B4A2F").lerp(color("ink", "#2E3A45"), .24);
-  const loam = color("dry", "#8A6B45");
-  const green = color("leaf", "#5B8C4A");
-  const sap = color("hillGreen", "#69A84F");
-  const deep = color("evergreen", "#3E6B34");
-  const cream = color("cream", "#F7F1E3");
-  const sunlit = color("sunshineGround", "#F5E98A");
-  const stream = color("water", "#5A8FA8");
-  const wavyColor = (base, weight, index) =>
-    base.clone().multiplyScalar(1 + weight * (.68 * Math.sin(index * 1.61) + .32 * Math.cos(index * 2.3)));
-
-  const solid = createSurface();
-  const surfaceWidth = width + 3.02;
-  const surfaceDepth = depth + 2.45;
-  const strata = [
-    loop(surfaceWidth - 1.03, surfaceDepth - .98, .63, (x, z) =>
-      -.54 + .079 * Math.sin(x * .76 + z * .45), .30, phase + .25),
-    loop(surfaceWidth - .53, surfaceDepth - .49, .61, (x, z) =>
-      -.38 + .055 * Math.sin(x * 1.32 + z * 1.1), .33, phase + .16),
-    loop(surfaceWidth - .14, surfaceDepth - .10, .62, (x, z) =>
-      lawnTop(x, z) - .22 + .032 * Math.sin(x * .89 + z * .69), .35, phase),
-    loop(surfaceWidth, surfaceDepth, .58, (x, z) =>
-      lawnTop(x, z) - .075 + .025 * Math.cos(x * 1.25 - z * 2.01), .36, phase),
-    loop(surfaceWidth + .02, surfaceDepth + .04, .58, lawnTop, .36, phase),
-  ];
-  const shale = [earth.clone().multiplyScalar(.80), earth.clone().lerp(loam, .32),
-    earth.clone().lerp(loam, .20), earth.clone().lerp(deep, .55)];
-  for (let index = 0; index < strata.length - 1; index++) {
-    solid.wall(strata[index], strata[index + 1], segment =>
-      wavyColor(shale[index], .125, segment * .71 + 4 * index));
-  }
-  const lawn = green.clone().lerp(sap, .49).lerp(sunlit, .11);
-  const meadow = lawn.clone().lerp(sunlit, .21);
-  solid.cover(strata[4], lawnTop, ({ x, z }) =>
-    lawn.clone().lerp(meadow, .30 + .25 * Math.cos(x * .62 + z * .78) + .15 * Math.sin(z * 1.51 - x * 1.1)));
-
-  const trim = loam.clone().lerp(earth, .21);
-  const walk = loam.clone().lerp(sunlit, .46).lerp(cream, .14);
-  addTrail(solid, [[-4.35, 4.64], [-5.38, 4.2], [-6.12, 2.70], [-6.19, .72],
-    [-6.06, -1.31], [-5.83, -3.02], [-4.55, -4.10], [-2.92, -4.67]], lawnTop, walk, trim);
-  addTrail(solid, [[3.72, 4.57], [4.68, 4.34], [5.65, 3.68], [6.14, 2.34],
-    [6.47, 1.02]], lawnTop, walk, trim);
-
-  const pad = loam.clone().lerp(earth, .20).lerp(green, .46).lerp(deep, .08);
-  const soilShadow = earth.clone().lerp(deep, .23);
-  const soilHighlight = pad.clone().lerp(sunlit, .14).lerp(green, .15);
-  const foot = loop(width + .80, depth + .78, .42, lawnTop, .14, phase + .2);
-  const bank = loop(width + .56, depth + .57, .38, (x, z) =>
-    lerp(lawnTop(x, z), soilTop(x, z), .58), .15, phase + .1);
-  const soilEdge = loop(width + .31, depth + .30, .36, soilTop, .122, phase - .15);
-  solid.wall(foot, bank, segment => wavyColor(soilShadow, .145, segment * .78));
-  solid.wall(bank, soilEdge, segment => wavyColor(pad.clone().lerp(earth, .31), .112, segment));
-  solid.cover(soilEdge, soilTop, ({ x, z }) => pad.clone().lerp(soilHighlight,
-    .41 + .16 * Math.sin(z * 3.8 + x * .26) + .19 * Math.cos(x * 1.6 - z * .79)));
-
-  const groundMesh = solid.mesh();
-  plotGroup.add(groundShadow(strata[0], color("ink", "#2E3A45").lerp(earth, .35)), groundMesh);
-  const cropGroup = new THREE.Group();
-  plotGroup.add(cropGroup);
-  const crop = addGlobeCrops(THREE, cropGroup, [plot], paint);
-  const { picks, layouts } = crop;
-
-  const strokes = createSurface();
-  const water = createSurface();
-  const crease = earth.clone().lerp(deep, .42);
-  const edgeLight = soilHighlight.clone().lerp(green, .28).lerp(cream, .08);
-  const layout = layouts[0];
-  for (const [index, row] of (layout?.rows ?? []).entries()) {
-    const z = row.z + layout.strideZ * .32;
-    const half = Math.min(width * .5 - .38, row.width * .5 + layout.strideX * .19);
-    const rowPoint = (x, across) => plot.point(x, z - across + .067 * Math.sin(x * .81 + index * .65), .022);
-    const widthAt = x => .022 + .091 * (1 - Math.abs(x / half) ** 3) + .012 * Math.cos(x * 2.2 + index);
-    strokes.ribbon(-half, half, 30, rowPoint, widthAt, segment => wavyColor(crease, .12, segment));
-    strokes.ribbon(-half * .86, half * .91, 25, (x, across) => rowPoint(x, across + .12),
-      x => .021 + .018 * Math.sin(x * 1.55 + index) ** 2, segment => wavyColor(edgeLight, .15, segment));
-  }
-
-  const funded = bed.slots.some(slot => {
-    const amount = slot.record?.award_amount_parsed;
-    return slot.awards > 0 || Boolean(amount && (amount.floor > 0 || amount.ceiling > 0));
-  });
-  const gutter = earth.clone().lerp(deep, .27);
-  const flowing = stream.clone().lerp(cream, .16);
-  for (const side of [-1, 1]) {
-    const x = side * (width / 2 - .11);
-    const span = depth / 2 - .46;
-    const cut = (z, across, lift) => plot.point(x + across + Math.sin(z * .84) * .039, z, lift);
-    strokes.ribbon(-span, span, 28, (z, across) => cut(z, across, .037), () => .126,
-      segment => wavyColor(gutter, .055, segment));
-    if (funded) {
-      water.ribbon(-span, span, 28, (z, across) => cut(z, across, .043), () => .085,
-        segment => wavyColor(flowing, .13, segment));
-      water.ribbon(-span + .2, span - .19, 27, (z, across) => cut(z, across - .032, .047), () => .017,
-        segment => wavyColor(cream.clone().lerp(flowing, .18), .13, segment));
-    }
-  }
-
-  const grassTone = lawn.clone().lerp(deep, .29);
-  const tips = lawn.clone().lerp(cream, .29);
-  const tussocks = [[-2.8, 4.78], [-1.36, 4.64], [-.74, -4.64], [1.48, -4.48], [-5.7, -.13],
-    [-6.48, 1.65], [6.07, -1.4], [6.18, -.62], [5.36, -3.65], [2.15, 4.92], [3.23, -4.57]];
-  for (const [patch, [cx, cz]] of tussocks.entries()) {
-    for (let index = 0; index < 6; index++) {
-      const turn = index * 2.4 + patch * .31;
-      const x = cx + Math.cos(turn) * (.09 + index * .034);
-      const z = cz + Math.sin(turn) * (.07 + index * .027);
-      const base = new THREE.Vector3(x, lawnTop(x, z) + .014, z);
-      const end = base.clone().add(new THREE.Vector3(.12 * Math.cos(turn), .16 + .12 * Math.sin(turn) ** 2, .13 * Math.sin(turn)));
-      const foot = base.clone().add(new THREE.Vector3(.066, .01, .017));
-      const tint = index % 3 === 0 ? tips : grassTone;
-      strokes.triangle(base, foot, end, tint);
-      strokes.triangle(foot, base, end, tint);
-    }
-  }
-
-  const slate = color("ink", "#2E3A45").lerp(loam, .39).lerp(cream, .35);
-  const stones = [[-.25, 4.55, .21], [.08, 4.62, .11], [1.73, 4.52, .13],
-    [-5.63, 3.49, .14], [-6.32, -.57, .19], [-6.43, -.37, .09], [-4.39, -4.38, .17],
-    [1.90, -4.63, .24], [2.25, -4.42, .11], [5.78, -2.72, .17], [6.03, 3.17, .20]];
-  for (const [index, [x, z, size]] of stones.entries()) {
-    const sides = Array.from({ length: 6 }, (_, corner) => {
-      const angle = (corner + index * .28) * Math.PI / 3;
-      const scale = size * (1 + .18 * Math.sin(corner * 4.2 + index));
-      const vx = x + Math.cos(angle) * scale;
-      const vz = z + Math.sin(angle) * scale * .72;
-      return new THREE.Vector3(vx, lawnTop(vx, vz) + .018, vz);
-    });
-    const crest = new THREE.Vector3(x - size * .14, lawnTop(x, z) + size * .48, z - size * .11);
-    sides.forEach((point, corner) => strokes.triangle(point, crest, sides[(corner + 1) % sides.length],
-      wavyColor(slate, .25, corner + index)));
-  }
-  plotGroup.add(strokes.mesh());
-  const wet = water.mesh();
-  plotGroup.add(wet);
-
-  return finishBed(plotGroup, { crop, cropGroup, groundMesh, fit: strata.flat(), wet, shadowColor: earth });
-}
-
 function finishBed(plotGroup, { crop, cropGroup, groundMesh, fit, wet, shadowColor, markers }) {
   const { picks } = crop;
   const shadows = new THREE.InstancedMesh(new THREE.CircleGeometry(1, 14),
@@ -394,7 +242,7 @@ export function createGardenBed3D({
     const distance = 38;
     const horizontal = distance * Math.cos(pose.pitch);
     camera.position.set(horizontal * Math.sin(pose.yaw), distance * Math.sin(pose.pitch), horizontal * Math.cos(pose.yaw));
-    camera.lookAt(0, layout.markers ? .53 : .24, 0);
+    camera.lookAt(0, .53, 0);
     camera.updateMatrixWorld();
     let minX = Infinity;
     let maxX = -Infinity;
@@ -489,18 +337,16 @@ export function createGardenBed3D({
       }
       Object.assign(canvas.dataset, {
         renderer: "webgl", bed: bed.id, plantCount: String(layout.picks.length),
-        terraceCount: String(layout.markers ? layout.markers.length - 1 : 0),
+        terraceCount: String(bed.deadlinePath.terraces.length),
         yaw: pose.yaw.toFixed(4), pitch: pose.pitch.toFixed(4), zoom: pose.zoom.toFixed(4),
         triangles: String(renderer.info.render.triangles), drawCalls: String(renderer.info.render.calls),
       });
       const tip = selectedPlant && project(view.copy(selectedPlant.position).addScaledVector(up, selectedPlant.height));
       onAnchor(tip && tip.x >= 0 && tip.x <= width && tip.y >= 0 && tip.y <= height
         ? { ...tip, id: selectedPlant.id } : null);
-      if (layout.markers) {
-        onTerraces(layout.markers.map(({ id, point }) => ({
-          id, ...project(point), depth: view.copy(point).applyMatrix4(camera.matrixWorldInverse).z,
-        })).filter(({ x, y }) => x >= 0 && x <= width && y >= 0 && y <= height));
-      }
+      const signs = layout.markers.map(({ id, point }) => ({ id, ...project(point) }));
+      const crowns = layout.picks.map(pick => project(view.copy(pick.position).addScaledVector(up, pick.height * .93)));
+      onTerraces(signs, crowns);
     }
     if (pendingHover) {
       const event = pendingHover;
@@ -529,12 +375,8 @@ export function createGardenBed3D({
     const nextGroup = new THREE.Group();
     let nextLayout;
     try {
-      if (next.id === "neuro" && next.deadlinePath) {
-        const terrain = createDeadlineTerrace(next, nextGroup, paint, { createSurface, loop, addTrail, groundShadow });
-        nextLayout = finishBed(nextGroup, terrain);
-      } else {
-        nextLayout = bedLayout(next, nextGroup, paint);
-      }
+      const terrain = createDeadlineTerrace(next, nextGroup, paint, { createSurface, loop, addTrail, groundShadow });
+      nextLayout = finishBed(nextGroup, terrain);
     } catch (error) {
       disposeGroup(nextGroup);
       throw error;
@@ -555,7 +397,7 @@ export function createGardenBed3D({
     onAnchor(null);
     onTerraces([]);
     ring.visible = false;
-    Object.assign(pose, layout.markers ? deadlinePose : defaultPose);
+    Object.assign(pose, defaultPose);
     layout.crop.setMinimumScore(minimum);
     setWeather(weather);
   }
@@ -653,7 +495,7 @@ export function createGardenBed3D({
       requestFrame();
     },
     reset() {
-      Object.assign(pose, layout?.markers ? deadlinePose : defaultPose);
+      Object.assign(pose, defaultPose);
       requestFrame();
     },
     getProjectedPlants() {
