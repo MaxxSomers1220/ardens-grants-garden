@@ -482,6 +482,7 @@ export function addGlobeCrops(THREE, world, plots, paint = {}, { detailedBed = f
     const strideX = width / columns;
     const strideZ = depth / rows;
     const baseSize = Math.min(strideX, strideZ) * .84;
+    const bedPlantScale = detailedBed && (bed.id === "rare" || bed.id === "earth") ? 1.12 : 1;
     const named = namedGardenCrops[bed.id];
     const surfaceNormal = typeof plot.normalAt === "function";
     const rowLayout = Array.from({ length: rows }, (_, row) => ({
@@ -515,7 +516,7 @@ export function addGlobeCrops(THREE, world, plots, paint = {}, { detailedBed = f
       const relativeHeight = slot.elephant ? 1.46 + (neutral ? 0 : .14 * score / 100)
         : (named?.scale ?? originalHeights[slot.crop] ?? 1) * (neutral ? .77 : .67 + .41 * score / 100);
       const closeupHeight = kind === "elephant" ? 1.19 : kind === "corn" ? 1.05 : 1.10;
-      const size = baseSize * relativeHeight * (detailedBed ? closeupHeight : 1);
+      const size = baseSize * relativeHeight * (detailedBed ? closeupHeight : 1) * bedPlantScale;
       let breadth = 1;
       let profile = 1;
       let axis;
