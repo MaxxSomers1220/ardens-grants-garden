@@ -2707,6 +2707,7 @@ function renderGardenField({ beds, layout, aspect }) {
           let attentionPlant = null;
           let bloomPlant = null;
           let seenBed = false;
+          let seenBedCanvas = false;
           const savedDialog = byId("garden-saved");
           const savedBody = byId("garden-saved-body");
           const homeButton = byId("garden-home");
@@ -3033,8 +3034,13 @@ function renderGardenField({ beds, layout, aspect }) {
               const left = x - half;
               const right = x + half;
               // These intervals describe sign-bottom positions that would cover a crown or another sign.
-              const blocked = crowns.filter(point => point.x >= left - 2 && point.x <= right + 2)
-                .map(point => [point.y - 2, point.y + entry.height + 2]);
+              const blocked = [];
+              for (const { x: crownX, y: crownY, reach = 0 } of crowns) {
+                const margin = 2 + reach;
+                if (crownX >= left - margin && crownX <= right + margin) {
+                  blocked.push([crownY - margin, crownY + entry.height + margin]);
+                }
+              }
               for (const box of placed) {
                 if (right + 4 > box.left && left < box.right + 4) {
                   blocked.push([box.top - 4, box.bottom + entry.height + 4]);
@@ -3673,7 +3679,7 @@ function renderGardenField({ beds, layout, aspect }) {
             const visible = currentView === "garden" && currentBed === null && !transitionRunning && isOnScreen;
             const clear = !document.hidden && !detail.open && !savedDialog.open;
             globe?.setVisible(visible && clear);
-            bed3d?.setVisible(!bedScene.hidden && seenBed && clear);
+            bed3d?.setVisible(!bedScene.hidden && seenBedCanvas && clear);
             weather.setVisible(visible && !globe);
             if (visible && !globe) weather.arrive();
           }
@@ -3706,8 +3712,14 @@ function renderGardenField({ beds, layout, aspect }) {
               syncModalMotion();
             });
             bedVisibility.observe(bedView);
+            const canvasVisibility = new IntersectionObserver(([entry]) => {
+              seenBedCanvas = entry.isIntersecting;
+              applyVisibility();
+            });
+            canvasVisibility.observe(bedCanvas);
           } else {
             seenBed = true;
+            seenBedCanvas = true;
             applyVisibility();
           }
           document.addEventListener("visibilitychange", syncModalMotion);
