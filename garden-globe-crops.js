@@ -482,7 +482,7 @@ export function addGlobeCrops(THREE, world, plots, paint = {}, { detailedBed = f
     const strideX = width / columns;
     const strideZ = depth / rows;
     const baseSize = Math.min(strideX, strideZ) * .84;
-    const bedPlantScale = detailedBed && (bed.id === "rare" || bed.id === "earth") ? 1.12 : 1;
+    const bedPlantScale = detailedBed && (bed.id === "rare" || bed.id === "earth") ? 1.06 : 1;
     const named = namedGardenCrops[bed.id];
     const surfaceNormal = typeof plot.normalAt === "function";
     const rowLayout = Array.from({ length: rows }, (_, row) => ({
