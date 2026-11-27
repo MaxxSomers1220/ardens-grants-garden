@@ -459,6 +459,20 @@
       .garden-detail-title { flex: 1 1 13rem; min-width: 0; overflow-wrap: anywhere; }
       .garden-detail-title h3 { font-size: clamp(1.25rem, 3vw, 1.85rem); letter-spacing: -.025em; }
       .garden-detail .agency { font-size: .8rem; color: var(--garden-deep); font-weight: 700; margin: .3rem 0; }
+      .garden-grant-meta {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: .08rem .6rem;
+      }
+      .garden-notice-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        font-size: .85rem;
+        font-weight: 650;
+        white-space: nowrap;
+      }
       .garden-detail-body {
         padding: 1rem clamp(.9rem, 3vw, 1.5rem) 1.4rem;
         display: grid;
@@ -667,6 +681,15 @@
         transform: translate(var(--plant-tag-x), var(--plant-tag-y)) translate(-50%, -50%);
       }
       .garden-bed-deadline-signs { position: absolute; inset: 0; pointer-events: none; }
+      .garden-bed-sign-leaders {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        stroke: var(--garden-cream);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+      }
       .garden-bed-deadline-sign {
         position: absolute;
         top: 0;
@@ -708,7 +731,8 @@
         font: 700 clamp(1.075rem, 2vw, 1.32rem)/1.24 var(--font-heading);
         overflow-wrap: anywhere;
       }
-      .garden-bed-preview-facts { margin-top: .48rem; font-size: .9rem; line-height: 1.4; color: var(--garden-deep); }
+      .garden-bed-preview-meta { margin-top: .48rem; color: var(--garden-deep); }
+      .garden-bed-preview-facts { font-size: .9rem; line-height: 1.4; }
       .garden-bed-grant-chooser { display: flex; width: 100%; gap: .3rem; min-width: 0; }
       .garden-bed-grant-picker { position: relative; flex: 1; min-width: 0; }
       .garden-bed-grant-picker .garden-switch { display: flex; align-items: center; justify-content: space-between; gap: .4rem; }
@@ -1161,7 +1185,9 @@
               <div class="garden-bed-stage">
                 <canvas class="garden-bed-canvas" id="garden-bed-canvas" tabindex="0"
                   aria-label="3D topic bed" aria-describedby="garden-bed-turn-help garden-bed-preview-help"></canvas>
-                <div class="garden-bed-deadline-signs" id="garden-bed-deadline-signs" aria-hidden="true"></div>
+                <div class="garden-bed-deadline-signs" id="garden-bed-deadline-signs" aria-hidden="true">
+                  <svg class="garden-bed-sign-leaders" id="garden-bed-sign-leaders"></svg>
+                </div>
                 <div class="garden-bed-plant-label" id="garden-bed-plant-label" data-pin aria-hidden="true" hidden></div>
               </div>
               <div class="garden-bed-tools">
@@ -1180,7 +1206,10 @@
                 <p class="garden-bed-preview-help" id="garden-bed-preview-help">Select a plant to read its grant.</p>
                 <div class="garden-bed-preview-grant" id="garden-bed-preview-grant" hidden>
                   <p class="garden-bed-preview-title" id="garden-bed-preview-title"></p>
-                  <p class="garden-bed-preview-facts" id="garden-bed-preview-facts"></p>
+                  <div class="garden-grant-meta garden-bed-preview-meta">
+                    <p class="garden-bed-preview-facts" id="garden-bed-preview-facts"></p>
+                    <a class="garden-notice-link" id="garden-bed-preview-source" target="_blank" rel="noopener noreferrer" hidden>Grants.gov notice</a>
+                  </div>
                 </div>
               </div>
               <div class="garden-bed-grant-chooser">
@@ -1221,7 +1250,10 @@
       <dialog class="garden-detail" id="garden-detail" aria-labelledby="garden-detail-heading">
         <header class="garden-detail-head">
           <div class="garden-detail-title">
-            <p class="agency" id="garden-detail-agency"></p>
+            <div class="garden-grant-meta">
+              <p class="agency" id="garden-detail-agency"></p>
+              <a class="garden-notice-link" id="garden-detail-source" target="_blank" rel="noopener noreferrer" hidden>Grants.gov notice</a>
+            </div>
             <h3 id="garden-detail-heading"></h3>
           </div>
           <div class="garden-detail-actions">
@@ -2569,12 +2601,15 @@ function renderGardenField({ beds, layout, aspect }) {
           const bedScene = byId("garden-bed-scene");
           const bedCanvas = byId("garden-bed-canvas");
           const bedDeadlineSigns = byId("garden-bed-deadline-signs");
+          const bedSignLeaders = byId("garden-bed-sign-leaders");
           const bedTurnHelp = byId("garden-bed-turn-help");
           const bedPlantLabel = byId("garden-bed-plant-label");
           const bedPreviewHelp = byId("garden-bed-preview-help");
           const bedPreviewGrant = byId("garden-bed-preview-grant");
           const bedPreviewTitle = byId("garden-bed-preview-title");
           const bedPreviewFacts = byId("garden-bed-preview-facts");
+          const bedPreviewSource = byId("garden-bed-preview-source");
+          const detailSource = byId("garden-detail-source");
           const bedGrantSelect = byId("garden-bed-grant-select");
           const bedGrantOpen = byId("garden-bed-open-grant");
           const emptyBed = byId("garden-empty-bed");
@@ -2598,6 +2633,13 @@ function renderGardenField({ beds, layout, aspect }) {
           const methodology = "https://github.com/MaxxSomers1220/rigbys-cloud-mcp/blob/main/docs/scoring-methodology.md";
           const sourceLink = (url, text) =>
             '<a href="' + escape(url) + '" target="_blank" rel="noopener noreferrer">' + escape(text) + '</a>';
+
+          function setGrantNotice(link, record) {
+            const url = record && sourceUrl(record, "title_normalized");
+            if (url) link.href = url;
+            else link.removeAttribute("href");
+            link.hidden = !url;
+          }
 
           function classify(record) {
             const awards = record.linked_awards?.length ?? record.linked_award_count;
@@ -2930,6 +2972,7 @@ function renderGardenField({ beds, layout, aspect }) {
               const deadline = previewDeadline(slot);
               bedPreviewFacts.textContent = deadline + (slot.neutral ? " · Neutral score" : "");
             }
+            setGrantNotice(bedPreviewSource, id === bedGrantSelect.value ? slot?.record : null);
             bedPreviewHelp.hidden = Boolean(slot);
             bedPreviewGrant.hidden = !slot;
             if (bedPlantLabel.dataset.record !== (slot ? id : "")) bedPlantLabel.hidden = true;
@@ -2951,34 +2994,79 @@ function renderGardenField({ beds, layout, aspect }) {
 
           function prepareDeadlineSigns(path) {
             deadlineSigns.clear();
+            const signs = [];
+            const leaders = [];
             if (path?.terraces.length) {
               for (const { id, label } of [...path.terraces, { id: "entrance", label: "Entrance" }]) {
                 const sign = document.createElement("span");
+                const leader = document.createElementNS("http://www.w3.org/2000/svg", "line");
                 sign.className = "garden-bed-deadline-sign";
                 sign.dataset.deadlineSign = id;
                 sign.textContent = label;
                 sign.hidden = true;
-                deadlineSigns.set(id, { sign, width: 0, height: 0 });
+                leader.setAttribute("hidden", "");
+                signs.push(sign);
+                leaders.push(leader);
+                deadlineSigns.set(id, { sign, leader, width: 0, height: 0 });
               }
             }
-            bedDeadlineSigns.replaceChildren(...Array.from(deadlineSigns.values(), entry => entry.sign));
+            bedDeadlineSigns.replaceChildren(bedSignLeaders, ...signs);
+            bedSignLeaders.replaceChildren(...leaders);
           }
 
-          const signOffsets = [0, -6, 6, -12, 12, -18, 18, -24, 24, -30, 30, -36, 36];
-          const narrowSignOffsets = [...signOffsets, -42, 42, -48, 48];
+          const clampTo = (value, min, max) => Math.max(min, Math.min(max, value));
+
+          function clearSignBox(marker, entry, stageWidth, stageHeight, placed, crowns) {
+            const half = entry.width / 2;
+            const minX = half + 5;
+            const maxX = stageWidth - half - 5;
+            const minY = entry.height + 5;
+            const maxY = stageHeight - 5;
+            const center = clampTo(marker.x, minX, maxX);
+            const preferredBottom = clampTo(marker.y, minY, maxY);
+            const offsets = stageWidth < 310 ? [0, 6, -6, 12, -12, 18, -18, 24, -24] : [0, 12, -12];
+            let best;
+            let distance = Infinity;
+            for (const offset of offsets) {
+              const x = center + offset;
+              if (x < minX || x > maxX || Math.abs(offset) >= distance) continue;
+              const left = x - half;
+              const right = x + half;
+              // These intervals describe sign-bottom positions that would cover a crown or another sign.
+              const blocked = crowns.filter(point => point.x >= left - 2 && point.x <= right + 2)
+                .map(point => [point.y - 2, point.y + entry.height + 2]);
+              for (const box of placed) {
+                if (right + 4 > box.left && left < box.right + 4) {
+                  blocked.push([box.top - 4, box.bottom + entry.height + 4]);
+                }
+              }
+              const candidates = [preferredBottom, minY, maxY];
+              for (const [start, end] of blocked) candidates.push(start - .5, end + .5);
+              for (const bottom of candidates) {
+                const travel = Math.abs(bottom - marker.y) + Math.abs(offset);
+                if (bottom < minY || bottom > maxY || travel >= distance) continue;
+                if (blocked.some(([start, end]) => bottom >= start && bottom <= end)) continue;
+                best = { x, left, right, top: bottom - entry.height, bottom };
+                distance = travel;
+              }
+            }
+            return best;
+          }
 
           function placeDeadlineSigns(markers, crowns = []) {
             if (!deadlineSigns.size) return;
             const width = bedCanvas.clientWidth;
             const height = bedCanvas.clientHeight;
             if (!width || !height) return;
-            const narrow = width < 310;
             const placed = [];
-            for (const [id, entry] of deadlineSigns) {
+            // On narrow stages, give the entrance and upper terraces space before the lower labels.
+            const placementOrder = width < 310 ? Array.from(deadlineSigns).reverse() : deadlineSigns;
+            for (const [id, entry] of placementOrder) {
               const marker = markers.find(candidate => candidate.id === id);
-              const { sign } = entry;
+              const { sign, leader } = entry;
               if (!marker || marker.x < 0 || marker.x > width || marker.y < 0 || marker.y > height) {
                 sign.hidden = true;
+                leader.setAttribute("hidden", "");
                 continue;
               }
               if (!entry.width) {
@@ -2986,39 +3074,25 @@ function renderGardenField({ beds, layout, aspect }) {
                 entry.width = sign.offsetWidth;
                 entry.height = sign.offsetHeight;
               }
-              const half = entry.width / 2;
-              const center = Math.max(half + 5, Math.min(width - half - 5, marker.x));
-              const horizontal = narrow ? [0, 6, -6, 12, -12, 18, -18, 24, -24] : [0, 12, -12];
-              const positions = horizontal.map(offset => center + offset)
-                .filter(x => x >= half + 5 && x <= width - half - 5);
-              let best;
-              let bestScore = Infinity;
-              for (const offset of narrow ? narrowSignOffsets : signOffsets) {
-                const bottom = marker.y + offset;
-                const top = bottom - entry.height;
-                if (top < 5 || bottom > height - 5) continue;
-                for (const x of positions) {
-                  const left = x - half;
-                  const right = x + half;
-                  if (placed.some(box => right + 4 > box.left && left < box.right + 4 &&
-                      bottom + 4 > box.top && top < box.bottom + 4)) continue;
-                  let covered = 0;
-                  for (const point of crowns) {
-                    if (point.x >= left - 2 && point.x <= right + 2 && point.y >= top - 2 && point.y <= bottom + 2) covered++;
-                  }
-                  const score = covered * 100 + Math.abs(offset) + Math.abs(center - x);
-                  if (score < bestScore) {
-                    best = { x, left, right, top, bottom };
-                    bestScore = score;
-                  }
-                }
-                if (Math.abs(offset) >= bestScore) break;
-              }
+              const best = clearSignBox(marker, entry, width, height, placed, crowns);
               sign.hidden = !best;
-              if (!best) continue;
+              if (!best) {
+                leader.setAttribute("hidden", "");
+                continue;
+              }
               sign.style.setProperty("--sign-x", best.x + "px");
               sign.style.setProperty("--sign-y", best.bottom + "px");
               placed.push(best);
+              const endX = clampTo(marker.x, best.left, best.right);
+              const endY = clampTo(marker.y, best.top, best.bottom);
+              const showLeader = Math.hypot(endX - marker.x, endY - marker.y) >= 8;
+              leader.toggleAttribute("hidden", !showLeader);
+              if (showLeader) {
+                leader.setAttribute("x1", marker.x);
+                leader.setAttribute("y1", marker.y);
+                leader.setAttribute("x2", endX);
+                leader.setAttribute("y2", endY);
+              }
             }
           }
 
@@ -3055,7 +3129,7 @@ function renderGardenField({ beds, layout, aspect }) {
                 onTerraces: placeDeadlineSigns,
                 onHover: id => {
                   bedCanvas.toggleAttribute("data-plant-hover", Boolean(id));
-                  preview3dGrant(id || bedGrantSelect.value);
+                  if (!bedGrantSelect.value) preview3dGrant(id);
                 },
                 onSelect: pick3dGrant,
                 onUnavailable: () => {
@@ -3444,6 +3518,7 @@ function renderGardenField({ beds, layout, aspect }) {
           function renderDetail(slot) {
             const p = slot.record;
             detailRecord = p;
+            setGrantNotice(detailSource, p);
             const topicGap = beds[slot.bedIndex].gap ?? {};
             byId("garden-detail-heading").textContent = p.title_normalized;
             byId("garden-detail-agency").textContent = p.sponsor_normalized;
@@ -3488,8 +3563,7 @@ function renderGardenField({ beds, layout, aspect }) {
               '</dd><dt>Gap score</dt><dd>' + score + '</dd>' + charts + '</dl>' + neutral +
               '<div class="garden-proof"><h4>Why this score</h4><p class="score-note">' + escape(proof.interpretation) +
               '</p><p class="score-note">Methodology ' + sourceLink(methodology, p.methodology_version) + '</p></div>' +
-              requirements + evidence + gap + '<p class="trace">' + sourceLink(sourceUrl(p, "title_normalized"), "Grants.gov notice") +
-              ' · Feed generated ' +
+              requirements + evidence + gap + '<p class="trace">Feed generated ' +
               sourceLink(new URL("./data/feed-index.json", document.baseURI).href,
                          dateFormat.format(new Date(p.feed_generated_at))) + '</p>';
           }
@@ -3504,6 +3578,7 @@ function renderGardenField({ beds, layout, aspect }) {
             detailRequest = request;
             byId("garden-detail-heading").textContent = titleText(slot);
             byId("garden-detail-agency").textContent = slot.record.sponsor_normalized;
+            setGrantNotice(detailSource, slot.record);
             const body = byId("garden-detail-body");
             body.textContent = "Loading opportunity…";
             landing.dataset.detail = "";
@@ -3523,6 +3598,7 @@ function renderGardenField({ beds, layout, aspect }) {
             detailRequest?.abort();
             detailRequest = null;
             detailRecord = null;
+            setGrantNotice(detailSource, null);
             byId("garden-detail-body").replaceChildren();
             const returning = detailId;
             detailId = null;
