@@ -1,4 +1,5 @@
 import * as THREE from "./vendor/three-0.180.0/three.module.min.js";
+import { createBedSway } from "./garden-bed-sway.js";
 import { createDeadlineTerrace } from "./garden-3d-deadline-terrace.js";
 
 const up = new THREE.Vector3(0, 1, 0);
@@ -124,10 +125,16 @@ function groundShadow(edge, tint) {
   return new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false }));
 }
 
-function finishBed(plotGroup, { crop, cropGroup, groundMesh, fit, wet, shadowColor, markers }) {
+function finishBed(bed, plotGroup, { crop, cropGroup, groundMesh, fit, wet, shadowColor, markers }) {
   const { picks } = crop;
-  const shadows = new THREE.InstancedMesh(new THREE.CircleGeometry(1, 14),
-    new THREE.MeshBasicMaterial({ color: shadowColor, transparent: true, opacity: .24, depthWrite: false }), picks.length);
+  const pickMeshes = cropGroup.children;
+  const sway = createBedSway(THREE, picks, pickMeshes, bed.slots);
+  const shadowDisc = new THREE.CircleGeometry(1, 14);
+  const shadowColors = new Float32Array(shadowDisc.attributes.position.count * 4).fill(1);
+  for (let index = 3; index < shadowColors.length; index += 4) shadowColors[index] = index === 3 ? .62 : 0;
+  shadowDisc.setAttribute("color", new THREE.BufferAttribute(shadowColors, 4));
+  const shadows = new THREE.InstancedMesh(shadowDisc,
+    new THREE.MeshBasicMaterial({ color: shadowColor, vertexColors: true, transparent: true, depthWrite: false }), picks.length);
   const position = new THREE.Vector3();
   const size = new THREE.Vector3();
   const flat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
@@ -143,13 +150,15 @@ function finishBed(plotGroup, { crop, cropGroup, groundMesh, fit, wet, shadowCol
   plotGroup.add(shadows);
 
   const byId = new Map(picks.map(pick => [pick.id, pick]));
-  for (const { position, width, height } of picks) {
+  for (const pick of picks) {
+    const top = pick.position.clone().addScaledVector(pick.axis || up, pick.height);
+    const extent = pick.width / 2 + sway.reach(pick);
     for (const side of [-1, 1]) {
-      fit.push(position.clone().add(new THREE.Vector3(side * width / 2, height, side * width / 2)));
-      fit.push(position.clone().add(new THREE.Vector3(side * width / 2, height, -side * width / 2)));
+      fit.push(top.clone().add(new THREE.Vector3(side * extent, 0, side * extent)));
+      fit.push(top.clone().add(new THREE.Vector3(side * extent, 0, -side * extent)));
     }
   }
-  return { crop, picks, byId, pickMeshes: cropGroup.children, groundMesh, fit, wet, markers };
+  return { crop, picks, byId, pickMeshes, groundMesh, fit, wet, markers, sway };
 }
 
 function disposeGroup(group) {
@@ -172,6 +181,7 @@ export function createGardenBed3D({
   onUnavailable = () => {},
 }) {
   const touch = matchMedia("(pointer: coarse)");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const context = canvas.getContext("webgl2", {
     alpha: true,
     antialias: true,
@@ -183,11 +193,11 @@ export function createGardenBed3D({
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 95);
-  const ambient = new THREE.HemisphereLight(0xfff1e1, 0xc4aaa0, 1.80);
-  const sun = new THREE.DirectionalLight(paint.light || "#F2C14E", 1.44);
-  const fill = new THREE.DirectionalLight(0xe5eff1, .53);
-  const rim = new THREE.DirectionalLight(paint.crayonPink || "#D7B1BA", .37);
-  sun.position.set(-9, 12, 9);
+  const ambient = new THREE.HemisphereLight(0xfff1e1, 0xc4aaa0, 1.60);
+  const sun = new THREE.DirectionalLight(paint.light || "#F2C14E", 1.58);
+  const fill = new THREE.DirectionalLight(0xe5eff1, .39);
+  const rim = new THREE.DirectionalLight(paint.crayonPink || "#D7B1BA", .52);
+  sun.position.set(-9, 11, 7);
   fill.position.set(8, 6, 8);
   rim.position.set(4, 7, -10);
   scene.add(ambient, sun, fill, rim);
@@ -222,6 +232,8 @@ export function createGardenBed3D({
   let disposed = false;
   let unavailable = false;
   let dirty = false;
+  let swayElapsed = 0;
+  let lastSwayAt = null;
   let gesture;
   let hovered = null;
   let pendingHover;
@@ -296,8 +308,8 @@ export function createGardenBed3D({
     let closest = null;
     let distance = Infinity;
     for (const pick of layout.picks) {
-      const foot = view.copy(pick.position).addScaledVector(up, pick.height * .18);
-      const head = screen.copy(pick.position).addScaledVector(up, pick.height * .79);
+      const foot = layout.sway.point(pick, .18, view);
+      const head = layout.sway.point(pick, .79, screen);
       const separation = raycaster.ray.distanceSqToSegment(foot, head);
       const reach = Math.min(pick.width * .45, pick.height * .34) + tolerance;
       if (separation > reach * reach || separation >= distance) continue;
@@ -308,7 +320,7 @@ export function createGardenBed3D({
     return closest;
   }
 
-  function draw() {
+  function draw(now) {
     frame = 0;
     if (!visible || !layout || unavailable || disposed || document.hidden) return;
     const w = canvas.clientWidth;
@@ -326,33 +338,49 @@ export function createGardenBed3D({
       renderer.setSize(w, h, false);
       dirty = true;
     }
-    if (dirty) {
-      dirty = false;
-      frameCamera();
+    const sceneChanged = dirty;
+    dirty = false;
+    if (sceneChanged) frameCamera();
+    const swaying = !reducedMotion.matches;
+    if (swaying) {
+      if (lastSwayAt !== null) swayElapsed += Math.min(now - lastSwayAt, 100) / 1000;
+      lastSwayAt = now;
+    }
+    if (sceneChanged || swaying) {
+      layout.sway.update(swaying ? swayElapsed : 0, selectedPlant?.id);
       try {
         renderer.render(scene, camera);
       } catch (error) {
         reportUnavailable(error);
         return;
       }
+    }
+    if (sceneChanged) {
       Object.assign(canvas.dataset, {
         renderer: "webgl", bed: bed.id, plantCount: String(layout.picks.length),
         terraceCount: String(bed.deadlinePath.terraces.length),
         yaw: pose.yaw.toFixed(4), pitch: pose.pitch.toFixed(4), zoom: pose.zoom.toFixed(4),
         triangles: String(renderer.info.render.triangles), drawCalls: String(renderer.info.render.calls),
       });
-      const tip = selectedPlant && project(view.copy(selectedPlant.position).addScaledVector(up, selectedPlant.height));
+      const signs = layout.markers.map(({ id, point }) => ({ id, ...project(point) }));
+      // Keep signs still while stems move, reserving space for the entire sway.
+      const crowns = layout.picks.map(pick => ({
+        ...project(view.copy(pick.position).addScaledVector(pick.axis || up, pick.height * .93)),
+        reach: swaying ? layout.sway.reach(pick) / unitsPerPixel : 0,
+      }));
+      onTerraces(signs, crowns);
+    }
+    if (sceneChanged || swaying && selectedPlant) {
+      const tip = selectedPlant && project(layout.sway.point(selectedPlant, 1, view));
       onAnchor(tip && tip.x >= 0 && tip.x <= width && tip.y >= 0 && tip.y <= height
         ? { ...tip, id: selectedPlant.id } : null);
-      const signs = layout.markers.map(({ id, point }) => ({ id, ...project(point) }));
-      const crowns = layout.picks.map(pick => project(view.copy(pick.position).addScaledVector(up, pick.height * .93)));
-      onTerraces(signs, crowns);
     }
     if (pendingHover) {
       const event = pendingHover;
       pendingHover = undefined;
       hover(rayPick(event));
     }
+    if (swaying) requestFrame(false);
   }
 
   function rotate({ yaw = 0, pitch = 0 } = {}) {
@@ -365,8 +393,8 @@ export function createGardenBed3D({
     weather = next;
     if (layout) layout.wet.visible = Boolean(weather.funding);
     sun.color.copy(weather.research ? warm : cool);
-    sun.intensity = weather.research ? 1.47 : 1.03;
-    rim.intensity = weather.research ? .45 : .30;
+    sun.intensity = weather.research ? 1.58 : 1.10;
+    rim.intensity = weather.research ? .52 : .34;
     requestFrame();
   }
 
@@ -376,7 +404,7 @@ export function createGardenBed3D({
     let nextLayout;
     try {
       const terrain = createDeadlineTerrace(next, nextGroup, paint, { createSurface, loop, addTrail, groundShadow });
-      nextLayout = finishBed(nextGroup, terrain);
+      nextLayout = finishBed(next, nextGroup, terrain);
     } catch (error) {
       disposeGroup(nextGroup);
       throw error;
@@ -392,6 +420,8 @@ export function createGardenBed3D({
     scene.updateMatrixWorld(true);
     pendingHover = undefined;
     gesture = undefined;
+    swayElapsed = 0;
+    lastSwayAt = null;
     hover(null);
     selectedPlant = null;
     onAnchor(null);
@@ -448,7 +478,12 @@ export function createGardenBed3D({
     event.preventDefault();
     reportUnavailable(new Error("The garden bed lost its WebGL context."));
   });
-  listen(document, "visibilitychange", () => requestFrame());
+  function restoreFrame() {
+    lastSwayAt = null;
+    requestFrame();
+  }
+  listen(document, "visibilitychange", restoreFrame);
+  listen(reducedMotion, "change", restoreFrame);
   listen(window, "resize", () => requestFrame(), { passive: true });
   listen(touch, "change", () => requestFrame());
   const resize = typeof ResizeObserver === "function" ? new ResizeObserver(() => requestFrame()) : null;
@@ -463,6 +498,7 @@ export function createGardenBed3D({
       else {
         if (frame) cancelAnimationFrame(frame);
         frame = 0;
+        lastSwayAt = null;
         gesture = undefined;
         pendingHover = undefined;
         hover(null);
@@ -502,7 +538,7 @@ export function createGardenBed3D({
       if (!layout || !width || !height) return [];
       return layout.picks.map(pick => ({
         id: pick.id,
-        ...project(view.copy(pick.position).addScaledVector(up, pick.height * .64)),
+        ...project(layout.sway.point(pick, .64, view)),
       }));
     },
     dispose() {

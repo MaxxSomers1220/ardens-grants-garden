@@ -65,7 +65,7 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const creek = color("water", "#5A8FA8").lerp(cream, .12);
   const walk = dry.clone().lerp(straw, .54).lerp(cream, .15);
   const track = dry.clone().lerp(earth, .25);
-  const moss = grass.clone().lerp(green, .38).lerp(straw, .17);
+  const moss = grass.clone().lerp(green, .50).lerp(straw, .09);
 
   const lawn = (x, z) => .05
     + approachSteps.reduce((height, [low, high]) => height + approachRise * smoothstep(-z, low, high), 0)
@@ -86,8 +86,8 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
     const center = centers[index];
     const elevation = .29 + index * tierRise;
     const top = (x, z) => elevation + .032 * Math.cos(x * .59 + z * .71) + .022 * Math.sin(x * 1.21 + index);
-    const pad = dry.clone().lerp(green, .52).lerp(earth, .21);
-    const verge = pad.clone().lerp(straw, .12);
+    const pad = dry.clone().lerp(earth, .53).lerp(green, .17);
+    const verge = pad.clone().lerp(straw, .09);
     const shift = points => points.map(point => point.add(new THREE.Vector3(0, 0, center)));
     const turfEdge = shift(loop(width + .31, depth + .23, .36, (x, z) => top(x, z + center), .063, index + .4));
     const footing = shift(loop(width + .80, depth + .57, .42, (x, z) => lawn(x, z + center) + .02, .079, index + .4));
@@ -147,11 +147,12 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   groundMesh.name = "Garden entrance and deadline terrace soil";
   const cropGroup = new THREE.Group();
   plotGroup.add(groundShadow(underside, ink.clone().lerp(earth, .37)), groundMesh, cropGroup);
-  const crops = addGlobeCrops(THREE, cropGroup, terraces.map(terrace => terrace.plot), paint);
+  const crops = addGlobeCrops(THREE, cropGroup, terraces.map(terrace => terrace.plot), paint, { detailedBed: true });
 
   const detail = createSurface();
   const irrigated = createSurface();
-  const furrow = earth.clone().lerp(deep, .47);
+  const furrow = earth.clone().lerp(deep, .18);
+  const furrowShoulder = furrow.clone().lerp(dry, .44);
   const dryDitch = earth.clone().lerp(deep, .28);
   let nextLayout = 0;
   for (const { band, center, top, plot } of terraces) {
@@ -164,7 +165,8 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
         return new THREE.Vector3(x, top(x, along) + .023, along);
       };
       detail.ribbon(-half, half, 28, rowPoint,
-        x => .030 + .059 * (1 - (x / half) ** 2), () => furrow.clone().multiplyScalar(.96));
+        x => .030 + .059 * (1 - (x / half) ** 2),
+        index => furrow.clone().lerp(furrowShoulder, .24 + .18 * Math.sin(index * .52)));
     }
     const funded = band.slots.some(slot => {
       const amount = slot.record?.award_amount_parsed;

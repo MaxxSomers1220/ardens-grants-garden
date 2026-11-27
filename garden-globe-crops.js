@@ -3,13 +3,13 @@ import { namedGardenCrops } from "./garden-named-crops.js";
 const originalHeights = { healthy: .94, seedling: .69, corn: 1.06, pumpkin: .60, orchard: 1.08 };
 const fullTurn = Math.PI * 2;
 
-function seededOffset(key) {
+export function seededOffset(key) {
   let hash = 2166136261;
   for (const character of key) hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
   return (hash >>> 0) / 4294967296;
 }
 
-function cropArtwork(THREE, paint) {
+function cropArtwork(THREE, paint, detailedBed) {
   const colors = {
     leaf: paint.leaf || "#5B8C4A",
     deep: paint.evergreen || "#3E6B34",
@@ -20,16 +20,25 @@ function cropArtwork(THREE, paint) {
     gold: "#D5AD58", blue: "#5EA8CA", navy: "#455775", teal: "#77AFA0", tealEdge: "#386D63",
     red: "#C45150", lime: "#95B56A",
   };
+  if (detailedBed) {
+    Object.assign(colors, {
+      rose: "#A64470", pink: "#DD85AC", purple: "#9B71B8", deepPurple: "#624679",
+      blue: "#58A4C6", navy: "#3E5277", teal: "#73B6A9", tealEdge: "#2E6C64",
+      light: "#A8C379", lime: "#9CBF65", red: "#C65551",
+    });
+  }
   const sources = new Set();
   const keep = geometry => (sources.add(geometry), geometry);
   const lobe = keep(new THREE.IcosahedronGeometry(1, 0));
-  const round = keep(new THREE.SphereGeometry(1, 8, 4));
+  const round = keep(new THREE.SphereGeometry(1, detailedBed ? 10 : 8, detailedBed ? 5 : 4));
   const stalk = keep(new THREE.CylinderGeometry(.73, 1, 1, 5, 1, true));
   const cube = keep(new THREE.BoxGeometry(1, 1, 1));
   const disk = keep(new THREE.CylinderGeometry(1, .85, 1, 9));
   const cupHandle = keep(new THREE.TorusGeometry(.11, .03, 5, 8));
   const up = new THREE.Vector3(0, 1, 0);
   const identity = new THREE.Quaternion();
+  const paleMint = "#8FBAAE";
+  const paleSage = "#CCDA9C";
 
   const leaf = keep(new THREE.BufferGeometry());
   leaf.setAttribute("position", new THREE.Float32BufferAttribute([
@@ -38,6 +47,14 @@ function cropArtwork(THREE, paint) {
   ], 3));
   leaf.setIndex([0, 6, 1, 1, 6, 2, 2, 6, 3, 3, 6, 4, 4, 6, 5, 5, 6, 0]);
   leaf.computeVertexNormals();
+  const broadLeaf = detailedBed ? keep(leaf.clone()) : leaf;
+  if (detailedBed) {
+    broadLeaf.setAttribute("position", new THREE.Float32BufferAttribute([
+      0, 0, 0, .25, -.015, -.23, .66, .066, -.30, 1, .22, 0,
+      .64, .082, .31, .29, .01, .245, .50, .178, .008,
+    ], 3));
+    broadLeaf.computeVertexNormals();
+  }
 
   const gourd = keep(new THREE.SphereGeometry(1, 16, 6));
   const gourdVertices = gourd.attributes.position;
@@ -50,11 +67,11 @@ function cropArtwork(THREE, paint) {
   }
   gourd.computeVertexNormals();
 
-  function extrusion(draw, depth) {
+  function extrusion(draw, depth, bevel = .009) {
     const outline = new THREE.Shape();
     draw(outline);
     const geometry = keep(new THREE.ExtrudeGeometry(outline, {
-      depth, bevelEnabled: true, bevelSegments: 1, bevelSize: .009, bevelThickness: .009,
+      depth, bevelEnabled: true, bevelSegments: 1, bevelSize: bevel, bevelThickness: bevel,
       curveSegments: 4, steps: 1,
     }));
     geometry.translate(0, 0, -depth / 2);
@@ -69,7 +86,7 @@ function cropArtwork(THREE, paint) {
     shape.quadraticCurveTo(.32, .82, .43, .79);
     shape.quadraticCurveTo(.38, .48, 0, .42);
     shape.quadraticCurveTo(-.39, .50, -.43, .76);
-  }, .12);
+  }, detailedBed ? .14 : .12, detailedBed ? .014 : .009);
   const paletteHead = extrusion(shape => {
     shape.moveTo(-.39, .68);
     shape.bezierCurveTo(-.48, .94, .16, 1.03, .38, .86);
@@ -107,16 +124,17 @@ function cropArtwork(THREE, paint) {
     component(parts, geometry, color, position, scale, rotation);
   }
 
-  function foliage(parts, color, y, yaw, reach, neutral, width = 1) {
+  function foliage(parts, color, y, yaw, reach, neutral, width = 1, blade = leaf) {
     const rotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, .30, "YXZ"));
     const position = [0, y, 0];
-    component(parts, leaf, color, position, [reach, reach, reach * width * (neutral ? .76 : 1)], rotation);
+    const breadth = (neutral ? .76 : 1) * (detailedBed ? 1.16 : 1);
+    component(parts, blade, color, position, [reach, reach, reach * width * breadth], rotation);
     if (!neutral) return;
     // Separated vein segments remain visible even when the palette is desaturated.
     for (const [from, to] of [[.24, .39], [.49, .63]]) {
       const point = value => new THREE.Vector3(value * reach, (.10 + value * .14) * reach, 0)
         .applyQuaternion(rotation).add(new THREE.Vector3(...position)).toArray();
-      line(parts, "#74806B", point(from), point(to), .006);
+      line(parts, "#74806B", point(from), point(to), detailedBed ? .010 : .006);
     }
   }
 
@@ -128,21 +146,31 @@ function cropArtwork(THREE, paint) {
     const height = seedling ? .57 : .91;
     branch(parts, colors.deep, height, neutral);
     const tiers = neutral ? [.31, .65] : seedling ? [.35, .66, .83] : [.26, .45, .65, .84];
-    tiers.forEach((y, i) => foliage(parts, i % 2 ? colors.light : colors.leaf,
-      height * y, i * 2.40, (1.10 - y * .5) * (seedling ? .34 : .46), neutral));
-    petal(parts, seedling ? colors.light : colors.leaf, [.026, height, 0], [.058, .12, .055]);
+    tiers.forEach((y, i) => {
+      const tint = detailedBed && neutral ? (i % 2 ? paleMint : paleSage) : (i % 2 ? colors.light : colors.leaf);
+      const spread = detailedBed ? (neutral ? 1.29 : 1.16) : 1;
+      foliage(parts, tint, height * y, i * 2.40, (1.10 - y * .5) * (seedling ? .34 : .46) * spread,
+        neutral, 1, broadLeaf);
+    });
+    const tip = detailedBed && neutral ? paleMint : seedling ? colors.light : colors.leaf;
+    petal(parts, tip, [.026, height, 0], detailedBed ? [.079, .113, .069] : [.058, .12, .055]);
   }
 
   function corn(parts, neutral) {
     branch(parts, colors.dry, 1.08, neutral, .040);
     const tiers = neutral ? [.36, .58, .74] : [.27, .44, .59, .74];
     tiers.forEach((y, i) => foliage(parts, i % 2 ? colors.corn : colors.dry, y, i * 2.57, .47, neutral, .59));
-    petal(parts, colors.corn, [.087, .64, .04], [.089, .22, .076], 0, -.24, round);
+    const cobWidth = detailedBed ? .105 : .089;
+    petal(parts, colors.corn, [.087, .64, .04], [cobWidth, .22, .076], 0, -.24, round);
     for (const side of [-1, 1]) {
       line(parts, colors.dry, [.070 + side * .039, .52, .095], [.105 + side * .024, .79, .096], .008);
     }
     for (const side of [-1, 0, 1]) {
       line(parts, colors.corn, [.026, 1.01, 0], [.034 + side * .076, 1.18, .027], .009);
+    }
+    if (detailedBed) {
+      line(parts, colors.dry, [.071, .62, .111], [.114, .72, .111], .011);
+      line(parts, colors.dry, [.118, .55, .111], [.101, .63, .111], .009);
     }
   }
 
@@ -159,9 +187,10 @@ function cropArtwork(THREE, paint) {
     branch(parts, colors.soil, .82, neutral, .085);
     line(parts, colors.soil, [0, .43, 0], [-.24, .74, .016], neutral ? .027 : .045);
     line(parts, colors.soil, [0, .47, 0], [.25, .74, -.077], neutral ? .027 : .043);
-    petal(parts, colors.deep, [0, .88, 0], [.37, .39, .31], 0, .05);
+    petal(parts, colors.deep, [0, .88, 0], [detailedBed ? .41 : .37, .39, detailedBed ? .34 : .31], 0, .05);
     petal(parts, colors.leaf, [-.23, .77, .02], [.24, .22, .24]);
     if (!neutral) petal(parts, colors.leaf, [.25, .81, -.04], [.26, .27, .24]);
+    if (detailedBed && !neutral) petal(parts, colors.light, [-.055, 1.03, .125], [.233, .13, .17], .10, .18);
     const fruit = [[-.26, .75, .17], [.13, .88, .25], [.23, 1.01, .07], [-.14, 1.05, .18], [.05, .77, -.26], [-.23, .92, -.16]];
     for (const at of fruit.slice(0, papers)) petal(parts, colors.apple, at, [.065, .073, .064]);
   }
@@ -175,10 +204,13 @@ function cropArtwork(THREE, paint) {
   function mind(parts, neutral) {
     branch(parts, colors.rose, .74, neutral, .043);
     foliage(parts, colors.pink, .48, -.10, .24, neutral, .75);
-    petal(parts, colors.rose, [0, .74, 0], [.34, .105, .15]);
-    for (const [x, y, z, w, h] of [[-.25, .81, .01, .175, .14], [-.09, .91, 0, .19, .20],
-      [.10, .88, 0, .19, .17], [.26, .81, .01, .16, .14]]) {
-      petal(parts, colors.pink, [x, y, z], [w, h, .155], 0, 0, round);
+    petal(parts, colors.rose, [0, .74, 0], [detailedBed ? .39 : .34, .105, detailedBed ? .19 : .15]);
+    const clouds = detailedBed
+      ? [[-.27, .82, .015, .202, .15], [-.10, .93, -.021, .207, .193],
+        [.13, .90, .018, .211, .164], [.29, .822, -.014, .167, .146]]
+      : [[-.25, .81, .01, .175, .14], [-.09, .91, 0, .19, .20], [.10, .88, 0, .19, .17], [.26, .81, .01, .16, .14]];
+    for (const [x, y, z, w, h] of clouds) {
+      petal(parts, colors.pink, [x, y, z], [w, h, detailedBed ? .194 : .155], 0, 0, round);
     }
   }
 
@@ -187,37 +219,41 @@ function cropArtwork(THREE, paint) {
     foliage(parts, colors.light, .46, .6, .25, neutral, .80);
     petal(parts, colors.deepPurple, [0, .80, 0], [.15, .12, .13]);
     for (const [x, y, z, tilt] of [[-.17, .90, 0, -.52], [0, 1.01, 0, .03], [.17, .92, 0, .51], [.01, .91, -.10, .11]]) {
-      petal(parts, colors.purple, [x, y, z], [.11, .21, .10], 0, tilt);
+      petal(parts, colors.purple, [x, y, z], [detailedBed ? .131 : .11, .21, detailedBed ? .127 : .10], 0, tilt);
     }
+    if (detailedBed) petal(parts, "#C4A4CF", [0, .97, .126], [.071, .092, .048], 0, .25);
     petal(parts, colors.pink, [-.25, .63, .11], [.063, .035, .038], 0, -.45);
     if (!neutral) petal(parts, colors.purple, [.22, .54, .07], [.060, .039, .038], 0, .52);
   }
 
   function data(parts, neutral) {
     branch(parts, colors.ink, .75, neutral, .048);
-    component(parts, cube, colors.navy, [0, .88, 0], [.52, .39, .24]);
+    component(parts, cube, colors.navy, [0, .88, 0], [detailedBed ? .60 : .52, .39, .24]);
     for (const face of [-1, 1]) {
       for (const y of [.78, .88, .98]) {
-        component(parts, cube, "#A8C0CB", [-.017, y, face * .121], [.37, .032, .02]);
+        component(parts, cube, "#A8C0CB", [-.017, y, face * .121], [detailedBed ? .415 : .37, detailedBed ? .040 : .032, .02]);
       }
     }
     line(parts, colors.navy, [.02, .57, 0], [.28, .63, .066], .020);
-    petal(parts, colors.blue, [.30, .62, .07], [.15, .10, .105], 0, -.24, round);
+    petal(parts, colors.blue, [.30, .62, .07], [detailedBed ? .174 : .15, detailedBed ? .115 : .10, .105], 0, -.24, round);
   }
 
   function germ(parts, neutral) {
     branch(parts, colors.leaf, .69, neutral, .048);
-    petal(parts, colors.lime, [0, .82, 0], [.265, .245, .155], 0, 0, round);
+    petal(parts, colors.lime, [0, .82, 0], [detailedBed ? .29 : .265, .245, detailedBed ? .163 : .155], 0, 0, round);
     for (let index = 0; index < 8; index++) {
       const angle = index * fullTurn / 8;
       const x = Math.cos(angle), y = Math.sin(angle);
       line(parts, colors.leaf, [x * .20, .82 + y * .18, 0], [x * .295, .82 + y * .265, 0], .032);
-      petal(parts, colors.leaf, [x * .302, .82 + y * .272, 0], [.06, .06, .060]);
+      const knob = detailedBed ? .071 : .06;
+      petal(parts, colors.leaf, [x * .302, .82 + y * .272, 0], [knob, knob, knob]);
     }
     for (const face of [-1, 1]) {
-      for (const x of [-.083, .083]) petal(parts, colors.ink, [x, .858, face * .145], [.027, .034, .023]);
-      line(parts, colors.deep, [-.096, .79, face * .148], [0, .735, face * .153], .014);
-      line(parts, colors.deep, [0, .735, face * .153], [.096, .79, face * .148], .014);
+      const eye = detailedBed ? .158 : .145;
+      const mouth = detailedBed ? .161 : .148;
+      for (const x of [-.083, .083]) petal(parts, colors.ink, [x, .858, face * eye], [detailedBed ? .033 : .027, .034, .023]);
+      line(parts, colors.deep, [-.096, .79, face * mouth], [0, .735, face * (mouth + .005)], .014);
+      line(parts, colors.deep, [0, .735, face * (mouth + .005)], [.096, .79, face * mouth], .014);
     }
   }
 
@@ -232,10 +268,11 @@ function cropArtwork(THREE, paint) {
       [.053, .57, [[0, 0, 0, 1], [0, 1, .82, 1], [.82, 1, .82, .54], [.82, .54, 0, .54], [.42, .54, 1, 0]]],
     ];
     for (const face of [-1, 1]) {
+      const front = face * (detailedBed ? .089 : .073);
       for (const [x, y, strokes] of glyphs) {
         for (const [a, b, c, d] of strokes) {
-          line(parts, colors.tealEdge, [face * (x + a * .082), y + b * .075, face * .073],
-            [face * (x + c * .082), y + d * .075, face * .073], .009);
+          line(parts, colors.tealEdge, [face * (x + a * .082), y + b * .075, front],
+            [face * (x + c * .082), y + d * .075, front], detailedBed ? .011 : .009);
         }
       }
     }
@@ -249,7 +286,7 @@ function cropArtwork(THREE, paint) {
     for (let index = 0; index < 5; index++) {
       const angle = index * fullTurn / 5;
       petal(parts, index % 2 ? colors.blue : colors.red, [Math.cos(angle) * .16, .86 + Math.sin(angle) * .16, 0],
-        [.107, .10, .095], 0, angle, round);
+        [detailedBed ? .125 : .107, detailedBed ? .107 : .10, .095], 0, angle, round);
     }
     petal(parts, colors.rose, [0, .86, .061], [.088, .086, .074]);
   }
@@ -276,8 +313,9 @@ function cropArtwork(THREE, paint) {
     component(parts, paletteHead, colors.cream, [0, 0, 0], [1, 1, 1]);
     const paints = [[-.29, .77, colors.gold], [-.12, .86, colors.leaf], [.077, .868, colors.purple],
       [.247, .82, colors.rose], [.211, .70, colors.blue]];
+    const swatch = detailedBed ? .075 : .061;
     for (const face of [-1, 1]) {
-      for (const [x, y, tint] of paints) petal(parts, tint, [face * x, y, face * .056], [.061, .057, .027]);
+      for (const [x, y, tint] of paints) petal(parts, tint, [face * x, y, face * .056], [swatch, detailedBed ? .067 : .057, .027]);
     }
   }
 
@@ -319,6 +357,7 @@ function cropArtwork(THREE, paint) {
     const position = new THREE.Vector3();
     const normal = new THREE.Vector3();
     const tint = new THREE.Color();
+    const strokeTint = new THREE.Color();
     let start = 0;
     for (const part of parts) {
       const sourcePositions = part.geometry.attributes.position;
@@ -326,11 +365,23 @@ function cropArtwork(THREE, paint) {
       transform.compose(new THREE.Vector3(...part.position), part.rotation, new THREE.Vector3(...part.scale));
       normalTransform.getNormalMatrix(transform);
       tint.set(part.color);
-      if (neutral) tint.lerp(cream, part.color === colors.ink ? .45 : .64);
+      const mixedLeaf = detailedBed && (part.color === paleMint || part.color === paleSage);
+      if (neutral && !mixedLeaf) {
+        const wash = detailedBed && part.color === "#74806B" ? .42 : part.color === colors.ink ? .45 : detailedBed ? .62 : .64;
+        tint.lerp(cream, wash);
+      }
       for (let vertex = 0; vertex < sourcePositions.count; vertex++) {
-        position.fromBufferAttribute(sourcePositions, vertex).applyMatrix4(transform).toArray(positions, (start + vertex) * 3);
-        normal.fromBufferAttribute(sourceNormals, vertex).applyNormalMatrix(normalTransform).toArray(normals, (start + vertex) * 3);
-        tint.toArray(vertexColors, (start + vertex) * 3);
+        const offset = (start + vertex) * 3;
+        position.fromBufferAttribute(sourcePositions, vertex).applyMatrix4(transform).toArray(positions, offset);
+        normal.fromBufferAttribute(sourceNormals, vertex).applyNormalMatrix(normalTransform).toArray(normals, offset);
+        if (detailedBed) {
+          // Bake the softly shaded edges into the shared model, away from per-frame rendering.
+          const brush = .96 + normal.y * .10 + (normal.z - normal.x) * .048
+            + .017 * Math.sin(position.x * 18 + position.y * 28 + position.z * 13);
+          strokeTint.copy(tint).multiplyScalar(brush).toArray(vertexColors, offset);
+        } else {
+          tint.toArray(vertexColors, offset);
+        }
       }
       if (part.geometry.index) {
         for (const index of part.geometry.index.array) indices.push(start + index);
@@ -354,7 +405,7 @@ function cropArtwork(THREE, paint) {
   return { bake, releaseSources: () => sources.forEach(geometry => geometry.dispose()) };
 }
 
-function footprintWidth(geometry, angle) {
+function footprintWidth(geometry, angle, breadth = 1, depth = 1) {
   const vertices = geometry.attributes.position;
   const sine = Math.sin(angle);
   const cosine = Math.cos(angle);
@@ -363,8 +414,8 @@ function footprintWidth(geometry, angle) {
   let near = Infinity;
   let far = -Infinity;
   for (let index = 0; index < vertices.count; index++) {
-    const x = vertices.getX(index);
-    const z = vertices.getZ(index);
+    const x = vertices.getX(index) * breadth;
+    const z = vertices.getZ(index) * depth;
     const across = cosine * x + sine * z;
     const along = cosine * z - sine * x;
     left = Math.min(left, across);
@@ -376,13 +427,13 @@ function footprintWidth(geometry, angle) {
 }
 
 /** Plant each source slot once in its plot's tangent frame. */
-export function addGlobeCrops(THREE, world, plots, paint = {}) {
-  const artwork = cropArtwork(THREE, paint);
+export function addGlobeCrops(THREE, world, plots, paint = {}, { detailedBed = false } = {}) {
+  const artwork = cropArtwork(THREE, paint, detailedBed);
   const batches = new Map();
   const picks = [];
   const layouts = [];
   const material = new THREE.MeshStandardMaterial({
-    vertexColors: true, roughness: .93, metalness: 0, side: THREE.DoubleSide,
+    vertexColors: true, roughness: detailedBed ? .88 : .93, metalness: 0, side: THREE.DoubleSide,
   });
   material.onBeforeCompile = shader => {
     shader.vertexShader = shader.vertexShader
@@ -401,6 +452,8 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
   const basis = new THREE.Matrix4();
   const rotation = new THREE.Quaternion();
   const yaw = new THREE.Quaternion();
+  const tilt = new THREE.Quaternion();
+  const slope = new THREE.Euler();
   const localY = new THREE.Vector3(0, 1, 0);
   const east = new THREE.Vector3();
   const outward = new THREE.Vector3();
@@ -409,10 +462,10 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
   let count = 0;
   let bloomCount = 0;
 
-  function batch(geometry, label, position, direction, size, score, neutral, recordId) {
+  function batch(geometry, label, position, direction, size, score, neutral, recordId, breadth = 1, depth = 1) {
     if (!batches.has(geometry)) batches.set(geometry, { label, entries: [] });
     batches.get(geometry).entries.push({
-      matrix: matrix.compose(position, direction, scale.setScalar(size)).clone(), score, neutral, recordId,
+      matrix: matrix.compose(position, direction, scale.set(size * breadth, size, size * depth)).clone(), score, neutral, recordId,
     });
   }
 
@@ -446,7 +499,8 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
       east.addScaledVector(outward, -east.dot(outward)).normalize();
       forward.crossVectors(east, outward).normalize();
       rotation.setFromRotationMatrix(basis.makeBasis(east, outward, forward));
-      const heading = named || slot.elephant ? (seededOffset(key + "yaw") - .5) * .7 : seededOffset(key + "yaw") * fullTurn;
+      const facing = detailedBed && named && !slot.elephant ? 1.16 : .7;
+      const heading = named || slot.elephant ? (seededOffset(key + "yaw") - .5) * facing : seededOffset(key + "yaw") * fullTurn;
       rotation.multiply(yaw.setFromAxisAngle(localY, heading));
 
       const neutral = Boolean(slot.neutral);
@@ -458,17 +512,46 @@ export function addGlobeCrops(THREE, world, plots, paint = {}) {
       const model = artwork.bake(kind, neutral, fruitCount, companion);
       const relativeHeight = slot.elephant ? 1.46 + (neutral ? 0 : .14 * score / 100)
         : (named?.scale ?? originalHeights[slot.crop] ?? 1) * (neutral ? .77 : .67 + .41 * score / 100);
-      const size = baseSize * relativeHeight;
-      batch(model, kind, at, rotation, size, score, neutral, key);
-      picks.push({
+      const closeupHeight = kind === "elephant" ? 1.19 : kind === "corn" ? 1.05 : 1.10;
+      const size = baseSize * relativeHeight * (detailedBed ? closeupHeight : 1);
+      let breadth = 1;
+      let profile = 1;
+      let axis;
+      let restReach = 0;
+      if (detailedBed) {
+        breadth = named && kind !== "elephant"
+          ? .83 + .39 * seededOffset(key + "breadth") : 1.00 + .19 * seededOffset(key + "breadth");
+        profile = .96 + .18 * seededOffset(key + "profile");
+        if (kind === "elephant") {
+          breadth /= closeupHeight;
+          profile /= closeupHeight;
+        }
+        const lean = slot.crop === "corn" ? .016 : kind === "elephant" ? .039 : .117;
+        slope.set(lean * (seededOffset(key + "lean-x") - .5), 0, lean * (seededOffset(key + "lean-z") - .5));
+        rotation.multiply(tilt.setFromEuler(slope));
+        axis = localY.clone().applyQuaternion(rotation);
+        restReach = size * Math.sqrt(Math.max(0, 1 - axis.dot(outward) ** 2));
+        if (kind !== "elephant") {
+          const footprint = footprintWidth(model, heading, breadth, profile) * size;
+          const room = Math.min(strideX, strideZ);
+          const fill = Math.min(1, (room * .92 - restReach) / footprint);
+          breadth *= fill;
+          profile *= fill;
+        }
+      }
+      batch(model, kind, at, rotation, size, score, neutral, key, breadth, profile);
+      const pick = {
         id: key, position: plot.point(x, z),
         height: model.boundingBox.max.y * size + .016,
-        width: footprintWidth(model, heading) * size,
-      });
+        width: footprintWidth(model, heading, breadth, profile) * size + restReach,
+      };
+      if (axis) pick.axis = axis;
+      picks.push(pick);
       count++;
       if (slot.bloom) {
-        const offset = new THREE.Vector3(size * .26, size * .72, size * .12).applyQuaternion(rotation);
-        batch(artwork.bake("bloom", false, 0), "deadline-bloom", at.clone().add(offset), rotation, size * .37, score, neutral, key);
+        const offset = new THREE.Vector3(size * .26 * breadth, size * .72, size * .12 * profile).applyQuaternion(rotation);
+        const bloomSize = detailedBed && kind === "elephant" ? size / closeupHeight : size;
+        batch(artwork.bake("bloom", false, 0), "deadline-bloom", at.clone().add(offset), rotation, bloomSize * .37, score, neutral, key);
         bloomCount++;
       }
     }
