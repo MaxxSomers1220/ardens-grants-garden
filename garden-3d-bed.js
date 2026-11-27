@@ -1,8 +1,10 @@
 import * as THREE from "./vendor/three-0.180.0/three.module.min.js";
 import { addGlobeCrops } from "./garden-globe-crops.js";
+import { createDeadlineTerrace } from "./garden-3d-deadline-terrace.js";
 
 const up = new THREE.Vector3(0, 1, 0);
 const defaultPose = { yaw: -.33, pitch: .73, zoom: 1 };
+const deadlinePose = { yaw: .22, pitch: .66, zoom: 1 };
 const { clamp, lerp } = THREE.MathUtils;
 const gestureThreshold = 6;
 
@@ -46,11 +48,11 @@ function createSurface() {
       quad(lower[index], upper[index], upper[next], lower[next], tint(index));
     }
   }
-  function cover(edge, elevation, tint) {
-    const center = new THREE.Vector3(0, elevation(0, 0), 0);
+  function cover(edge, elevation, tint, [originX, originZ] = [0, 0]) {
+    const center = new THREE.Vector3(originX, elevation(originX, originZ), originZ);
     const rings = [.19, .38, .56, .74, .89].map(fraction => edge.map(point => {
-      const x = point.x * fraction;
-      const z = point.z * fraction;
+      const x = originX + (point.x - originX) * fraction;
+      const z = originZ + (point.z - originZ) * fraction;
       return new THREE.Vector3(x, elevation(x, z), z);
     }));
     rings.push(edge);
@@ -84,7 +86,7 @@ function createSurface() {
   return { triangle, band, wall, cover, ribbon, mesh };
 }
 
-function addTrail(surface, coordinates, elevation, color, edge) {
+function addTrail(surface, coordinates, elevation, color, edge, size = 1) {
   const route = new THREE.CatmullRomCurve3(
     coordinates.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, "chordal");
   function point(t, offset, lift) {
@@ -95,7 +97,7 @@ function addTrail(surface, coordinates, elevation, color, edge) {
     position.y = elevation(position.x, position.z) + lift;
     return position;
   }
-  const halfWidth = t => .078 + .155 * Math.sin(Math.PI * t) ** .64 + .016 * Math.sin(t * 16);
+  const halfWidth = t => size * (.078 + .155 * Math.sin(Math.PI * t) ** .64 + .016 * Math.sin(t * 16));
   surface.ribbon(0, 1, 44, (t, width) => point(t, width, .027), halfWidth, () => edge);
   surface.ribbon(.014, .986, 43, (t, width) => point(t, width, .032),
     t => halfWidth(t) * .77, index => color.clone().multiplyScalar(.98 + .029 * Math.cos(index * 1.9)));
@@ -271,8 +273,13 @@ function bedLayout(bed, plotGroup, paint) {
   const wet = water.mesh();
   plotGroup.add(wet);
 
+  return finishBed(plotGroup, { crop, cropGroup, groundMesh, fit: strata.flat(), wet, shadowColor: earth });
+}
+
+function finishBed(plotGroup, { crop, cropGroup, groundMesh, fit, wet, shadowColor, markers }) {
+  const { picks } = crop;
   const shadows = new THREE.InstancedMesh(new THREE.CircleGeometry(1, 14),
-    new THREE.MeshBasicMaterial({ color: earth, transparent: true, opacity: .24, depthWrite: false }), picks.length);
+    new THREE.MeshBasicMaterial({ color: shadowColor, transparent: true, opacity: .24, depthWrite: false }), picks.length);
   const position = new THREE.Vector3();
   const size = new THREE.Vector3();
   const flat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
@@ -287,7 +294,6 @@ function bedLayout(bed, plotGroup, paint) {
   shadows.computeBoundingSphere();
   plotGroup.add(shadows);
 
-  const fit = strata.flat();
   const byId = new Map(picks.map(pick => [pick.id, pick]));
   for (const { position, width, height } of picks) {
     for (const side of [-1, 1]) {
@@ -295,7 +301,7 @@ function bedLayout(bed, plotGroup, paint) {
       fit.push(position.clone().add(new THREE.Vector3(side * width / 2, height, -side * width / 2)));
     }
   }
-  return { crop, picks, byId, pickMeshes: cropGroup.children, groundMesh, fit, wet };
+  return { crop, picks, byId, pickMeshes: cropGroup.children, groundMesh, fit, wet, markers };
 }
 
 function disposeGroup(group) {
@@ -312,6 +318,7 @@ export function createGardenBed3D({
   canvas,
   paint = {},
   onAnchor = () => {},
+  onTerraces = () => {},
   onHover = () => {},
   onSelect = () => {},
   onUnavailable = () => {},
@@ -387,7 +394,7 @@ export function createGardenBed3D({
     const distance = 38;
     const horizontal = distance * Math.cos(pose.pitch);
     camera.position.set(horizontal * Math.sin(pose.yaw), distance * Math.sin(pose.pitch), horizontal * Math.cos(pose.yaw));
-    camera.lookAt(0, .24, 0);
+    camera.lookAt(0, layout.markers ? .53 : .24, 0);
     camera.updateMatrixWorld();
     let minX = Infinity;
     let maxX = -Infinity;
@@ -482,12 +489,18 @@ export function createGardenBed3D({
       }
       Object.assign(canvas.dataset, {
         renderer: "webgl", bed: bed.id, plantCount: String(layout.picks.length),
+        terraceCount: String(layout.markers ? layout.markers.length - 1 : 0),
         yaw: pose.yaw.toFixed(4), pitch: pose.pitch.toFixed(4), zoom: pose.zoom.toFixed(4),
         triangles: String(renderer.info.render.triangles), drawCalls: String(renderer.info.render.calls),
       });
       const tip = selectedPlant && project(view.copy(selectedPlant.position).addScaledVector(up, selectedPlant.height));
       onAnchor(tip && tip.x >= 0 && tip.x <= width && tip.y >= 0 && tip.y <= height
         ? { ...tip, id: selectedPlant.id } : null);
+      if (layout.markers) {
+        onTerraces(layout.markers.map(({ id, point }) => ({
+          id, ...project(point), depth: view.copy(point).applyMatrix4(camera.matrixWorldInverse).z,
+        })).filter(({ x, y }) => x >= 0 && x <= width && y >= 0 && y <= height));
+      }
     }
     if (pendingHover) {
       const event = pendingHover;
@@ -516,7 +529,12 @@ export function createGardenBed3D({
     const nextGroup = new THREE.Group();
     let nextLayout;
     try {
-      nextLayout = bedLayout(next, nextGroup, paint);
+      if (next.id === "neuro" && next.deadlinePath) {
+        const terrain = createDeadlineTerrace(next, nextGroup, paint, { createSurface, loop, addTrail, groundShadow });
+        nextLayout = finishBed(nextGroup, terrain);
+      } else {
+        nextLayout = bedLayout(next, nextGroup, paint);
+      }
     } catch (error) {
       disposeGroup(nextGroup);
       throw error;
@@ -535,8 +553,9 @@ export function createGardenBed3D({
     hover(null);
     selectedPlant = null;
     onAnchor(null);
+    onTerraces([]);
     ring.visible = false;
-    Object.assign(pose, defaultPose);
+    Object.assign(pose, layout.markers ? deadlinePose : defaultPose);
     layout.crop.setMinimumScore(minimum);
     setWeather(weather);
   }
@@ -605,6 +624,7 @@ export function createGardenBed3D({
         gesture = undefined;
         pendingHover = undefined;
         hover(null);
+        onTerraces([]);
       }
     },
     setWeather,
@@ -633,7 +653,7 @@ export function createGardenBed3D({
       requestFrame();
     },
     reset() {
-      Object.assign(pose, defaultPose);
+      Object.assign(pose, layout?.markers ? deadlinePose : defaultPose);
       requestFrame();
     },
     getProjectedPlants() {
