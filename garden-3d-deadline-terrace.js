@@ -31,7 +31,28 @@ function block(surface, x, y, z, width, height, depth, turn, color) {
   surface.triangle(top[0], top[3], top[2], cap);
 }
 
+function addContourRow(surface, top, middle, half, stride, tints) {
+  const profile = [-1, -.31, .32, 1];
+  const halfWidth = Math.min(.29, stride * .235);
+  const rise = Math.min(.16, stride * .16);
+  for (const [index, tint] of tints.entries()) {
+    const from = profile[index];
+    const to = profile[index + 1];
+    const offset = (from + to) / 2;
+    surface.ribbon(-half, half, 22, (x, across) => {
+      const part = x / half;
+      const taper = Math.sqrt(Math.max(0, 1 - part ** 2));
+      const curve = stride * (.071 * Math.sin(x * .76 + middle * .51) + .054 * part ** 2);
+      const cross = across + offset;
+      const z = middle - cross * halfWidth * (.24 + .76 * taper) + curve;
+      const shoulder = Math.max(0, 1 - cross ** 2);
+      return new THREE.Vector3(x, top(x, z) + .018 + rise * taper * shoulder, z);
+    }, () => (to - from) / 2, segment => tint.clone().multiplyScalar(.98 + .045 * Math.sin(segment * .86 + middle)));
+  }
+}
+
 export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, loop, addTrail, groundShadow }) {
+  const environmentBed = bed.id === "earth";
   const bands = bed.deadlinePath.terraces;
   const width = 9.20;
   const depths = bands.map(band => shelfDepth(band.slots.length));
@@ -66,6 +87,7 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const walk = dry.clone().lerp(straw, .54).lerp(cream, .15);
   const track = dry.clone().lerp(earth, .25);
   const moss = grass.clone().lerp(green, .50).lerp(straw, .09);
+  if (environmentBed) moss.lerp(deep, .24);
 
   const lawn = (x, z) => .05
     + approachSteps.reduce((height, [low, high]) => height + approachRise * smoothstep(-z, low, high), 0)
@@ -86,8 +108,10 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
     const center = centers[index];
     const elevation = .29 + index * tierRise;
     const top = (x, z) => elevation + .032 * Math.cos(x * .59 + z * .71) + .022 * Math.sin(x * 1.21 + index);
-    const pad = dry.clone().lerp(earth, .53).lerp(green, .17);
-    const verge = pad.clone().lerp(straw, .09);
+    const pad = environmentBed
+      ? dry.clone().lerp(earth, .42).lerp(deep, .44).lerp(green, .19)
+      : dry.clone().lerp(earth, .53).lerp(green, .17);
+    const verge = environmentBed ? pad.clone().lerp(green, .34).lerp(straw, .065) : pad.clone().lerp(straw, .09);
     const shift = points => points.map(point => point.add(new THREE.Vector3(0, 0, center)));
     const turfEdge = shift(loop(width + .31, depth + .23, .36, (x, z) => top(x, z + center), .063, index + .4));
     const footing = shift(loop(width + .80, depth + .57, .42, (x, z) => lawn(x, z + center) + .02, .079, index + .4));
@@ -153,13 +177,23 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const irrigated = createSurface();
   const furrow = earth.clone().lerp(deep, .18);
   const furrowShoulder = furrow.clone().lerp(dry, .44);
+  const contourTints = environmentBed ? [
+    earth.clone().lerp(deep, .39),
+    dry.clone().lerp(green, .57).lerp(straw, .10),
+    dry.clone().lerp(earth, .41).lerp(green, .26),
+  ] : null;
   const dryDitch = earth.clone().lerp(deep, .28);
   let nextLayout = 0;
   for (const { band, center, top, plot } of terraces) {
     const layout = band.slots.length ? crops.layouts[nextLayout++] : null;
     for (const row of layout?.rows ?? []) {
-      const z = center - row.z - layout.strideZ * .31;
       const half = Math.min(width / 2 - .34, row.width / 2 + .25);
+      if (contourTints) {
+        const contour = center - row.z - layout.strideZ * .42;
+        addContourRow(detail, top, contour, half, layout.strideZ, contourTints);
+        continue;
+      }
+      const z = center - row.z - layout.strideZ * .31;
       const rowPoint = (x, across) => {
         const along = z - across + .043 * Math.sin(x * 1.36 + z * .59);
         return new THREE.Vector3(x, top(x, along) + .023, along);

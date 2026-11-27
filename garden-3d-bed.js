@@ -4,6 +4,7 @@ import { createDeadlineTerrace } from "./garden-3d-deadline-terrace.js";
 
 const up = new THREE.Vector3(0, 1, 0);
 const defaultPose = { yaw: .22, pitch: .66, zoom: 1 };
+const rarePose = { yaw: .33, pitch: .54, zoom: 1 };
 const { clamp, lerp } = THREE.MathUtils;
 const gestureThreshold = 6;
 
@@ -150,15 +151,18 @@ function finishBed(bed, plotGroup, { crop, cropGroup, groundMesh, fit, wet, shad
   plotGroup.add(shadows);
 
   const byId = new Map(picks.map(pick => [pick.id, pick]));
+  // Frame the flowers and their path markers in the small Rare disease bed.
+  const framing = bed.id === "rare" ? markers.map(marker => marker.point) : fit;
   for (const pick of picks) {
+    if (bed.id === "rare") framing.push(pick.position);
     const top = pick.position.clone().addScaledVector(pick.axis || up, pick.height);
     const extent = pick.width / 2 + sway.reach(pick);
     for (const side of [-1, 1]) {
-      fit.push(top.clone().add(new THREE.Vector3(side * extent, 0, side * extent)));
-      fit.push(top.clone().add(new THREE.Vector3(side * extent, 0, -side * extent)));
+      framing.push(top.clone().add(new THREE.Vector3(side * extent, 0, side * extent)));
+      framing.push(top.clone().add(new THREE.Vector3(side * extent, 0, -side * extent)));
     }
   }
-  return { crop, picks, byId, pickMeshes, groundMesh, fit, wet, markers, sway };
+  return { crop, picks, byId, pickMeshes, groundMesh, fit: framing, wet, markers, sway };
 }
 
 function disposeGroup(group) {
@@ -427,7 +431,7 @@ export function createGardenBed3D({
     onAnchor(null);
     onTerraces([]);
     ring.visible = false;
-    Object.assign(pose, defaultPose);
+    Object.assign(pose, bed.id === "rare" ? rarePose : defaultPose);
     layout.crop.setMinimumScore(minimum);
     setWeather(weather);
   }
@@ -531,7 +535,7 @@ export function createGardenBed3D({
       requestFrame();
     },
     reset() {
-      Object.assign(pose, defaultPose);
+      Object.assign(pose, bed?.id === "rare" ? rarePose : defaultPose);
       requestFrame();
     },
     getProjectedPlants() {
