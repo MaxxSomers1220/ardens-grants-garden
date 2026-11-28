@@ -31,7 +31,84 @@ function block(surface, x, y, z, width, height, depth, turn, color) {
   surface.triangle(top[0], top[3], top[2], cap);
 }
 
+function addContourRow(surface, top, middle, half, stride, tints) {
+  const profile = [-1, -.31, .32, 1];
+  const halfWidth = Math.min(.29, stride * .235);
+  const rise = Math.min(.16, stride * .16);
+  for (const [index, tint] of tints.entries()) {
+    const from = profile[index];
+    const to = profile[index + 1];
+    const offset = (from + to) / 2;
+    surface.ribbon(-half, half, 22, (x, across) => {
+      const part = x / half;
+      const taper = Math.sqrt(Math.max(0, 1 - part ** 2));
+      const curve = stride * (.071 * Math.sin(x * .76 + middle * .51) + .054 * part ** 2);
+      const cross = across + offset;
+      const z = middle - cross * halfWidth * (.24 + .76 * taper) + curve;
+      const shoulder = Math.max(0, 1 - cross ** 2);
+      return new THREE.Vector3(x, top(x, z) + .018 + rise * taper * shoulder, z);
+    }, () => (to - from) / 2, segment => tint.clone().multiplyScalar(.98 + .045 * Math.sin(segment * .86 + middle)));
+  }
+}
+
+function terraceWalk(coordinates, lawn, bands, markers, picks, study) {
+  // Use the same spline and height as the visible ochre path.
+  const path = new THREE.CatmullRomCurve3(
+    coordinates.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, "chordal");
+  const heights = picks.map(pick => pick.height).sort((a, b) => a - b);
+  const eye = study?.eye ?? (.95 + .20 * smoothstep(heights[Math.floor(heights.length / 2)] ?? 0, .35, 1.46));
+  const entranceLift = study?.entranceLift ?? .13;
+  function walkTrail(progress, target = new THREE.Vector3()) {
+    const along = THREE.MathUtils.clamp(progress, 0, 1);
+    path.getPointAt(along, target);
+    target.y = lawn(target.x, target.z) + eye + entranceLift * (1 - smoothstep(along, 0, .085));
+    return target;
+  }
+
+  const samples = Array.from({ length: 141 }, (_, index) => {
+    const progress = index / 140;
+    return { progress, position: walkTrail(progress) };
+  }).filter(({ position }) => position.x > 5.21);
+  const byId = new Map(picks.map(pick => [pick.id, pick]));
+  const stops = [{ id: "entrance", label: "Entrance", slots: bands[0]?.slots ?? [] }, ...bands];
+  let previousProgress = 0;
+  const walkStops = stops.map(({ id, label, slots }, index) => {
+    const marker = markers[index].point;
+    // Leave a path sample for each remaining shelf even when adjacent shelves are shallow.
+    const candidates = !study && index
+      ? samples.slice(0, samples.length - (bands.length - index)).filter(sample => sample.progress > previousProgress)
+      : samples;
+    const lead = !study && index ? Math.min(1.64, .46 * (markers[index - 1].point.z - marker.z)) : 1.64;
+    const before = marker.z + lead;
+    const stop = index ? candidates.reduce((best, sample) => !best ||
+      Math.abs(sample.position.z - before) < Math.abs(best.position.z - before) ? sample : best, null) : null;
+    const progress = stop?.progress ?? previousProgress;
+    previousProgress = progress;
+    const position = walkTrail(progress);
+    const members = slots.map(slot => byId.get(slot.record.opportunity_id));
+    const ahead = members.filter(pick => pick.position.z < position.z - .16);
+    const nearby = ahead.length ? ahead : members;
+    // At the gateway, look past the plant right beside the camera toward the first turn.
+    const alongEntrance = index ? [] : nearby.filter(pick => pick.position.x > position.x + .85);
+    const groundDistance = pick => Math.hypot(pick.position.x - position.x, pick.position.z - position.z);
+    const closest = (alongEntrance.length ? alongEntrance : nearby).reduce((best, pick) =>
+      !best || groundDistance(pick) < groundDistance(best) ? pick : best, null);
+    const crop = closest?.position.clone().addScaledVector(closest.axis ?? up, closest.height * .62);
+    const interest = crop ?? marker;
+    const aim = interest.clone().sub(position).normalize();
+    if (index) {
+      const sign = marker.clone().sub(position).normalize();
+      // Keep the plant in frame when a nearby stake sits across the camera's field of view.
+      if (aim.angleTo(sign) < .84) aim.lerp(sign, .43).normalize();
+    }
+    const target = position.clone().addScaledVector(aim, Math.max(1.5, position.distanceTo(interest)));
+    return { position, target, label, markerId: id, progress };
+  });
+  return { walkStops, walkTrail };
+}
+
 export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, loop, addTrail, groundShadow }) {
+  const environmentBed = bed.id === "earth";
   const bands = bed.deadlinePath.terraces;
   const width = 9.20;
   const depths = bands.map(band => shelfDepth(band.slots.length));
@@ -66,6 +143,7 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const walk = dry.clone().lerp(straw, .54).lerp(cream, .15);
   const track = dry.clone().lerp(earth, .25);
   const moss = grass.clone().lerp(green, .50).lerp(straw, .09);
+  if (environmentBed) moss.lerp(deep, .24);
 
   const lawn = (x, z) => .05
     + approachSteps.reduce((height, [low, high]) => height + approachRise * smoothstep(-z, low, high), 0)
@@ -86,8 +164,10 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
     const center = centers[index];
     const elevation = .29 + index * tierRise;
     const top = (x, z) => elevation + .032 * Math.cos(x * .59 + z * .71) + .022 * Math.sin(x * 1.21 + index);
-    const pad = dry.clone().lerp(earth, .53).lerp(green, .17);
-    const verge = pad.clone().lerp(straw, .09);
+    const pad = environmentBed
+      ? dry.clone().lerp(earth, .42).lerp(deep, .44).lerp(green, .19)
+      : dry.clone().lerp(earth, .53).lerp(green, .17);
+    const verge = environmentBed ? pad.clone().lerp(green, .34).lerp(straw, .065) : pad.clone().lerp(straw, .09);
     const shift = points => points.map(point => point.add(new THREE.Vector3(0, 0, center)));
     const turfEdge = shift(loop(width + .31, depth + .23, .36, (x, z) => top(x, z + center), .063, index + .4));
     const footing = shift(loop(width + .80, depth + .57, .42, (x, z) => lawn(x, z + center) + .02, .079, index + .4));
@@ -114,7 +194,8 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const trail = [[-1.85, 5.21], [-.77, 4.98], [.78, 4.95], [2.71, 4.92],
     [4.54, 4.70], [5.38, 3.61], [5.55, 2.18], [5.49, .71], [5.58, -.86],
     [5.40, -2.27], [5.43, -3.67], [4.96, -4.70], [3.92, -5.06]];
-  addTrail(floor, trail.map(([x, z]) => [x, resizeZ(z)]), lawn, walk, track, 1.42);
+  const trailCoordinates = trail.map(([x, z]) => [x, resizeZ(z)]);
+  addTrail(floor, trailCoordinates, lawn, walk, track, 1.42);
   const wood = earth.clone().lerp(dry, .43);
   const plaque = wood.clone().lerp(straw, .25);
   for (const { band, center, top } of terraces) {
@@ -153,13 +234,23 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const irrigated = createSurface();
   const furrow = earth.clone().lerp(deep, .18);
   const furrowShoulder = furrow.clone().lerp(dry, .44);
+  const contourTints = environmentBed ? [
+    earth.clone().lerp(deep, .39),
+    dry.clone().lerp(green, .57).lerp(straw, .10),
+    dry.clone().lerp(earth, .41).lerp(green, .26),
+  ] : null;
   const dryDitch = earth.clone().lerp(deep, .28);
   let nextLayout = 0;
   for (const { band, center, top, plot } of terraces) {
     const layout = band.slots.length ? crops.layouts[nextLayout++] : null;
     for (const row of layout?.rows ?? []) {
-      const z = center - row.z - layout.strideZ * .31;
       const half = Math.min(width / 2 - .34, row.width / 2 + .25);
+      if (contourTints) {
+        const contour = center - row.z - layout.strideZ * .42;
+        addContourRow(detail, top, contour, half, layout.strideZ, contourTints);
+        continue;
+      }
+      const z = center - row.z - layout.strideZ * .31;
       const rowPoint = (x, across) => {
         const along = z - across + .043 * Math.sin(x * 1.36 + z * .59);
         return new THREE.Vector3(x, top(x, along) + .023, along);
@@ -205,8 +296,12 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const wet = irrigated.mesh();
   plotGroup.add(detail.mesh(), wet);
 
+  const walkStudy = environmentBed ? { eye: .96, entranceLift: .13 }
+    : bed.id === "rare" ? { eye: 1.08, entranceLift: 0 } : null;
+  const walkView = bands.length ? terraceWalk(trailCoordinates, lawn, bands, markers, crops.picks, walkStudy) : {};
   return {
     crop: crops, cropGroup, groundMesh, wet, markers, shadowColor: earth,
     fit: [...underside, ...apron, ...markers.map(marker => marker.point)],
+    ...walkView,
   };
 }

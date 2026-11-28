@@ -722,6 +722,23 @@
       .garden-bed-tools p { font-size: .82rem; }
       .garden-bed-turns { display: flex; gap: .22rem; }
       .garden-bed-turns .garden-switch { min-width: 44px; padding-inline: .4rem; font-size: 1rem !important; }
+      .garden-bed-walk-controls {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: .45rem;
+        width: 100%;
+      }
+      .garden-bed-walk-controls [role="status"] {
+        font: 650 .82rem/1.3 var(--font-body);
+        text-align: center;
+      }
+      #garden .garden-bed-walk-controls button[aria-disabled="true"] { opacity: .58; cursor: default; }
+      .garden-bed-walk-toggle { background: var(--garden-deep); color: var(--garden-cream); }
+      .garden-bed-scene[data-camera-mode="walk"] .garden-bed-stage {
+        background-image: radial-gradient(ellipse at 57% 22%, #f5e98a65, transparent 64%),
+          url("./assets/arden-bed-landscape.svg");
+      }
       .garden-bed-inspector { display: flex; flex-direction: column; align-items: flex-start; gap: .8rem; min-width: 0; padding: .8rem; }
       .garden-bed-preview-help { font-size: 1rem; line-height: 1.48; }
       .garden-bed-preview-grant {
@@ -776,6 +793,9 @@
           bottom: env(safe-area-inset-bottom, 0px);
           z-index: 2;
           box-shadow: 0 -5px 18px #2e3a451a;
+        }
+        .garden-bed-scene[data-camera-mode="walk"] .garden-bed-inspector:has(.garden-bed-preview-grant:not([hidden])) {
+          position: static;
         }
       }
       @media (max-width: 363px) {
@@ -1192,12 +1212,19 @@
               </div>
               <div class="garden-bed-tools">
                 <p id="garden-bed-turn-help">Drag to turn</p>
-                <div class="garden-bed-turns" role="group" aria-label="Move around the bed">
+                <button class="garden-switch garden-bed-walk-toggle" id="garden-bed-walk-toggle" type="button"
+                  aria-controls="garden-bed-walk-controls" aria-expanded="false" hidden>Walk the bed</button>
+                <div class="garden-bed-turns" id="garden-bed-orbit-controls" role="group" aria-label="Move around the bed">
                   <button class="garden-switch" type="button" data-bed-turn="left" aria-label="Turn bed left">←</button>
                   <button class="garden-switch" type="button" data-bed-turn="right" aria-label="Turn bed right">→</button>
                   <button class="garden-switch" type="button" data-bed-turn="farther" aria-label="Zoom bed out">−</button>
                   <button class="garden-switch" type="button" data-bed-turn="closer" aria-label="Zoom bed in">+</button>
                   <button class="garden-switch" type="button" data-bed-turn="reset" aria-label="Reset bed view">↺</button>
+                </div>
+                <div class="garden-bed-walk-controls" id="garden-bed-walk-controls" role="group" aria-label="Walk the path" hidden>
+                  <button class="garden-switch" id="garden-bed-walk-back" type="button" aria-label="Previous stop">Previous</button>
+                  <span id="garden-bed-walk-stop" role="status"></span>
+                  <button class="garden-switch" id="garden-bed-walk-forward" type="button" aria-label="Next stop">Next</button>
                 </div>
               </div>
             </div>
@@ -2603,6 +2630,10 @@ function renderGardenField({ beds, layout, aspect }) {
           const bedDeadlineSigns = byId("garden-bed-deadline-signs");
           const bedSignLeaders = byId("garden-bed-sign-leaders");
           const bedTurnHelp = byId("garden-bed-turn-help");
+          const bedWalkToggle = byId("garden-bed-walk-toggle");
+          const bedWalkControls = byId("garden-bed-walk-controls");
+          const bedWalkBack = byId("garden-bed-walk-back");
+          const bedWalkForward = byId("garden-bed-walk-forward");
           const bedPlantLabel = byId("garden-bed-plant-label");
           const bedPreviewHelp = byId("garden-bed-preview-help");
           const bedPreviewGrant = byId("garden-bed-preview-grant");
@@ -3125,6 +3156,25 @@ function renderGardenField({ beds, layout, aspect }) {
             bedCanvas.removeAttribute("data-plant-hover");
           }
 
+          function showBedWalk({ index, count, moving, label }) {
+            const walking = index >= 0;
+            bedScene.dataset.cameraMode = walking ? "walk" : "overview";
+            bedWalkToggle.hidden = !count;
+            bedWalkToggle.textContent = walking ? "Full bed" : "Walk the bed";
+            bedWalkToggle.setAttribute("aria-expanded", String(walking));
+            bedWalkControls.hidden = !walking;
+            byId("garden-bed-orbit-controls").hidden = walking;
+            byId("garden-bed-walk-stop").textContent = label;
+            bedWalkBack.disabled = index <= 0;
+            bedWalkForward.disabled = index >= count - 1;
+            bedWalkBack.setAttribute("aria-disabled", String(moving || bedWalkBack.disabled));
+            bedWalkForward.setAttribute("aria-disabled", String(moving || bedWalkForward.disabled));
+            const firstTerrace = currentBed?.deadlinePath.terraces[0];
+            const hasDates = firstTerrace && firstTerrace.id !== "rolling" && firstTerrace.id !== "unstated";
+            bedTurnHelp.textContent = walking ? "Drag to look around." :
+              count || !hasDates ? "Drag to turn." : "Drag to turn. Earliest deadlines by the entrance.";
+          }
+
           async function loadBedScene() {
             bed3dRequested = true;
             try {
@@ -3133,6 +3183,7 @@ function renderGardenField({ beds, layout, aspect }) {
                 canvas: bedCanvas, paint: gardenPaint,
                 onAnchor: placeBedPlantLabel,
                 onTerraces: placeDeadlineSigns,
+                onWalk: showBedWalk,
                 onHover: id => {
                   bedCanvas.toggleAttribute("data-plant-hover", Boolean(id));
                   if (!bedGrantSelect.value) preview3dGrant(id);
@@ -3166,9 +3217,6 @@ function renderGardenField({ beds, layout, aspect }) {
                 bed3d.setBed(currentBed);
                 bed3dTopic = currentBed;
                 bedCanvas.setAttribute("aria-label", currentBed.topic + " 3D bed");
-                const firstTerrace = currentBed.deadlinePath.terraces[0];
-                bedTurnHelp.textContent = firstTerrace.id === "rolling" || firstTerrace.id === "unstated"
-                  ? "Drag to turn." : "Drag to turn. Earliest deadlines by the entrance.";
                 bedCanvas.removeAttribute("data-plant-hover");
                 bedGrantSelect.replaceChildren(new Option("Choose a grant", ""), ...bedSlots.map(slot =>
                   new Option(titleText(slot), slot.record.opportunity_id)));
@@ -3289,6 +3337,7 @@ function renderGardenField({ beds, layout, aspect }) {
             const previous = currentBed;
             const animated = currentView === "garden" && !reduce.matches;
             transitionRunning = animated;
+            bed3d?.setWalk(false);
             currentBed = null;
             if (animated) {
               if (globe) {
@@ -3376,7 +3425,22 @@ function renderGardenField({ beds, layout, aspect }) {
           bedScene.querySelectorAll("[data-bed-turn]").forEach(button => button.addEventListener("click", () => {
             moveAroundBed(button.dataset.bedTurn);
           }));
+          bedWalkToggle.addEventListener("click", () => bed3d?.setWalk(bedScene.dataset.cameraMode !== "walk"));
+          bedWalkBack.addEventListener("click", () => bed3d?.stepWalk(-1));
+          bedWalkForward.addEventListener("click", () => bed3d?.stepWalk(1));
           bedCanvas.addEventListener("keydown", event => {
+            if (bedScene.dataset.cameraMode === "walk") {
+              if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                event.preventDefault();
+                bed3d.stepWalk(event.key === "ArrowUp" ? 1 : -1);
+                return;
+              }
+              if (event.key === "Escape") {
+                event.preventDefault();
+                bed3d.setWalk(false);
+                return;
+              }
+            }
             const direction = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down",
               "+": "closer", "=": "closer", "-": "farther", Home: "reset" }[event.key];
             if (direction) {

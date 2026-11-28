@@ -219,7 +219,9 @@ function cropArtwork(THREE, paint, detailedBed) {
     foliage(parts, colors.light, .46, .6, .25, neutral, .80);
     petal(parts, colors.deepPurple, [0, .80, 0], [.15, .12, .13]);
     for (const [x, y, z, tilt] of [[-.17, .90, 0, -.52], [0, 1.01, 0, .03], [.17, .92, 0, .51], [.01, .91, -.10, .11]]) {
-      petal(parts, colors.purple, [x, y, z], [detailedBed ? .131 : .11, .21, detailedBed ? .127 : .10], 0, tilt);
+      const color = detailedBed && z < 0 ? colors.deepPurple : colors.purple;
+      petal(parts, color, [x, y, z],
+        [detailedBed ? .145 : .11, .21, detailedBed ? .139 : .10], detailedBed ? x * 1.8 : 0, tilt);
     }
     if (detailedBed) petal(parts, "#C4A4CF", [0, .97, .126], [.071, .092, .048], 0, .25);
     petal(parts, colors.pink, [-.25, .63, .11], [.063, .035, .038], 0, -.45);
@@ -480,6 +482,7 @@ export function addGlobeCrops(THREE, world, plots, paint = {}, { detailedBed = f
     const strideX = width / columns;
     const strideZ = depth / rows;
     const baseSize = Math.min(strideX, strideZ) * .84;
+    const bedPlantScale = detailedBed && (bed.id === "rare" || bed.id === "earth") ? 1.06 : 1;
     const named = namedGardenCrops[bed.id];
     const surfaceNormal = typeof plot.normalAt === "function";
     const rowLayout = Array.from({ length: rows }, (_, row) => ({
@@ -513,7 +516,7 @@ export function addGlobeCrops(THREE, world, plots, paint = {}, { detailedBed = f
       const relativeHeight = slot.elephant ? 1.46 + (neutral ? 0 : .14 * score / 100)
         : (named?.scale ?? originalHeights[slot.crop] ?? 1) * (neutral ? .77 : .67 + .41 * score / 100);
       const closeupHeight = kind === "elephant" ? 1.19 : kind === "corn" ? 1.05 : 1.10;
-      const size = baseSize * relativeHeight * (detailedBed ? closeupHeight : 1);
+      const size = baseSize * relativeHeight * (detailedBed ? closeupHeight : 1) * bedPlantScale;
       let breadth = 1;
       let profile = 1;
       let axis;
