@@ -3337,6 +3337,7 @@ function renderGardenField({ beds, layout, aspect }) {
             const previous = currentBed;
             const animated = currentView === "garden" && !reduce.matches;
             transitionRunning = animated;
+            bed3d?.setWalk(false);
             currentBed = null;
             if (animated) {
               if (globe) {
@@ -3424,7 +3425,7 @@ function renderGardenField({ beds, layout, aspect }) {
           bedScene.querySelectorAll("[data-bed-turn]").forEach(button => button.addEventListener("click", () => {
             moveAroundBed(button.dataset.bedTurn);
           }));
-          bedWalkToggle.addEventListener("click", () => bed3d?.toggleWalk());
+          bedWalkToggle.addEventListener("click", () => bed3d?.setWalk(bedScene.dataset.cameraMode !== "walk"));
           bedWalkBack.addEventListener("click", () => bed3d?.stepWalk(-1));
           bedWalkForward.addEventListener("click", () => bed3d?.stepWalk(1));
           bedCanvas.addEventListener("keydown", event => {
@@ -3436,7 +3437,7 @@ function renderGardenField({ beds, layout, aspect }) {
               }
               if (event.key === "Escape") {
                 event.preventDefault();
-                bed3d.toggleWalk();
+                bed3d.setWalk(false);
                 return;
               }
             }

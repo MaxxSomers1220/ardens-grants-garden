@@ -249,6 +249,7 @@ export function createGardenBed3D({
   let hovered = null;
   let pendingHover;
   let walkStop = -1;
+  let framedWalkStop = null;
   let walkYaw = 0;
   let walkPitch = 0;
   let walkTravel = null;
@@ -267,6 +268,7 @@ export function createGardenBed3D({
   }
 
   function frameCamera() {
+    framedWalkStop = walkStop;
     camera = walkStop < 0 ? overviewCamera : walkCamera;
     scene.fog = walkStop < 0 ? null : haze;
     if (walkStop >= 0) {
@@ -341,12 +343,15 @@ export function createGardenBed3D({
     onWalk({ index: walkStop, count, moving: Boolean(walkTravel), label: layout?.walkStops?.[walkStop]?.label || "" });
   }
 
-  function toggleWalk() {
-    if (!layout?.walkStops?.length) return;
-    walkStop = walkStop < 0 ? 0 : -1;
+  function setWalk(enabled) {
+    if (!layout?.walkStops?.length || enabled === (walkStop >= 0)) return;
+    walkStop = enabled ? 0 : -1;
     walkTravel = null;
     lastWalkAt = null;
     walkYaw = walkPitch = 0;
+    gesture = undefined;
+    pendingHover = undefined;
+    hover(null);
     showWalkState();
     requestFrame();
   }
@@ -356,7 +361,7 @@ export function createGardenBed3D({
     const next = walkStop + offset;
     const stops = layout.walkStops;
     if (!stops[next]) return;
-    if (!reducedMotion.matches) {
+    if (!reducedMotion.matches && visible) {
       const previous = stops[walkStop];
       const stop = stops[next];
       const from = new THREE.Quaternion();
@@ -369,12 +374,19 @@ export function createGardenBed3D({
     }
     walkStop = next;
     walkYaw = walkPitch = 0;
+    gesture = undefined;
+    pendingHover = undefined;
+    hover(null);
     showWalkState();
     requestFrame();
   }
 
+  function canPick() {
+    return visible && !walkTravel && framedWalkStop === walkStop;
+  }
+
   function rayPick({ clientX, clientY, pointerType }) {
-    if (!layout || !width || !height || walkTravel) return null;
+    if (!layout || !width || !height || !canPick()) return null;
     const bounds = canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return null;
     const x = (clientX - bounds.left) / bounds.width;
@@ -528,6 +540,7 @@ export function createGardenBed3D({
     swayElapsed = 0;
     lastSwayAt = null;
     walkStop = -1;
+    framedWalkStop = null;
     walkTravel = null;
     lastWalkAt = null;
     showWalkState();
@@ -542,7 +555,7 @@ export function createGardenBed3D({
   }
 
   listen(canvas, "pointerdown", event => {
-    if (!visible || walkTravel || !event.isPrimary || event.button !== 0) return;
+    if (!canPick() || !event.isPrimary || event.button !== 0) return;
     gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0, moved: false };
     canvas.setPointerCapture(event.pointerId);
   });
@@ -572,7 +585,7 @@ export function createGardenBed3D({
     if (event.pointerId !== gesture?.id) return;
     const wasDrag = gesture.moved;
     gesture = undefined;
-    if (visible && !wasDrag) onSelect(rayPick(event), event.pointerType);
+    if (!wasDrag && canPick()) onSelect(rayPick(event), event.pointerType);
   });
   listen(canvas, "pointerleave", () => {
     pendingHover = undefined;
@@ -636,7 +649,7 @@ export function createGardenBed3D({
       requestFrame();
     },
     rotate,
-    toggleWalk,
+    setWalk,
     stepWalk,
     zoom(factor) {
       if (walkStop >= 0 || !Number.isFinite(factor) || factor <= 0) return;

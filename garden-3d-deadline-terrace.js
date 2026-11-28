@@ -51,10 +51,13 @@ function addContourRow(surface, top, middle, half, stride, tints) {
   }
 }
 
-function terraceWalk(coordinates, lawn, eye, entranceLift, bands, markers, picks) {
+function terraceWalk(coordinates, lawn, bands, markers, picks, study) {
   // Use the same spline and height as the visible ochre path.
   const path = new THREE.CatmullRomCurve3(
     coordinates.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, "chordal");
+  const heights = picks.map(pick => pick.height).sort((a, b) => a - b);
+  const eye = study?.eye ?? (.95 + .20 * smoothstep(heights[Math.floor(heights.length / 2)] ?? 0, .35, 1.46));
+  const entranceLift = study?.entranceLift ?? .13;
   function walkTrail(progress, target = new THREE.Vector3()) {
     const along = THREE.MathUtils.clamp(progress, 0, 1);
     path.getPointAt(along, target);
@@ -68,13 +71,19 @@ function terraceWalk(coordinates, lawn, eye, entranceLift, bands, markers, picks
   }).filter(({ position }) => position.x > 5.21);
   const byId = new Map(picks.map(pick => [pick.id, pick]));
   const stops = [{ id: "entrance", label: "Entrance", slots: bands[0]?.slots ?? [] }, ...bands];
+  let previousProgress = 0;
   const walkStops = stops.map(({ id, label, slots }, index) => {
     const marker = markers[index].point;
-    const candidates = index ? samples : [];
-    const before = index ? marker.z + 1.64 : 0;
-    const stop = candidates.reduce((best, sample) => !best ||
-      Math.abs(sample.position.z - before) < Math.abs(best.position.z - before) ? sample : best, null);
-    const progress = stop?.progress ?? 0;
+    // Leave a path sample for each remaining shelf even when adjacent shelves are shallow.
+    const candidates = !study && index
+      ? samples.slice(0, samples.length - (bands.length - index)).filter(sample => sample.progress > previousProgress)
+      : samples;
+    const lead = !study && index ? Math.min(1.64, .46 * (markers[index - 1].point.z - marker.z)) : 1.64;
+    const before = marker.z + lead;
+    const stop = index ? candidates.reduce((best, sample) => !best ||
+      Math.abs(sample.position.z - before) < Math.abs(best.position.z - before) ? sample : best, null) : null;
+    const progress = stop?.progress ?? previousProgress;
+    previousProgress = progress;
     const position = walkTrail(progress);
     const members = slots.map(slot => byId.get(slot.record.opportunity_id));
     const ahead = members.filter(pick => pick.position.z < position.z - .16);
@@ -287,9 +296,9 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const wet = irrigated.mesh();
   plotGroup.add(detail.mesh(), wet);
 
-  const walkView = environmentBed || bed.id === "rare"
-    ? terraceWalk(trailCoordinates, lawn, environmentBed ? .96 : 1.08, environmentBed ? .13 : 0,
-      bands, markers, crops.picks) : {};
+  const walkStudy = environmentBed ? { eye: .96, entranceLift: .13 }
+    : bed.id === "rare" ? { eye: 1.08, entranceLift: 0 } : null;
+  const walkView = bands.length ? terraceWalk(trailCoordinates, lawn, bands, markers, crops.picks, walkStudy) : {};
   return {
     crop: crops, cropGroup, groundMesh, wet, markers, shadowColor: earth,
     fit: [...underside, ...apron, ...markers.map(marker => marker.point)],
