@@ -51,6 +51,53 @@ function addContourRow(surface, top, middle, half, stride, tints) {
   }
 }
 
+function terraceWalk(coordinates, lawn, eye, entranceLift, bands, markers, picks) {
+  // Use the same spline and height as the visible ochre path.
+  const path = new THREE.CatmullRomCurve3(
+    coordinates.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, "chordal");
+  function walkTrail(progress, target = new THREE.Vector3()) {
+    const along = THREE.MathUtils.clamp(progress, 0, 1);
+    path.getPointAt(along, target);
+    target.y = lawn(target.x, target.z) + eye + entranceLift * (1 - smoothstep(along, 0, .085));
+    return target;
+  }
+
+  const samples = Array.from({ length: 141 }, (_, index) => {
+    const progress = index / 140;
+    return { progress, position: walkTrail(progress) };
+  }).filter(({ position }) => position.x > 5.21);
+  const byId = new Map(picks.map(pick => [pick.id, pick]));
+  const stops = [{ id: "entrance", label: "Entrance", slots: bands[0]?.slots ?? [] }, ...bands];
+  const walkStops = stops.map(({ id, label, slots }, index) => {
+    const marker = markers[index].point;
+    const candidates = index ? samples : [];
+    const before = index ? marker.z + 1.64 : 0;
+    const stop = candidates.reduce((best, sample) => !best ||
+      Math.abs(sample.position.z - before) < Math.abs(best.position.z - before) ? sample : best, null);
+    const progress = stop?.progress ?? 0;
+    const position = walkTrail(progress);
+    const members = slots.map(slot => byId.get(slot.record.opportunity_id));
+    const ahead = members.filter(pick => pick.position.z < position.z - .16);
+    const nearby = ahead.length ? ahead : members;
+    // At the gateway, look past the plant right beside the camera toward the first turn.
+    const alongEntrance = index ? [] : nearby.filter(pick => pick.position.x > position.x + .85);
+    const groundDistance = pick => Math.hypot(pick.position.x - position.x, pick.position.z - position.z);
+    const closest = (alongEntrance.length ? alongEntrance : nearby).reduce((best, pick) =>
+      !best || groundDistance(pick) < groundDistance(best) ? pick : best, null);
+    const crop = closest?.position.clone().addScaledVector(closest.axis ?? up, closest.height * .62);
+    const interest = crop ?? marker;
+    const aim = interest.clone().sub(position).normalize();
+    if (index) {
+      const sign = marker.clone().sub(position).normalize();
+      // Keep the plant in frame when a nearby stake sits across the camera's field of view.
+      if (aim.angleTo(sign) < .84) aim.lerp(sign, .43).normalize();
+    }
+    const target = position.clone().addScaledVector(aim, Math.max(1.5, position.distanceTo(interest)));
+    return { position, target, label, markerId: id, progress };
+  });
+  return { walkStops, walkTrail };
+}
+
 export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, loop, addTrail, groundShadow }) {
   const environmentBed = bed.id === "earth";
   const bands = bed.deadlinePath.terraces;
@@ -138,7 +185,8 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const trail = [[-1.85, 5.21], [-.77, 4.98], [.78, 4.95], [2.71, 4.92],
     [4.54, 4.70], [5.38, 3.61], [5.55, 2.18], [5.49, .71], [5.58, -.86],
     [5.40, -2.27], [5.43, -3.67], [4.96, -4.70], [3.92, -5.06]];
-  addTrail(floor, trail.map(([x, z]) => [x, resizeZ(z)]), lawn, walk, track, 1.42);
+  const trailCoordinates = trail.map(([x, z]) => [x, resizeZ(z)]);
+  addTrail(floor, trailCoordinates, lawn, walk, track, 1.42);
   const wood = earth.clone().lerp(dry, .43);
   const plaque = wood.clone().lerp(straw, .25);
   for (const { band, center, top } of terraces) {
@@ -239,8 +287,12 @@ export function createDeadlineTerrace(bed, plotGroup, paint, { createSurface, lo
   const wet = irrigated.mesh();
   plotGroup.add(detail.mesh(), wet);
 
+  const walkView = environmentBed || bed.id === "rare"
+    ? terraceWalk(trailCoordinates, lawn, environmentBed ? .96 : 1.08, environmentBed ? .13 : 0,
+      bands, markers, crops.picks) : {};
   return {
     crop: crops, cropGroup, groundMesh, wet, markers, shadowColor: earth,
     fit: [...underside, ...apron, ...markers.map(marker => marker.point)],
+    ...walkView,
   };
 }

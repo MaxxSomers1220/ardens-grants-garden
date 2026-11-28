@@ -126,7 +126,7 @@ function groundShadow(edge, tint) {
   return new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false }));
 }
 
-function finishBed(bed, plotGroup, { crop, cropGroup, groundMesh, fit, wet, shadowColor, markers }) {
+function finishBed(bed, plotGroup, { crop, cropGroup, groundMesh, fit, wet, shadowColor, markers, walkStops, walkTrail }) {
   const { picks } = crop;
   const pickMeshes = cropGroup.children;
   const sway = createBedSway(THREE, picks, pickMeshes, bed.slots);
@@ -162,7 +162,7 @@ function finishBed(bed, plotGroup, { crop, cropGroup, groundMesh, fit, wet, shad
       framing.push(top.clone().add(new THREE.Vector3(side * extent, 0, -side * extent)));
     }
   }
-  return { crop, picks, byId, pickMeshes, groundMesh, fit: framing, wet, markers, sway };
+  return { crop, picks, byId, pickMeshes, groundMesh, fit: framing, wet, markers, sway, walkStops, walkTrail };
 }
 
 function disposeGroup(group) {
@@ -182,6 +182,7 @@ export function createGardenBed3D({
   onTerraces = () => {},
   onHover = () => {},
   onSelect = () => {},
+  onWalk = () => {},
   onUnavailable = () => {},
 }) {
   const touch = matchMedia("(pointer: coarse)");
@@ -196,7 +197,10 @@ export function createGardenBed3D({
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 95);
+  const overviewCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 95);
+  const walkCamera = new THREE.PerspectiveCamera(58, 1, .06, 65);
+  const haze = new THREE.Fog(paint.cream || "#F7F1E3", 4.5, 18);
+  let camera = overviewCamera;
   const ambient = new THREE.HemisphereLight(0xfff1e1, 0xc4aaa0, 1.60);
   const sun = new THREE.DirectionalLight(paint.light || "#F2C14E", 1.58);
   const fill = new THREE.DirectionalLight(0xe5eff1, .39);
@@ -221,6 +225,9 @@ export function createGardenBed3D({
   const screen = new THREE.Vector3();
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
+  const walkAim = new THREE.Vector3();
+  const walkLook = new THREE.Spherical();
+  const turnMatrix = new THREE.Matrix4();
   let bed;
   let group;
   let layout;
@@ -241,6 +248,11 @@ export function createGardenBed3D({
   let gesture;
   let hovered = null;
   let pendingHover;
+  let walkStop = -1;
+  let walkYaw = 0;
+  let walkPitch = 0;
+  let walkTravel = null;
+  let lastWalkAt = null;
 
   function reportUnavailable(error) {
     if (disposed || unavailable) return;
@@ -255,6 +267,28 @@ export function createGardenBed3D({
   }
 
   function frameCamera() {
+    camera = walkStop < 0 ? overviewCamera : walkCamera;
+    scene.fog = walkStop < 0 ? null : haze;
+    if (walkStop >= 0) {
+      const stop = layout.walkStops[walkStop];
+      camera.aspect = width / height;
+      if (walkTravel) {
+        const t = walkTravel.elapsed / walkTravel.duration;
+        const ease = t * t * (3 - 2 * t);
+        layout.walkTrail(lerp(walkTravel.start, stop.progress, ease), camera.position);
+        camera.quaternion.slerpQuaternions(walkTravel.from, walkTravel.to, ease);
+      } else {
+        camera.position.copy(stop.position);
+        walkLook.setFromVector3(walkAim.subVectors(stop.target, stop.position));
+        walkLook.theta += walkYaw;
+        walkLook.phi = clamp(walkLook.phi + walkPitch, .15, Math.PI - .15);
+        camera.lookAt(walkAim.setFromSpherical(walkLook).add(camera.position));
+      }
+      camera.updateMatrixWorld();
+      camera.updateProjectionMatrix();
+      unitsPerPixel = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / height;
+      return;
+    }
     const distance = 38;
     const horizontal = distance * Math.cos(pose.pitch);
     camera.position.set(horizontal * Math.sin(pose.yaw), distance * Math.sin(pose.pitch), horizontal * Math.cos(pose.yaw));
@@ -291,11 +325,56 @@ export function createGardenBed3D({
 
   function project(point) {
     screen.copy(point).project(camera);
-    return { x: (1 + screen.x) * width / 2, y: (1 - screen.y) * height / 2 };
+    return { x: (1 + screen.x) * width / 2, y: (1 - screen.y) * height / 2,
+      inDepth: walkStop < 0 || screen.z >= -1 && screen.z <= 1 };
+  }
+
+  function pixelScale(point) {
+    if (walkStop < 0) return unitsPerPixel;
+    const e = camera.matrixWorldInverse.elements;
+    const depth = -(e[2] * point.x + e[6] * point.y + e[10] * point.z + e[14]);
+    return Math.max(walkCamera.near, depth) * unitsPerPixel;
+  }
+
+  function showWalkState() {
+    const count = layout?.walkStops?.length || 0;
+    onWalk({ index: walkStop, count, moving: Boolean(walkTravel), label: layout?.walkStops?.[walkStop]?.label || "" });
+  }
+
+  function toggleWalk() {
+    if (!layout?.walkStops?.length) return;
+    walkStop = walkStop < 0 ? 0 : -1;
+    walkTravel = null;
+    lastWalkAt = null;
+    walkYaw = walkPitch = 0;
+    showWalkState();
+    requestFrame();
+  }
+
+  function stepWalk(offset) {
+    if (walkStop < 0 || walkTravel) return;
+    const next = walkStop + offset;
+    const stops = layout.walkStops;
+    if (!stops[next]) return;
+    if (!reducedMotion.matches) {
+      const previous = stops[walkStop];
+      const stop = stops[next];
+      const from = new THREE.Quaternion();
+      if (camera === walkCamera) from.copy(walkCamera.quaternion);
+      else from.setFromRotationMatrix(turnMatrix.lookAt(previous.position, previous.target, up));
+      walkTravel = { start: previous.progress, from, elapsed: 0,
+        to: new THREE.Quaternion().setFromRotationMatrix(turnMatrix.lookAt(stop.position, stop.target, up)),
+        duration: clamp(previous.position.distanceTo(stop.position) * 310, 950, 1550) };
+      lastWalkAt = null;
+    }
+    walkStop = next;
+    walkYaw = walkPitch = 0;
+    showWalkState();
+    requestFrame();
   }
 
   function rayPick({ clientX, clientY, pointerType }) {
-    if (!layout || !width || !height) return null;
+    if (!layout || !width || !height || walkTravel) return null;
     const bounds = canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return null;
     const x = (clientX - bounds.left) / bounds.width;
@@ -308,12 +387,14 @@ export function createGardenBed3D({
     if (hit && (!surface || hit.distance < surface.distance)) return hit.object.userData.recordIds[hit.instanceId];
 
     // A narrow stem remains tappable without making adjacent bare soil select a grant.
-    const tolerance = (pointerType === "touch" ? 5.4 : 2.6) * unitsPerPixel;
+    const taps = pointerType === "touch" ? 5.4 : 2.6;
     let closest = null;
     let distance = Infinity;
     for (const pick of layout.picks) {
       const foot = layout.sway.point(pick, .18, view);
       const head = layout.sway.point(pick, .79, screen);
+      const tolerance = taps * pixelScale(head);
+      if (walkStop >= 0 && head.clone().sub(camera.position).dot(raycaster.ray.direction) <= 0) continue;
       const separation = raycaster.ray.distanceSqToSegment(foot, head);
       const reach = Math.min(pick.width * .45, pick.height * .34) + tolerance;
       if (separation > reach * reach || separation >= distance) continue;
@@ -342,8 +423,16 @@ export function createGardenBed3D({
       renderer.setSize(w, h, false);
       dirty = true;
     }
-    const sceneChanged = dirty;
+    const sceneChanged = dirty || Boolean(walkTravel);
     dirty = false;
+    if (walkTravel) {
+      if (lastWalkAt !== null) walkTravel.elapsed += Math.min(now - lastWalkAt, 100);
+      lastWalkAt = now;
+      if (reducedMotion.matches || walkTravel.elapsed >= walkTravel.duration) {
+        walkTravel = null;
+        showWalkState();
+      }
+    }
     if (sceneChanged) frameCamera();
     const swaying = !reducedMotion.matches;
     if (swaying) {
@@ -364,19 +453,25 @@ export function createGardenBed3D({
         renderer: "webgl", bed: bed.id, plantCount: String(layout.picks.length),
         terraceCount: String(bed.deadlinePath.terraces.length),
         yaw: pose.yaw.toFixed(4), pitch: pose.pitch.toFixed(4), zoom: pose.zoom.toFixed(4),
+        cameraMode: walkStop < 0 ? "overview" : "walk", walkStop: String(walkStop), walkMoving: String(Boolean(walkTravel)),
         triangles: String(renderer.info.render.triangles), drawCalls: String(renderer.info.render.calls),
       });
-      const signs = layout.markers.map(({ id, point }) => ({ id, ...project(point) }));
-      // Keep signs still while stems move, reserving space for the entire sway.
-      const crowns = layout.picks.map(pick => ({
-        ...project(view.copy(pick.position).addScaledVector(pick.axis || up, pick.height * .93)),
-        reach: swaying ? layout.sway.reach(pick) / unitsPerPixel : 0,
-      }));
-      onTerraces(signs, crowns);
+      if (walkTravel) onTerraces([]);
+      else {
+        const marked = walkStop < 0 ? layout.markers :
+          layout.markers.filter(marker => marker.id === layout.walkStops[walkStop].markerId);
+        const signs = marked.map(({ id, point }) => ({ id, ...project(point) })).filter(point => point.inDepth);
+        // Give the date signs room for the whole sway at the plant's own depth.
+        const crowns = layout.picks.map(pick => {
+          const crown = view.copy(pick.position).addScaledVector(pick.axis || up, pick.height * .93);
+          return { ...project(crown), reach: swaying ? layout.sway.reach(pick) / pixelScale(crown) : 0 };
+        }).filter(point => point.inDepth);
+        onTerraces(signs, crowns);
+      }
     }
     if (sceneChanged || swaying && selectedPlant) {
-      const tip = selectedPlant && project(layout.sway.point(selectedPlant, 1, view));
-      onAnchor(tip && tip.x >= 0 && tip.x <= width && tip.y >= 0 && tip.y <= height
+      const tip = !walkTravel && selectedPlant && project(layout.sway.point(selectedPlant, 1, view));
+      onAnchor(tip?.inDepth && tip.x >= 0 && tip.x <= width && tip.y >= 0 && tip.y <= height
         ? { ...tip, id: selectedPlant.id } : null);
     }
     if (pendingHover) {
@@ -384,12 +479,18 @@ export function createGardenBed3D({
       pendingHover = undefined;
       hover(rayPick(event));
     }
-    if (swaying) requestFrame(false);
+    if (swaying || walkTravel) requestFrame(false);
   }
 
   function rotate({ yaw = 0, pitch = 0 } = {}) {
-    pose.yaw = Math.atan2(Math.sin(pose.yaw + yaw), Math.cos(pose.yaw + yaw));
-    pose.pitch = clamp(pose.pitch + pitch, .39, 1.23);
+    if (walkTravel) return;
+    if (walkStop >= 0) {
+      walkYaw = clamp(walkYaw - yaw, -.85, .85);
+      walkPitch = clamp(walkPitch - pitch, -.32, .32);
+    } else {
+      pose.yaw = Math.atan2(Math.sin(pose.yaw + yaw), Math.cos(pose.yaw + yaw));
+      pose.pitch = clamp(pose.pitch + pitch, .39, 1.23);
+    }
     requestFrame();
   }
 
@@ -426,6 +527,10 @@ export function createGardenBed3D({
     gesture = undefined;
     swayElapsed = 0;
     lastSwayAt = null;
+    walkStop = -1;
+    walkTravel = null;
+    lastWalkAt = null;
+    showWalkState();
     hover(null);
     selectedPlant = null;
     onAnchor(null);
@@ -437,7 +542,7 @@ export function createGardenBed3D({
   }
 
   listen(canvas, "pointerdown", event => {
-    if (!visible || !event.isPrimary || event.button !== 0) return;
+    if (!visible || walkTravel || !event.isPrimary || event.button !== 0) return;
     gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0, moved: false };
     canvas.setPointerCapture(event.pointerId);
   });
@@ -484,6 +589,7 @@ export function createGardenBed3D({
   });
   function restoreFrame() {
     lastSwayAt = null;
+    lastWalkAt = null;
     requestFrame();
   }
   listen(document, "visibilitychange", restoreFrame);
@@ -503,6 +609,7 @@ export function createGardenBed3D({
         if (frame) cancelAnimationFrame(frame);
         frame = 0;
         lastSwayAt = null;
+        lastWalkAt = null;
         gesture = undefined;
         pendingHover = undefined;
         hover(null);
@@ -529,13 +636,16 @@ export function createGardenBed3D({
       requestFrame();
     },
     rotate,
+    toggleWalk,
+    stepWalk,
     zoom(factor) {
-      if (!Number.isFinite(factor) || factor <= 0) return;
+      if (walkStop >= 0 || !Number.isFinite(factor) || factor <= 0) return;
       pose.zoom = clamp(pose.zoom * factor, .79, 1.95);
       requestFrame();
     },
     reset() {
-      Object.assign(pose, bed?.id === "rare" ? rarePose : defaultPose);
+      if (walkStop >= 0) walkYaw = walkPitch = 0;
+      else Object.assign(pose, bed?.id === "rare" ? rarePose : defaultPose);
       requestFrame();
     },
     getProjectedPlants() {
